@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-
+//TODO: Import appropriate package(s) for handling login authorization
 export default function Index() {
   return (
     <View
