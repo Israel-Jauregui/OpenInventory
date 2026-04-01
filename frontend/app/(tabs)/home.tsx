@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity} from "react-native";
 import React from 'react';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
-const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
-/* make buttons to navigate to other screens*/
-export default function Home(){
 
+const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
+/* make buttons to navigate to other tabs*/
+export default function Home(){
     return (
         <View style={styles.container}>
             <View style={styles.row}>
