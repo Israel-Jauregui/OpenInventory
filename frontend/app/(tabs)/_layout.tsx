@@ -5,8 +5,8 @@ function TabLayout(){
     return(
 
         <Tabs>
-
-            <Tabs.Screen name="index"></Tabs.Screen>.
+            
+            <Tabs.Screen name="index" ></Tabs.Screen>.
         </Tabs>
     );
 
