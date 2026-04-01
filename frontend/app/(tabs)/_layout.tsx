@@ -7,9 +7,13 @@ function TabLayout(){
     return(
 
         <Tabs>
-            
-            <Tabs.Screen name="home" options={{headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />}} />
-
+            <Tabs.Screen
+                name="home"
+                options={{
+                    headerTitle: '',
+                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                }}
+            />
         </Tabs>
     );
 
