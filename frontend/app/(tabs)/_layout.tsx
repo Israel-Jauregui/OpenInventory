@@ -14,8 +14,8 @@ function TabLayout(){
                     headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
                 }}
             />
-        </Tabs>/
-    );
+        </Tabs>
+    )
 
 }
 
