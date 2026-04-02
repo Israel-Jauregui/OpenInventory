@@ -6,10 +6,27 @@ from jose import jwt, JWTError
 import models
 from database import engine, SessionLocal
 from pydantic import BaseModel
+from dotenv import load_dotenv
+import httpx
+import os
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+load_dotenv()
+
+barcodeLookupApiKey = os.getenv("BARCODELOOKUPAPIKEY")
+
+class ProductUPC(BaseModel):
+    upc : str
+
+class ProductDetails(BaseModel):
+    title: str
+    category: str
+    brand: str
+    images: list[str]
+
 
 class UserCreate(BaseModel):
     username: str
@@ -115,3 +132,17 @@ def get_profile(current_user: models.User = Depends(get_current_user)):
         "message": f"Hello {current_user.username}, you are securely logged in!",
         "wants_notifications": current_user.wants_notif
     }
+
+@app.post("/getproductdetails")
+def getProductDetails(Request : ProductUPC):
+        upc = Request.upc
+        requestParameters = {'barcode' : upc, 'geo':'us' ,'formatted': 'y', 'key': barcodeLookupApiKey}
+        response = httpx.get("https://api.barcodelookup.com/v3/products", params=requestParameters)
+        responsejson = response.json()
+
+        product = responsejson["products"][0]
+        
+        productDetails = ProductDetails(title=product["title"], category=product["category"], brand=product["brand"], images=product.get("images", []))
+
+        return productDetails
+    
