@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import httpx
 import os
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -141,11 +141,25 @@ def getProductDetails(Request : ProductUPC):
         reqUpc = Request.upc
         requestParameters = {'barcode' : reqUpc, 'geo':'us' ,'formatted': 'y', 'key': barcodeLookupApiKey}
         response = httpx.get("https://api.barcodelookup.com/v3/products", params=requestParameters)
-        responsejson = response.json()
 
-        product = responsejson["products"][0]
+        try:
+            responsejson = response.json()
+        except:
+            raise HTTPException(status_code=502,
+            detail="Barcode API returned invalid JSON, are you sure you sent the right UPC?")
+
+        product = responsejson.get("products", [None])[0]
         
-        productDetails = ProductDetails(item_name=product["title"], desc=product["description"], price=product.get("stores", [{}])[0].get("price", "0.00"), upc=reqUpc, photo_url=product.get("images", [None])[0], category=product["category"], brand=product["brand"])
+        if product is None:
+            raise HTTPException(status_code=404, detail="Product not found")
+        
+        priceExtract = product.get("stores", [{}])[0].get("price", "0.00")
+        img = product.get("images", [None])[0]
+        categoryString = product["category"].split('>')
+        cat = categoryString[0].strip()
+        
+        
+        productDetails = ProductDetails(item_name=product["title"], desc=product["description"], price=priceExtract, upc=reqUpc, photo_url= img, category=cat, brand=product["brand"])
 
         return productDetails
     
