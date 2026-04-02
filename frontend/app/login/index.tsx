@@ -42,7 +42,7 @@ export default function Login() {
             onPress={() => router.replace('/(tabs)/home')} />
         </View>
 
-        {//Secondary account creation link
+        {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
         }
         <Link href="/" asChild>
           <Text style={styles.signupText}>Need an account?</Text>

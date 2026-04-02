@@ -43,7 +43,8 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow OpenInventory to access your camera to scan items."
+          "cameraPermission": "Allow OpenInventory to access your camera to scan items.",
+          "barcodeScannerEnabled" : true
         }
       ]
     ],
