@@ -22,10 +22,13 @@ class ProductUPC(BaseModel):
     upc : str
 
 class ProductDetails(BaseModel):
-    title: str
+    item_name: str
+    desc: str
+    price: str
+    upc: str
+    photo_url: str
     category: str
     brand: str
-    images: list[str]
 
 
 class UserCreate(BaseModel):
@@ -135,14 +138,14 @@ def get_profile(current_user: models.User = Depends(get_current_user)):
 
 @app.post("/getproductdetails")
 def getProductDetails(Request : ProductUPC):
-        upc = Request.upc
-        requestParameters = {'barcode' : upc, 'geo':'us' ,'formatted': 'y', 'key': barcodeLookupApiKey}
+        reqUpc = Request.upc
+        requestParameters = {'barcode' : reqUpc, 'geo':'us' ,'formatted': 'y', 'key': barcodeLookupApiKey}
         response = httpx.get("https://api.barcodelookup.com/v3/products", params=requestParameters)
         responsejson = response.json()
 
         product = responsejson["products"][0]
         
-        productDetails = ProductDetails(title=product["title"], category=product["category"], brand=product["brand"], images=product.get("images", []))
+        productDetails = ProductDetails(item_name=product["title"], desc=product["description"], price=product.get("stores", [{}])[0].get("price", "0.00"), upc=reqUpc, photo_url=product.get("images", [None])[0], category=product["category"], brand=product["brand"])
 
         return productDetails
     

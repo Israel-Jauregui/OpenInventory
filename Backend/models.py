@@ -53,8 +53,10 @@ class Item(Base):
     item_name = Column(String, index=True, nullable=False)
     desc = Column(String)
     price = Column(Float)
-    barcode = Column(String, unique=True, index=True) # Unique so we don't have duplicate barcodes
+    upc = Column(String, unique=True, index=True) # Unique so we don't have duplicate barcodes
     photo_url = Column(String)
+    category = Column(String)
+    brand = Column(String)
 
     # Relationship: An item can appear in many different inventory entries
     inventory_entries = relationship("InventoryEntry", back_populates="item")
