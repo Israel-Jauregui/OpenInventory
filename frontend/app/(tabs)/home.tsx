@@ -1,17 +1,29 @@
-import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable , ScrollView} from "react-native";
 import React from 'react';
+//FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+//FIXME: TEMPORARY IMPORT
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
 import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
+
+//FIXME: TEMPORARY IMPORT
+import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
+
+//Utilized for home button onPress events and barcode scanner button
+import { useRouter } from 'expo-router';
 
 const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
 /* make buttons to navigate to other tabs*/
 export default function Home() {
 
+    //Used for routing after clicking barcode scanner, home inventory buttons, etc.
+    const router = useRouter();
+
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
+            
             {/*Inventory type dropdown TODO: Turn into own component with appropriate dropdown later for reusability and functionality
            Also change styling when dropdown is incorporated */
             }
@@ -30,7 +42,7 @@ export default function Home() {
 
                 {//Input barcode via scan TODO: Turn into own component
                 }
-                <Pressable style={[styles.barcodeScan]} onPress={()=>{alert("FIXME: Requires expo-camera functionality");}}>
+                <Pressable style={[styles.barcodeScan]} onPress={()=>{router.navigate('../scanner');}}>
                     <Image 
                     style={{height: 40,width: 40}}source={require("../../assets/images/barcodeScanIcon.png")}/>
                 </Pressable>
@@ -38,6 +50,7 @@ export default function Home() {
 
             {//Home view buttons TODO: Turn into components and pass relevant props such as name
             }
+            <ScrollView>
             <View style={styles.container}>
                 
 
@@ -66,6 +79,7 @@ export default function Home() {
                     <HomeInventoryButton name={"Edit Item"}   onPress={()=>{}}/>
                 </View>
             </View>
+            </ScrollView>
         </>
 
     );
