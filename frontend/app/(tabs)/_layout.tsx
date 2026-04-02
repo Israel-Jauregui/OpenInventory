@@ -26,6 +26,16 @@ function TabLayout(){
                     headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
                 }}
             />
+
+            <Tabs.Screen
+                name="alerts"
+                options={{
+                    headerTitle: '',
+                    title: "Alerts",
+                    tabBarLabelStyle: {fontSize: 20},
+                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                }}
+            />
             
 
         </Tabs>
