@@ -1,7 +1,9 @@
 import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable } from "react-native";
 import React from 'react';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { Dropdown } from 'react-native-element-dropdown'
+import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
+
+import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
 
 const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
 /* make buttons to navigate to other tabs*/
@@ -37,24 +39,31 @@ export default function Home() {
             {//Home view buttons TODO: Turn into components and pass relevant props such as name
             }
             <View style={styles.container}>
+                
 
                 <View style={styles.row}>
                     {//Create item button
                     }
                     <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, { fontSize: 108, fontWeight: 300 }]}>+</Text>
+                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
+                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 2</Text>
+                        <Image style={{height: 75, width: 75}}source={require("../../assets/images/manageUsersIcon.png")}/>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Manage Users</Text>
+                       
                     </TouchableOpacity>
                 </View>
+
                 <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 3</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 4</Text>
-                    </TouchableOpacity>
+                    <HomeInventoryButton name={"Comments"} onPress={()=>{}}/>
+                    <HomeInventoryButton name={"Needs Attention"}  onPress={()=>{}}/>
+                </View>
+
+                <View style={styles.row}>
+                    <HomeInventoryButton name={"Delete Item"} onPress={()=>{}}/>
+                    <HomeInventoryButton name={"Edit Item"}   onPress={()=>{}}/>
                 </View>
             </View>
         </>
