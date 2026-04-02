@@ -7,14 +7,28 @@ function TabLayout(){
     return(
 
         <Tabs>
+            //name prop determines the route; remember to alter title property of options prop instead
             <Tabs.Screen
                 name="home"
                 options={{
                     headerTitle: '',
+                    title: "Home",
+                    tabBarLabelStyle: {fontSize: 20},
                     headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
                 }}
             />
-        </Tabs>/
+            <Tabs.Screen
+                name="/"
+                options={{
+                    headerTitle: '',
+                    title: "Items",
+                    tabBarLabelStyle: {fontSize: 20},
+                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                }}
+            />
+            
+
+        </Tabs>
     );
 
 }
