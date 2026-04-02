@@ -18,7 +18,7 @@ function TabLayout(){
                 }}
             />
             <Tabs.Screen
-                name="/"
+                name="items"
                 options={{
                     headerTitle: '',
                     title: "Items",
