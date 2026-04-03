@@ -1,7 +1,18 @@
 
-import { View } from 'react-native';
+import { View, Button } from 'react-native';
+import { useRouter } from 'expo-router';
 
-export default function ScannerView(){
+import BarcodeScanInput from '@/components/BarcodeScanInput/BarcodeScanInput';
 
-    return <View></View>
+export default function ScannerView() {
+
+    const router = useRouter();
+
+    return (
+        <>
+            <Button title="Back" onPress={router.back} />
+            <BarcodeScanInput />
+        </>
+
+    );
 }
