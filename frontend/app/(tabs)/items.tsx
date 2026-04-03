@@ -1,6 +1,11 @@
 
+import { useEffect } from 'react';
+import ItemEntry from '@/components/ItemEntry/ItemEntry';
+
 //TODO: Incorporate fetch that displays all items
 export default function ItemsView(){
 
-    return null;
+
+    //TEMPORARY RETURN
+    return <ItemEntry />;
 }

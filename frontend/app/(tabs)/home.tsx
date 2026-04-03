@@ -1,15 +1,29 @@
-import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable , ScrollView} from "react-native";
 import React from 'react';
+//FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
-import { Dropdown } from 'react-native-element-dropdown'
+//FIXME: TEMPORARY IMPORT
+import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
+
+import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
+
+//FIXME: TEMPORARY IMPORT
+import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
+
+//Utilized for home button onPress events and barcode scanner button
+import { useRouter } from 'expo-router';
 
 const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
 /* make buttons to navigate to other tabs*/
 export default function Home() {
 
+    //Used for routing after clicking barcode scanner, home inventory buttons, etc.
+    const router = useRouter();
+
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
+            
             {/*Inventory type dropdown TODO: Turn into own component with appropriate dropdown later for reusability and functionality
            Also change styling when dropdown is incorporated */
             }
@@ -28,7 +42,7 @@ export default function Home() {
 
                 {//Input barcode via scan TODO: Turn into own component
                 }
-                <Pressable style={[styles.barcodeScan]} onPress={()=>{alert("FIXME: Requires expo-camera functionality");}}>
+                <Pressable style={[styles.barcodeScan]} onPress={()=>{router.navigate('../scanner');}}>
                     <Image 
                     style={{height: 40,width: 40}}source={require("../../assets/images/barcodeScanIcon.png")}/>
                 </Pressable>
@@ -36,27 +50,36 @@ export default function Home() {
 
             {//Home view buttons TODO: Turn into components and pass relevant props such as name
             }
+            <ScrollView>
             <View style={styles.container}>
+                
 
                 <View style={styles.row}>
                     {//Create item button
                     }
                     <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, { fontSize: 108, fontWeight: 300 }]}>+</Text>
+                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
+                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 2</Text>
+                        <Image style={{height: 75, width: 75}}source={require("../../assets/images/manageUsersIcon.png")}/>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Manage Users</Text>
+                       
                     </TouchableOpacity>
                 </View>
+
                 <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 3</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Button 4</Text>
-                    </TouchableOpacity>
+                    <HomeInventoryButton name={"Comments"} onPress={()=>{}}/>
+                    <HomeInventoryButton name={"Needs Attention"}  onPress={()=>{}}/>
+                </View>
+
+                <View style={styles.row}>
+                    <HomeInventoryButton name={"Delete Item"} onPress={()=>{}}/>
+                    <HomeInventoryButton name={"Edit Item"}   onPress={()=>{}}/>
                 </View>
             </View>
+            </ScrollView>
         </>
 
     );

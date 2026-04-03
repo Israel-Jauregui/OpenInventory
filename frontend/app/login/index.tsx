@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, StyleSheet } from "react-native";
+import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { useRouter, Link } from 'expo-router';
 
 //TODO: Import appropriate package(s) for handling login authorization
@@ -15,9 +15,9 @@ export default function Login() {
       }
 
 
-      {//Field container
+      {//Field container TODO: Fine-tune KeyboardAvoidingView behavior and props so that everything including "Need an account?" is visible (though may not be necessary since typing infers having an account) above the keyboard while typing
       }
-      <View style={styles.fieldsContainer}>
+      <KeyboardAvoidingView style={styles.fieldsContainer} behavior="padding" keyboardVerticalOffset={25}>
         {//Username input
         }
         <TextInput
@@ -48,7 +48,7 @@ export default function Login() {
           <Text style={styles.signupText}>Need an account?</Text>
         </Link>
 
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 
