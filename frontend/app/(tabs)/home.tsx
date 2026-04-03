@@ -13,7 +13,9 @@ import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 //Utilized for home button onPress events and barcode scanner button
 import { useRouter } from 'expo-router';
 
-const buttonSize = Dimensions.get('window').width / 2.5; // fits two buttons per row
+const { width } = Dimensions.get('window');
+const isLargeScreen = width > 768; //large view
+const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per row
 /* make buttons to navigate to other tabs*/
 export default function Home() {
 
@@ -70,13 +72,23 @@ export default function Home() {
                 </View>
 
                 <View style={styles.row}>
-                    <HomeInventoryButton name={"Comments"} onPress={()=>{}}/>
-                    <HomeInventoryButton name={"Needs Attention"}  onPress={()=>{}}/>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Comments</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Needs attention</Text>
+                    </TouchableOpacity>
+                    
+                    
                 </View>
 
                 <View style={styles.row}>
-                    <HomeInventoryButton name={"Delete Item"} onPress={()=>{}}/>
-                    <HomeInventoryButton name={"Edit Item"}   onPress={()=>{}}/>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Delete Item</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Edit Item</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
             </ScrollView>
