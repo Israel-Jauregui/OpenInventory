@@ -9,17 +9,26 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import httpx
 import os
+from typing import Optional
 
-# models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 load_dotenv()
 
-barcodeLookupApiKey = os.getenv("BARCODELOOKUPAPIKEY")
+#barcodeLookupApiKey = os.getenv("BARCODELOOKUPAPIKEY")
 
 class ProductUPC(BaseModel):
     upc : str
+
+class ItemCreate(BaseModel):
+    barcode: str
+    item_name: str
+    desc: Optional[str] = ""
+    photo_url: Optional[str] = ""
+    category: Optional[str] = "Unknown"
+    brand: Optional[str] = "Unknown"
 
 class ProductDetails(BaseModel):
     item_name: str
@@ -29,7 +38,7 @@ class ProductDetails(BaseModel):
     photo_url: str
     category: str
     brand: str
-
+    
 
 class UserCreate(BaseModel):
     username: str
@@ -52,6 +61,38 @@ def get_db():
         db.close()
 
 # --- AUTHENTICATION ROUTES ---
+
+@app.post("/items/create", status_code=status.HTTP_201_CREATED)
+def create_global_item(item_data: ItemCreate, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+
+    # 1. Check if the barcode already exists in our global catalog
+    existing_item = db.query(models.Item).filter(models.Item.barcode == item_data.barcode).first()
+    
+    if existing_item:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An item with this barcode already exists in the database."
+        )
+
+    new_item = models.Item(
+        barcode=item_data.barcode,
+        item_name=item_data.item_name,
+        desc=item_data.desc,
+        photo_url=item_data.photo_url,
+        category=item_data.category,
+        brand=item_data.brand        
+    )
+
+    # 3. Save it to the Postgres database
+    db.add(new_item)
+    db.commit()
+    db.refresh(new_item)
+
+    return {
+        "message": f"Item '{new_item.item_name}' successfully added to the catalog!", 
+        "item_id": new_item.item_id
+    }
+
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
 def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
     # 1. Check if the username is already taken
@@ -67,7 +108,7 @@ def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
     # We map the data from the Pydantic model (user_data) to the SQLAlchemy model (models.User)
     new_user = models.User(
         username=user_data.username,
-        password_hash=user_data.password, # Saving plain text directly!
+        password=user_data.password, # Saving plain text directly!
         wants_notif=user_data.wants_notif
     )
 
@@ -87,7 +128,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     
     # 2. PLAIN TEXT PASSWORD CHECK (School Project Only!)
     # We are checking if the password they typed matches exactly what is in the database
-    if not user or user.password_hash != form_data.password:
+    if not user or user.password != form_data.password:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -123,19 +164,18 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     return user
 
+
+
 # --- TEST ROUTES ---
 
 @app.get("/")
 def read_root():
     return {"message": "OpenInventory API is running!"}
 
-@app.get("/my-profile")
-def get_profile(current_user: models.User = Depends(get_current_user)):
-    return {
-        "message": f"Hello {current_user.username}, you are securely logged in!",
-        "wants_notifications": current_user.wants_notif
-    }
 
+
+
+"""
 @app.post("/getproductdetails")
 def getProductDetails(Request : ProductUPC):
         reqUpc = Request.upc
@@ -162,4 +202,4 @@ def getProductDetails(Request : ProductUPC):
         productDetails = ProductDetails(item_name=product["title"], desc=product["description"], price=priceExtract, upc=reqUpc, photo_url= img, category=cat, brand=product["brand"])
 
         return productDetails
-    
+"""  
