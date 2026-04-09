@@ -54,6 +54,7 @@ class Item(Base):
     desc = Column(String)
     upc = Column(String, unique=True, index=True) # Unique so we don't have duplicate barcodes
     photo_url = Column(String)
+    price = Column(Float)
     category = Column(String)
     brand = Column(String)
 

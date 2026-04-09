@@ -11,9 +11,18 @@ import httpx
 import os
 from typing import Optional
 
+import shutil
+import uuid
+from fastapi import File, UploadFile, Form
+from fastapi.staticfiles import StaticFiles
+
+
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+os.makedirs("static/images", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 load_dotenv()
 
@@ -83,10 +92,19 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 
 @app.post("/items/create", status_code=status.HTTP_201_CREATED)
-def create_global_item(item_data: ItemCreate, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
-
-    # 1. Check if the barcode already exists in our global catalog
-    existing_item = db.query(models.Item).filter(models.Item.barcode == item_data.barcode).first()
+def create_global_item(
+    barcode: str = Form(...),
+    item_name: str = Form(...),
+    desc: str = Form(""),
+    category: str = Form("Unknown"),
+    price: float = Form(0.0),
+    brand: str = Form("Unknown"),
+    file: UploadFile = File(None), # The new image file upload!
+    current_user: models.User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # 1. Check if the barcode already exists
+    existing_item = db.query(models.Item).filter(models.Item.barcode == barcode).first()
     
     if existing_item:
         raise HTTPException(
@@ -94,23 +112,39 @@ def create_global_item(item_data: ItemCreate, current_user: models.User = Depend
             detail="An item with this barcode already exists in the database."
         )
 
+    # 2. Handle the Image Saving
+    photo_path = ""
+    if file:
+        # Generate a unique random string for the filename so we never overwrite existing images
+        file_extension = file.filename.split(".")[-1]
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_location = f"static/images/{unique_filename}"
+
+        # Write the file directly to the VPS hard drive
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(file.file, file_object)
+
+        # This is the path we save to the database
+        photo_path = f"/static/images/{unique_filename}"
+
+    # 3. Map to SQLAlchemy and save to Postgres
     new_item = models.Item(
-        barcode=item_data.barcode,
-        item_name=item_data.item_name,
-        desc=item_data.desc,
-        photo_url=item_data.photo_url,
-        category=item_data.category,
-        brand=item_data.brand        
+        barcode=barcode,
+        item_name=item_name,
+        desc=desc,
+        photo_url=photo_path, # Saves the local path!
+        category=category,
+        brand=brand        
     )
 
-    # 3. Save it to the Postgres database
     db.add(new_item)
     db.commit()
     db.refresh(new_item)
 
     return {
         "message": f"Item '{new_item.item_name}' successfully added to the catalog!", 
-        "item_id": new_item.item_id
+        "item_id": new_item.item_id,
+        "photo_url": new_item.photo_url
     }
 
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
