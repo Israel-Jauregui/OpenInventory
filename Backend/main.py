@@ -147,6 +147,22 @@ def create_global_item(
         "photo_url": new_item.photo_url
     }
 
+@app.get("/items/{barcode}")
+def get_item_by_barcode(barcode: str, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    
+    # 1. Search our global catalog for the specific barcode
+    item = db.query(models.Item).filter(models.Item.barcode == barcode).first()
+    
+    # 2. If it doesn't exist, tell the app it's time to show the "Create Item" form
+    if not item:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Barcode not found in OpenInventory catalog."
+        )
+    
+    # 3. If it exists, return the full item details!
+    return item
+
 @app.post("/signup", status_code=status.HTTP_201_CREATED)
 def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
     # 1. Check if the username is already taken
@@ -196,6 +212,25 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     
     return {"access_token": encoded_jwt, "token_type": "bearer"}
 
+
+@app.get("/items/search")
+def search_items(
+    q: str, 
+    current_user: models.User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    # 1. We use .ilike() for a case-insensitive "contains" search.
+    # The '%' signs are wildcards, meaning "find this text anywhere in the string."
+    search_query = f"%{q}%"
+    
+    results = db.query(models.Item).filter(
+        (models.Item.item_name.ilike(search_query)) |
+        (models.Item.brand.ilike(search_query)) |
+        (models.Item.category.ilike(search_query))
+    ).all()
+
+    # 2. Return the list of items (even if it's an empty list [])
+    return results
 
 # --- ROUTE PROTECTION DEPENDENCY ---
 

@@ -7,7 +7,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: openPass!!99
+      POSTGRES_PASSWORD: openPass!!99G1
       POSTGRES_DB: inventorydb
     ports:
       - "5432:5432"
