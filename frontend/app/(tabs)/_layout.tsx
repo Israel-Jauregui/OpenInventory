@@ -16,6 +16,7 @@ function TabLayout(){
                     tabBarItemStyle: { display: 'none' },
                     headerShadowVisible: false,
                     headerStyle: { backgroundColor: '#f5f5f5' },
+                    animation: 'shift',
                     headerRight: () => (
                         <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
                             <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
