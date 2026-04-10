@@ -16,7 +16,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768; //large view
 const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per row
-/* make buttons to navigate to other tabs*/
+
+
 export default function Home() {
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.

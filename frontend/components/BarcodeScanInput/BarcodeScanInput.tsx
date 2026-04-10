@@ -4,26 +4,61 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 
-import { View, Button, Text } from 'react-native';
+import { View, Button, Text, TouchableOpacity , StyleSheet} from 'react-native';
 
 
 //TODO: Incorporate functionality of scanning barcodes, validating, then returning. CameraView should have defined barCodeTypes in barCodeScannerSettings so that QR codes are prohibited unless otherwise is desired
 export default function BarcodeScanInput() {
+    //Hook instantiations
     const [permission, requestPermission] = useCameraPermissions();
+    const [barcodeScanned, setBarcodeScanned] = useState(false);
 
 
+    if (!permission) {
+        return <View></View>  //Returned if permissions are still loading
+    }
+
+    if (!permission.granted) { //Returned if camera permissions are either denied or turned off in device's permission settings
+        //TODO: Add appropriate styling / text to tell user to grant camera permissions
+        return (
+            <>
+                <TouchableOpacity onPress={requestPermission}><Text>Permission</Text></TouchableOpacity>
+            </>
+        )
+    }
 
     return (
 
         <>
 
 
-            <View>
-                <CameraView facing="back"></CameraView>
+            <View style={styles.cameraContainer}>
+                <CameraView style={styles.camera} 
+                facing="back" 
+                onBarcodeScanned={handleBarcodeScanned}
+                />
             </View>
 
 
         </>
     );
+
+
+    function handleBarcodeScanned(){
+     
+    }
 }
+
+const styles = StyleSheet.create({
+    cameraContainer: {
+        flex : 1,
+
+    },
+
+    camera: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
+    }
+});
 
