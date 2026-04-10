@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     alignItems: "center",
-    paddingTop: 60,
+    paddingTop: 20,
   },
   heading: {
     fontSize: 26,

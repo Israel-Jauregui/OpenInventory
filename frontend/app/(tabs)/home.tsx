@@ -101,11 +101,16 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    inventoryHeader: { justifyContent: "center", alignItems: "center" },
+    inventoryHeader: {
+        justifyContent: "center", 
+        alignItems: "center" 
+    },
+    
     searchBarContainer: {
         justifyContent: "center",
         alignItems: "center",
     },
+    
     searchBar: {
         margin: 10,
         padding: 20,
