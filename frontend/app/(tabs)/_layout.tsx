@@ -1,5 +1,5 @@
 import { Tabs, useRouter} from 'expo-router';
-import { Button } from "react-native";
+import { Button, Pressable, Text } from "react-native";
 
 function TabLayout(){
     const router = useRouter();
@@ -9,12 +9,36 @@ function TabLayout(){
         <Tabs>
             //name prop determines the route; remember to alter title property of options prop instead
             <Tabs.Screen
+                name="inventory-select"
+                options={{
+                    headerTitle: '',
+                    tabBarStyle: { display: 'none' },
+                    tabBarItemStyle: { display: 'none' },
+                    headerShadowVisible: false,
+                    headerStyle: { backgroundColor: '#f5f5f5' },
+                    animation: 'shift',
+                    headerRight: () => (
+                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
+                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        </Pressable>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="home"
                 options={{
                     headerTitle: '',
                     title: "Home",
-                    tabBarLabelStyle: {fontSize: 20},
-                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                    headerLeft: () => (
+                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{marginLeft: 10}}>
+                            <Text style={{fontSize: 16, color: '#007AFF'}}>{"← Back"}</Text>
+                        </Pressable>
+                    ),
+                    headerRight: () => (
+                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
+                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        </Pressable>
+                    ),
                 }}
             />
             <Tabs.Screen
@@ -22,8 +46,11 @@ function TabLayout(){
                 options={{
                     headerTitle: '',
                     title: "Items",
-                    tabBarLabelStyle: {fontSize: 20},
-                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                    headerRight: () => (
+                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
+                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        </Pressable>
+                    ),
                 }}
             />
 
@@ -32,8 +59,11 @@ function TabLayout(){
                 options={{
                     headerTitle: '',
                     title: "Alerts",
-                    tabBarLabelStyle: {fontSize: 20},
-                    headerRight: () => <Button title='Logout' onPress={() => router.replace('/login')} />
+                    headerRight: () => (
+                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
+                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        </Pressable>
+                    ),
                 }}
             />
             

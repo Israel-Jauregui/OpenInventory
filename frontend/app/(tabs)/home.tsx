@@ -11,7 +11,7 @@ import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInven
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
 //Utilized for home button onPress events and barcode scanner button
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768; //large view
@@ -22,6 +22,7 @@ export default function Home() {
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();
+    const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
@@ -31,7 +32,7 @@ export default function Home() {
            Also change styling when dropdown is incorporated */
             }
             <View style={styles.inventoryHeader}>
-                <Text style={{margin: 2, padding: 5, fontSize: 22}}>Inventory_Name</Text>
+                <Text style={{margin: 2, padding: 5, fontSize: 22}}>{inventoryName ?? 'Inventory'}</Text>
             </View>
 
             {//Search bar TODO: Move to own component file for reusability's sake. Do the same for sort, filter, and other buttons that appear more than once
@@ -61,8 +62,7 @@ export default function Home() {
                     {//Create item button
                     }
                     <TouchableOpacity style={styles.button}>
-                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
-                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
+                        <Text style={[styles.buttonText, {marginTop: 10}]}>Inventory</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button}>
@@ -74,14 +74,16 @@ export default function Home() {
 
                 <View style={styles.row}>
                     <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Comments</Text>
+                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
+                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
+                        
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button}>
                         <Text style={[styles.buttonText, {marginTop: 10}]}>Needs attention</Text>
                     </TouchableOpacity>
                     
                     
-               </View>
+                </View>
 
                 <View style={styles.row}>
                     <TouchableOpacity style={styles.button}>
@@ -90,7 +92,7 @@ export default function Home() {
                     <TouchableOpacity style={styles.button}>
                         <Text style={[styles.buttonText, {marginTop: 10}]}>Edit Item</Text>
                     </TouchableOpacity>
-               </View>
+                </View>
             </View>
             </ScrollView>
         </>
@@ -100,11 +102,16 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-    inventoryHeader: { justifyContent: "center", alignItems: "center" },
+    inventoryHeader: {
+        justifyContent: "center", 
+        alignItems: "center" 
+    },
+    
     searchBarContainer: {
         justifyContent: "center",
         alignItems: "center",
     },
+    
     searchBar: {
         margin: 10,
         padding: 20,
@@ -113,7 +120,7 @@ const styles = StyleSheet.create({
 
         fontSize: 18,
         color: "#1d1b20",
-
+        
         borderRadius: 20,
 
 
@@ -122,7 +129,7 @@ const styles = StyleSheet.create({
 
     barcodeScan: {
         position: "absolute",
-        right: 50,
+        right: 55,
         justifyContent: "center",
         alignItems: "center",
 
@@ -132,7 +139,7 @@ const styles = StyleSheet.create({
         borderColor: "black",
         borderWidth: 2,
         borderRadius: 30,
-        backgroundColor: "#1B9AAA",
+        backgroundColor: "#3bb7ff",
     
     },
 
@@ -149,7 +156,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     row: {
-        flexDirection: 'row',       // horizontal row
+        flexDirection: 'row',       
         marginBottom: 20,
     },
     button: {
@@ -160,12 +167,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',       // center text horizontally
         marginHorizontal: 10,
         borderRadius: 12,
-        borderColor: '#a2d3fa',
+        borderColor: '#6fbeff',
         borderWidth: 1,
 
     },
     buttonText: {
-        color: '#a2d3fa',
+        color: '#39a2f8',
         fontWeight: 'bold',
         fontSize: 16,
     },
