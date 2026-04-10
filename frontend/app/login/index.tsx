@@ -39,7 +39,7 @@ export default function Login() {
 
             color="white"
             title="LOGIN"
-            onPress={() => router.replace("/inventory-select")} />
+            onPress={() => router.replace("/login/inventory-select")} />
         </View>
 
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
