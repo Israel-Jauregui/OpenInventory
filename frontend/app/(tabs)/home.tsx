@@ -11,7 +11,7 @@ import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInven
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
 //Utilized for home button onPress events and barcode scanner button
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768; //large view
@@ -21,6 +21,7 @@ export default function Home() {
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();
+    const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
@@ -30,7 +31,7 @@ export default function Home() {
            Also change styling when dropdown is incorporated */
             }
             <View style={styles.inventoryHeader}>
-                <Text style={{margin: 2, padding: 5, fontSize: 22}}>Inventory_Name</Text>
+                <Text style={{margin: 2, padding: 5, fontSize: 22}}>{inventoryName ?? 'Inventory'}</Text>
             </View>
 
             {//Search bar TODO: Move to own component file for reusability's sake. Do the same for sort, filter, and other buttons that appear more than once
