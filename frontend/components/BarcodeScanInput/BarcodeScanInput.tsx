@@ -9,7 +9,9 @@ import { View, Button, Text, TouchableOpacity , StyleSheet} from 'react-native';
 
 //TODO: Incorporate functionality of scanning barcodes, validating, then returning. CameraView should have defined barCodeTypes in barCodeScannerSettings so that QR codes are prohibited unless otherwise is desired
 export default function BarcodeScanInput() {
+    //Hook instantiations
     const [permission, requestPermission] = useCameraPermissions();
+    const [barcodeScanned, setBarcodeScanned] = useState(false);
 
 
     if (!permission) {
@@ -31,12 +33,20 @@ export default function BarcodeScanInput() {
 
 
             <View style={styles.cameraContainer}>
-                <CameraView style={styles.camera} facing="back" />
+                <CameraView style={styles.camera} 
+                facing="back" 
+                onBarcodeScanned={handleBarcodeScanned}
+                />
             </View>
 
 
         </>
     );
+
+
+    function handleBarcodeScanned(){
+     
+    }
 }
 
 const styles = StyleSheet.create({
