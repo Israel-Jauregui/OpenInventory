@@ -1,6 +1,8 @@
 import { Tabs, useRouter} from 'expo-router';
 import { Button, Pressable, Text } from "react-native";
 
+//TODO: Create and pass context for relevant inventory data
+
 function TabLayout(){
     const router = useRouter();
 
