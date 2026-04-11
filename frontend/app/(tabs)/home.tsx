@@ -5,10 +5,13 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 //FIXME: TEMPORARY IMPORT
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
+//BEGIN Custom component imports
 import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
-
+import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
 //FIXME: TEMPORARY IMPORT
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
+
+//END Custom component imports
 
 //Utilized for home button onPress events and barcode scanner button
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -35,24 +38,10 @@ export default function Home() {
                 <Text style={{margin: 2, padding: 5, fontSize: 22}}>{inventoryName ?? 'Inventory'}</Text>
             </View>
 
-            {//Search bar TODO: Move to own component file for reusability's sake. Do the same for sort, filter, and other buttons that appear more than once
-            }
-            <View style={styles.searchBarContainer}>
-                <TextInput
-                    style={styles.searchBar}
-                    placeholder="Search for items here..."
-                    placeholderTextColor="grey"
-                ></TextInput>
+            {//Contains both the search bar and the barcode scanner button
+            }<ItemsSearchBar/>
 
-                {//Input barcode via scan TODO: Turn into own component
-                }
-                <Pressable style={[styles.barcodeScan]} onPress={()=>{router.navigate('../scanner');}}>
-                    <Image 
-                    style={{height: 40,width: 40}}source={require("../../assets/images/barcodeScanIcon.png")}/>
-                </Pressable>
-            </View>
-
-            {//Home view buttons TODO: Turn into components and pass relevant props such as name
+            {//Home view buttons TODO: Consider turning into components and pass relevant props such as name
             }
             <ScrollView>
             <View style={styles.container}>
