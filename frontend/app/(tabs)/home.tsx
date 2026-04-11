@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable , ScrollView} from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable, ScrollView } from "react-native";
 import React from 'react';
 //FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -6,8 +6,9 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
 //BEGIN Custom component imports
-import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
+import HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton";
 import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
+import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
 //FIXME: TEMPORARY IMPORT
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
@@ -30,59 +31,54 @@ export default function Home() {
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
-            
-            {/*Inventory type dropdown TODO: Turn into own component with appropriate dropdown later for reusability and functionality
-           Also change styling when dropdown is incorporated */
-            }
-            <View style={styles.inventoryHeader}>
-                <Text style={{margin: 2, padding: 5, fontSize: 22}}>{inventoryName ?? 'Inventory'}</Text>
-            </View>
+
+            {/*Inventory type dropdown */
+            }<InventoryHeader inventoryName={inventoryName === undefined ? "" : inventoryName} />
 
             {//Contains both the search bar and the barcode scanner button
-            }<ItemsSearchBar/>
+            }<ItemsSearchBar />
 
             {//Home view buttons TODO: Consider turning into components and pass relevant props such as name
-            }
-            <ScrollView>
-            <View style={styles.container}>
-                
+            }<ScrollView>
+                <View style={styles.container}>
 
-                <View style={styles.row}>
-                    {//Create item button
-                    }
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Inventory</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button}>
-                        <Image style={{height: 75, width: 75}}source={require("../../assets/images/manageUsersIcon.png")}/>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Manage Users</Text>
-                       
-                    </TouchableOpacity>
+                    <View style={styles.row}>
+                        {//Create item button
+                        }
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.button}>
+                            <Image style={{ height: 75, width: 75 }} source={require("../../assets/images/manageUsersIcon.png")} />
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Manage Users</Text>
+
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.row}>
+                        <TouchableOpacity style={styles.button}>
+                            <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("../../assets/images/plusIcon.png")} />
+                            <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
+
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Needs attention</Text>
+                        </TouchableOpacity>
+
+
+                    </View>
+
+                    <View style={styles.row}>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Delete Item</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Edit Item</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-
-                <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
-                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
-                        
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Needs attention</Text>
-                    </TouchableOpacity>
-                    
-                    
-                </View>
-
-                <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Delete Item</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Edit Item</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
             </ScrollView>
         </>
 
@@ -92,15 +88,15 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     inventoryHeader: {
-        justifyContent: "center", 
-        alignItems: "center" 
+        justifyContent: "center",
+        alignItems: "center"
     },
-    
+
     searchBarContainer: {
         justifyContent: "center",
         alignItems: "center",
     },
-    
+
     searchBar: {
         margin: 10,
         padding: 20,
@@ -109,7 +105,7 @@ const styles = StyleSheet.create({
 
         fontSize: 18,
         color: "#1d1b20",
-        
+
         borderRadius: 20,
 
 
@@ -129,7 +125,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 30,
         backgroundColor: "#3bb7ff",
-    
+
     },
 
     text: {
@@ -145,7 +141,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     row: {
-        flexDirection: 'row',       
+        flexDirection: 'row',
         marginBottom: 20,
     },
     button: {
