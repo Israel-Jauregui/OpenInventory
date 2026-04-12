@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 
 const { width } = Dimensions.get("window");
@@ -35,6 +35,7 @@ export default function InventorySelect() {
             onPress={() => handleSelect(item)}
           >
             <Text style={styles.cardText}>{item.name}</Text>
+            <Image style={styles.cardChevron} source={require("../../assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
       />
@@ -60,19 +61,36 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   card: {
+
+    flexDirection: "row",
+
     backgroundColor: "#ffffff",
+
     borderColor: "#6fbeff",
     borderWidth: 1,
     borderRadius: 12,
+
     paddingVertical: 24,
     paddingHorizontal: 20,
+
     marginBottom: 16,
+
     width: width * 0.85,
+
+    justifyContent: "center",
     alignItems: "center",
   },
   cardText: {
     fontSize: 20,
     fontWeight: "600",
     color: "#39a2f8",
+  },
+
+  cardChevron: {
+    position: "absolute",
+    right: 20,
+
+    height: 35,
+    width: 35
   },
 });
