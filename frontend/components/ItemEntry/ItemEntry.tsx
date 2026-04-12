@@ -21,6 +21,7 @@ export default function ItemEntry() {
 
             {/*Container for item data labels such as name, UPC, etc.
             TODO:  Add appropriate props to each Text component. 
+            Add quantity adjuster to Quantity label. Will consist of a View with two TouchableOpacitys and one TextInput.
             Also consider conditionally rendering each label depending on whether they have an actual value.
                 
             */
@@ -106,7 +107,9 @@ const styles = StyleSheet.create(
             //FIXME: TEMPORARY COLORING FOR JUDGING DIMENSIONS
             backgroundColor: "grey"
         },
-        
+        quantityAdjuster: {
+
+        },
         buttonsContainer: {
             //FIXME: Change back to row if needed
             flexDirection: "column",
