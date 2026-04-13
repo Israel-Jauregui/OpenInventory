@@ -25,22 +25,22 @@ export default function InventorySelect() {
 
   return (
     <View style={styles.container}>
-      {/*Modal for creating a new inventory*/
+      {//Modal for creating a new inventory
       }<Modal
         transparent={true}
         animationType={"slide"}
         visible={modalVisible}>
-        {/*Centered container for the modal*/
+        {//Centered container for the modal
         }<View style={{ alignItems: "center" }}>
           <View style={styles.createInventoryModal}>
-            <TouchableOpacity 
-            style={
-              {
-                position: "absolute",
-                top: 20,
-                right: 20,
-              }}
-            onPress={()=>{setModalVisible(false)}}>
+            <TouchableOpacity
+              style={
+                {
+                  position: "absolute",
+                  top: 20,
+                  right: 20,
+                }}
+              onPress={() => { setModalVisible(false) }}>
               <Image
                 style={
                   {
@@ -67,8 +67,8 @@ export default function InventorySelect() {
 
       <Text style={styles.heading}>Select an Inventory</Text>
 
-      {//Could possibly be changed to a SectionList to show each category with a large label, though isn't strictly necessary
-      } <FlatList
+
+      <FlatList
         data={PLACEHOLDER_INVENTORIES}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
@@ -81,7 +81,7 @@ export default function InventorySelect() {
             <Image style={styles.cardIcon} source={require("../../assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
-        //Button for creating a new inventory instance
+
         ListFooterComponent={
           <TouchableOpacity
             style={
@@ -94,9 +94,11 @@ export default function InventorySelect() {
               }]}
             onPress={() => { setModalVisible(true) }}
           >
-            <Text style={[styles.cardText, { color: "white", fontWeight: 600 }]}>Create new inventory</Text>
+            <Text style={[styles.cardText, { color: "white", fontWeight: "600" }]}>Create new inventory</Text>
             <Image style={styles.cardIcon} source={require("../../assets/images/plusIcon.png")} />
-          </TouchableOpacity>} />
+          </TouchableOpacity>}
+      />
+
 
 
 
