@@ -8,4 +8,4 @@ SQLALCHEMY_DATABASE_URL = "postgresql://admin:openPass!!99G1@localhost:5432/inve
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # This creates a factory for generating new database sessions
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine) 

@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 import httpx
 import os
 from typing import Optional
-
 import shutil
 import uuid
 from fastapi import File, UploadFile, Form
@@ -27,6 +26,20 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 load_dotenv()
 
 #barcodeLookupApiKey = os.getenv("BARCODELOOKUPAPIKEY")
+
+class AddItemToInv(BaseModel):
+    inventory_id : int
+    item_id : int
+    quantity : int
+    low_stock_trigger: int
+    
+class AddUserToInv(BaseModel):
+    invId : int
+    username : str
+    
+class InventoryResponse(BaseModel):
+    invId: int
+    invName: str
 
 class ProductUPC(BaseModel):
     upc : str
@@ -48,6 +61,8 @@ class ProductDetails(BaseModel):
     category: str
     brand: str
     
+class Inventory(BaseModel):
+    inventory_name : str
 
 class UserCreate(BaseModel):
     username: str
@@ -93,7 +108,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 @app.post("/items/create", status_code=status.HTTP_201_CREATED)
 def create_global_item(
-    barcode: str = Form(...),
+    upc: str = Form(...),
     item_name: str = Form(...),
     desc: str = Form(""),
     category: str = Form("Unknown"),
@@ -104,7 +119,7 @@ def create_global_item(
     db: Session = Depends(get_db)
 ):
     # 1. Check if the barcode already exists
-    existing_item = db.query(models.Item).filter(models.Item.barcode == barcode).first()
+    existing_item = db.query(models.Item).filter(models.Item.upc == upc).first()
     
     if existing_item:
         raise HTTPException(
@@ -129,9 +144,10 @@ def create_global_item(
 
     # 3. Map to SQLAlchemy and save to Postgres
     new_item = models.Item(
-        barcode=barcode,
+        upc=upc,
         item_name=item_name,
         desc=desc,
+        price=price,
         photo_url=photo_path, # Saves the local path!
         category=category,
         brand=brand        
@@ -244,33 +260,70 @@ def read_root():
     return {"message": "OpenInventory API is running!"}
 
 
+@app.get("/inventory/getinventories")
+def get_inventories(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    #Yo its me parker! This endpoint retrieves the Name and ID of all inventories assosciated with the current user. Hold on to this stuff, Its important and you will need both for other endpoints.
+    
+    invList = (db.query(models.InventoryUser).filter(models.InventoryUser.user_id == current_user.user_id).all())
+    invResponse = []
+    
+    if not invList:
+        raise HTTPException(status_code=400, detail="No inventories linked to user!")
+    
+    for inv in invList:
+        inventory = (db.query(models.Inventory).filter(models.Inventory.inventory_id == inv.inventory_id ).first())
+        inventoryName = inventory.inventory_name
+        res = InventoryResponse(invId=inv.inventory_id, invName=inventoryName)
+        invResponse.append(res)
+    
+    return invResponse
 
-
-"""
-@app.post("/getproductdetails")
-def getProductDetails(Request : ProductUPC):
-        reqUpc = Request.upc
-        requestParameters = {'barcode' : reqUpc, 'geo':'us' ,'formatted': 'y', 'key': barcodeLookupApiKey}
-        response = httpx.get("https://api.barcodelookup.com/v3/products", params=requestParameters)
-
-        try:
-            responsejson = response.json()
-        except:
-            raise HTTPException(status_code=502,
-            detail="Barcode API returned invalid JSON, are you sure you sent the right UPC?")
-
-        product = responsejson.get("products", [None])[0]
+@app.post("/inventory/create")
+def create_inventory(invName : str, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user) ):
+    
+    if not invName or not invName.strip():
+        raise HTTPException(status_code=400, detail="Inventory name required")
+    
+    newInv = models.Inventory(inventory_name = invName.strip())
+    db.add(newInv)
+    db.commit()
+    db.refresh(newInv)
+    
+    newInvUser = models.InventoryUser(user_id=current_user.user_id, inventory_id=newInv.inventory_id)
+    db.add(newInvUser)
+    db.commit()
+    
+@app.post("/inventory/adduser")
+def add_user_to_inv(addUserReq: AddUserToInv, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user) ):
+    #YO YO YO, Its me parker!!! We take in the inventoryId and the username of the user that we want to add to our Inventory. (See AddUserToInv to know how to format data when sending data here)
+    
+    findUser = (db.query(models.User).filter(models.User.username == addUserReq.username).first())
+    
+    if not findUser:
+        raise HTTPException(status_code=404,
+            detail="Username not found")
         
-        if product is None:
-            raise HTTPException(status_code=404, detail="Product not found")
+    userToAdd = findUser.user_id
+    existing = (db.query(models.InventoryUser).filter(models.InventoryUser.user_id == userToAdd, models.InventoryUser.inventory_id == addUserReq.invId).first())
+    if existing:
+        return("User already added to inventory!")
+     
         
-        priceExtract = product.get("stores", [{}])[0].get("price", "0.00")
-        img = product.get("images", [None])[0]
-        categoryString = product["category"].split('>')
-        cat = categoryString[0].strip()
-        
-        
-        productDetails = ProductDetails(item_name=product["title"], desc=product["description"], price=priceExtract, upc=reqUpc, photo_url= img, category=cat, brand=product["brand"])
+    newInvUser = models.InventoryUser(user_id=userToAdd, inventory_id=addUserReq.invId)
+    db.add(newInvUser)
+    db.commit()
+    
+    return userToAdd
 
-        return productDetails
-"""  
+@app.post("/inventory/additem")
+def add_item_to_inventory(addItem: AddItemToInv, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user) ):
+    existing = (db.query(models.InventoryEntry).filter(models.InventoryEntry.inventory_id == addItem.inventory_id , models.InventoryEntry.item_id == addItem.item_id).first())
+    
+    if existing:
+        raise HTTPException(status_code=400,
+            detail="Item already in inventory!")
+    
+    itemEntry = models.InventoryEntry(inventory_id = addItem.inventory_id, item_id=addItem.item_id, quantity=addItem.quantity, low_stock_trigger = addItem.low_stock_trigger)
+    db.add(itemEntry)
+    db.commit()
+    return {"message": "Item added to inventory!"}
