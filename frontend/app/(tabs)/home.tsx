@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable, ScrollView } from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable, ScrollView, Modal } from "react-native";
 import React from 'react';
 //FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -46,7 +46,10 @@ export default function Home() {
                     <View style={styles.row}>
                         {//Create item button
                         }
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity 
+                        style={styles.button}
+                        onPress={()=>{router.navigate("/items")}}
+                        >
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
                         </TouchableOpacity>
 
