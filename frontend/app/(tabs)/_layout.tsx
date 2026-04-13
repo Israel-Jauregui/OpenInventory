@@ -9,7 +9,7 @@ function TabLayout() {
     return (
 
         <Tabs backBehavior="history">
-            //name prop determines the route; remember to alter title property of options prop instead
+           
             <Tabs.Screen
                 name="inventory-select"
                 options={{
@@ -29,7 +29,7 @@ function TabLayout() {
             <Tabs.Screen
                 name="home"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Home',
                     title: "Home",
                     headerLeft: () => (
                         <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
@@ -46,7 +46,7 @@ function TabLayout() {
             <Tabs.Screen
                 name="items"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Items',
                     title: "Items",
                     headerLeft: () => (
                         <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
@@ -64,7 +64,7 @@ function TabLayout() {
             <Tabs.Screen
                 name="alerts"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Alerts',
                     title: "Alerts",
                     headerLeft: () => (
                         <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>

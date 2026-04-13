@@ -21,7 +21,7 @@ import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 //END Custom component imports
 
 //Utilized for home button onPress events and barcode scanner button
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768; //large view
@@ -35,16 +35,20 @@ export default function Home() {
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();
 
+    const navigation = useNavigation();
+
     //END HOOK INSTANTIATIONS
     const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
-
+            
             {/*BEGIN MODALS*/
             }
-            <CreateItemModal visible={createItemVisible} />
+            <CreateItemModal 
+            visible={createItemVisible} 
+            setCreateItemVisible={setCreateItemVisible}/>
             {/*END MODALS*/
             }
             {/*Inventory type dropdown */
@@ -76,7 +80,13 @@ export default function Home() {
                     </View>
 
                     <View style={styles.row}>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity 
+                        style={styles.button}
+                        onPress={()=>{
+                            setCreateItemVisible(true);
+                            navigation.setOptions({headerTitle: "Create Item"});
+                        }}
+                        >
                             <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("../../assets/images/plusIcon.png")} />
                             <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
 
