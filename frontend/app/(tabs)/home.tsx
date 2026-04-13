@@ -1,14 +1,20 @@
 import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable, ScrollView, Modal } from "react-native";
 import React from 'react';
+import { useState } from 'react';
 //FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 //FIXME: TEMPORARY IMPORT
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
 //BEGIN Custom component imports
+//FIXME: TEMPORARY IMPORT
 import HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton";
-import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
+
+import CreateItemModal from "@/components/CreateItemModal/CreateItemModal";
 import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
+import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
+
+
 //FIXME: TEMPORARY IMPORT
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
@@ -23,15 +29,24 @@ const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per ro
 
 
 export default function Home() {
+    //BEGIN HOOK INSTANTIATIONS MARK: Hook instantiations
+    const [createItemVisible, setCreateItemVisible] = useState<boolean>(false)
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();
+
+    //END HOOK INSTANTIATIONS
     const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
 
+            {/*BEGIN MODALS*/
+            }
+            <CreateItemModal visible={createItemVisible} />
+            {/*END MODALS*/
+            }
             {/*Inventory type dropdown */
             }<InventoryHeader inventoryName={inventoryName === undefined ? "" : inventoryName} />
 

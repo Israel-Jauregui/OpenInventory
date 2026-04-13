@@ -1,14 +1,21 @@
-import { StyleSheet } from 'react-native'; 
+import { StyleSheet, Modal } from 'react-native';
 
-export default function CreateItemModal() {
+type CreateItemModalProps = {
+    visible: boolean
+};
+export default function CreateItemModal({visible} : CreateItemModalProps) {
 
-    return(<>
-        
+    return (<>
+
+        <Modal
+        visible={visible}
+        >
+        </Modal>
 
     </>);
 }
 
 const styles = StyleSheet.create(
-{
+    {
 
-});
+    });
