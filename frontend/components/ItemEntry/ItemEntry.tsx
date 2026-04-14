@@ -38,17 +38,17 @@ export default function ItemEntry() {
             }<View style={styles.buttonsContainer}>
                 {//Item description / view button
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 25, width: 25, backgroundColor: "magenta"}}source={require("../../assets/images/itemDescIcon.png")}/>
+                    <Image style={{height: 25, width: 25}}source={require("../../assets/images/itemDescIcon.png")}/>
                 </TouchableOpacity>
 
                 {//Edit item data button
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 40, width: 40, backgroundColor: "blue"}}source={require("../../assets/images/editIcon.png")}/>
+                    <Image style={{height: 40, width: 40}}source={require("../../assets/images/editIcon.png")}/>
                 </TouchableOpacity>
 
                 {//Delete item master data
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 25, width: 25, backgroundColor: "pink"}}source={require("../../assets/images/deleteIcon.png")}/>
+                    <Image style={{height: 25, width: 25, borderColor: "red "}}source={require("../../assets/images/deleteIcon.png")}/>
                 </TouchableOpacity>
             </View>
 
@@ -65,7 +65,7 @@ const styles = StyleSheet.create(
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
-
+            paddingRight: 20,
             height: 150,
 
             backgroundColor: "#d9d9d9",
@@ -78,7 +78,7 @@ const styles = StyleSheet.create(
             alignItems: "center",
 
             marginLeft: 20,
-
+            
             height: 120,
             width: 120,
 
@@ -104,8 +104,7 @@ const styles = StyleSheet.create(
             height: 140,
             width: 180,
 
-            //FIXME: TEMPORARY COLORING FOR JUDGING DIMENSIONS
-            backgroundColor: "grey"
+            
         },
         quantityAdjuster: {
 
@@ -123,10 +122,10 @@ const styles = StyleSheet.create(
         button: {
             justifyContent: "center",
             alignItems: "center",
-
+            borderRadius: 20,
             width: 40,
             height: 40,
 
-            backgroundColor: "brown"
+            backgroundColor: "#b9b9b9"
         }
     });
