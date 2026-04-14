@@ -21,7 +21,7 @@ function TabLayout() {
                     animation: 'shift',
                     headerRight: () => (
                         <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
+                            <Text style={{ fontSize: 20, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -33,12 +33,12 @@ function TabLayout() {
                     title: "Home",
                     headerLeft: () => (
                         <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
+                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
                         </Pressable>
                     ),
                     headerRight: () => (
                         <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
+                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -49,13 +49,13 @@ function TabLayout() {
                     headerTitle: 'Items',
                     title: "Items",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
+                        <Pressable onPress={() => router.push('/(tabs)/home')} style={{ marginLeft: 10 }}>
+                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
                         </Pressable>
                     ),
                     headerRight: () => (
                         <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
+                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -67,13 +67,13 @@ function TabLayout() {
                     headerTitle: 'Alerts',
                     title: "Alerts",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
+                        <Pressable onPress={() => router.push('/(tabs)/home')} style={{ marginLeft: 10 }}>
+                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
                         </Pressable>
                     ),
                     headerRight: () => (
                         <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
+                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
