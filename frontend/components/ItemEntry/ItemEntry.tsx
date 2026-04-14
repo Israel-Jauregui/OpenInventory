@@ -26,7 +26,7 @@ export default function ItemEntry() {
                 
             */
             }<View style={styles.labelsContainer}>
-                <Text style={{ fontSize: 26 }}>Item_Name</Text>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>Item_Name</Text>
                 <Text>Quantity: { }</Text>
                 <Text>Category: { }</Text>
                 <Text>Brand: { }</Text>

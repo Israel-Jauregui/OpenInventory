@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useRouter, Link } from 'expo-router';
 
 //TODO: Import appropriate package(s) for handling login authorization
@@ -35,11 +35,9 @@ export default function Login() {
         }
 
         <View style={styles.loginButtonWrapper} >
-          <Button
-
-            color="white"
-            title="LOGIN"
-            onPress={() => router.replace("/(tabs)/inventory-select")} />
+          <TouchableOpacity onPress={() => router.replace("/(tabs)/inventory-select")}>
+            <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
+          </TouchableOpacity>
         </View>
 
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
@@ -63,7 +61,7 @@ const styles = StyleSheet.create({
 
 
 
-    experimental_backgroundImage: "linear-gradient(0deg,rgba(134, 193, 217, 1) 0%, rgba(223, 237, 227, 1) 45%, rgba(255, 255, 255, 1) 86%, rgba(214, 213, 203, 1) 100%)",
+    experimental_backgroundImage: "linear-gradient(0340deg, #6fbeff 0%, rgba(223, 237, 227, 1) 45%, rgb(240, 240, 240) 70%, #209aff 100%)",
   },
 
   mainHeader: {
@@ -75,14 +73,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    margin: 10,
-    padding: 10,
+    marginTop:10,
 
-    borderColor: "black",
+    padding: 20,
+
+    /*borderColor: "black",
     borderWidth: 2,
+    */
     borderRadius: 35,
-
-    backgroundColor: "#1B9AAA",
+    
+    backgroundColor: "#ffffff",
 
 
     height: "50%",
@@ -91,20 +91,23 @@ const styles = StyleSheet.create({
   },
 
   textInputField: {
-    margin: 5,
-    padding: 10,
+    margin: 7,
+    padding: 20,
 
-    borderRadius: 20,
+    /*
     borderWidth: 2,
-
+    */
+   borderRadius: 30,
+    
+    
     color: "black",
-    backgroundColor: "#DDDBCB",
+    backgroundColor: "#e4e4e4",
 
-    fontSize: 20,
+    fontSize: 15,
     textAlign: "left",
 
 
-    height: "15%",
+    height: "10%",
     width: "90%",
   },
 
@@ -113,11 +116,13 @@ const styles = StyleSheet.create({
     marginTop: 25,
     padding: 10,
 
-    borderRadius: 10,
+    borderRadius: 30,
+    /*
     borderColor: "black",
     borderWidth: 2,
+    */
 
-    backgroundColor: "rgba(11, 74, 73, 0.71)",
+    backgroundColor: "#36a2fa",
 
 
 
@@ -127,7 +132,7 @@ const styles = StyleSheet.create({
   signupText: {
 
     margin: 40,
-    color: "#DDDBCB",
+    color: "#292929",
 
     fontSize: 16,
     fontWeight: "600",
