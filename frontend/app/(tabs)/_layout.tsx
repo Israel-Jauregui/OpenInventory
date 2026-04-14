@@ -1,13 +1,15 @@
-import { Tabs, useRouter} from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { Button, Pressable, Text } from "react-native";
 
-function TabLayout(){
+//TODO: Create and pass context for relevant inventory data
+
+function TabLayout() {
     const router = useRouter();
 
-    return(
+    return (
 
-        <Tabs>
-            //name prop determines the route; remember to alter title property of options prop instead
+        <Tabs backBehavior="history">
+           
             <Tabs.Screen
                 name="inventory-select"
                 options={{
@@ -18,8 +20,8 @@ function TabLayout(){
                     headerStyle: { backgroundColor: '#f5f5f5' },
                     animation: 'shift',
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
-                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -27,16 +29,16 @@ function TabLayout(){
             <Tabs.Screen
                 name="home"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Home',
                     title: "Home",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{marginLeft: 10}}>
-                            <Text style={{fontSize: 16, color: '#007AFF'}}>{"← Back"}</Text>
+                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
                         </Pressable>
                     ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
-                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -44,11 +46,16 @@ function TabLayout(){
             <Tabs.Screen
                 name="items"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Items',
                     title: "Items",
+                    headerLeft: () => (
+                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
+                        </Pressable>
+                    ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
-                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
@@ -57,16 +64,21 @@ function TabLayout(){
             <Tabs.Screen
                 name="alerts"
                 options={{
-                    headerTitle: '',
+                    headerTitle: 'Alerts',
                     title: "Alerts",
+                    headerLeft: () => (
+                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>{"← Exit"}</Text>
+                        </Pressable>
+                    ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{marginRight: 15}}>
-                            <Text style={{fontSize: 16, color: '#007AFF'}}>Logout</Text>
+                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
+                            <Text style={{ fontSize: 16, color: '#007AFF' }}>Logout</Text>
                         </Pressable>
                     ),
                 }}
             />
-            
+
 
         </Tabs>
     );

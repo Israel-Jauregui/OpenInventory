@@ -12,6 +12,7 @@ export default function BarcodeScanInput() {
     //Hook instantiations
     const [permission, requestPermission] = useCameraPermissions();
     const [barcodeScanned, setBarcodeScanned] = useState(false);
+    const [previousBarcode,  setPreviousBarcode] = useState("");
 
 
     if (!permission) {
@@ -44,7 +45,30 @@ export default function BarcodeScanInput() {
     );
 
 
-    function handleBarcodeScanned(){
+    //TODO: Continue improving handling of recent / duplicate scans
+    function handleBarcodeScanned({data}: {data: string}){
+        
+        if(!data || barcodeScanned || data === previousBarcode){
+            //FIXME: Temporary console log 
+            console.log("Exiting handleBarcodeScanned due to either empty data, scan delay, or duplicate scan recently");
+            return;
+        }
+        //Set barcodeScanned to true to delay next processing of scan 
+        setBarcodeScanned(true);
+        setPreviousBarcode(data);
+        
+        console.log(data);
+
+        //Sets barcodeScanned to false 
+        setTimeout(()=>{
+            //FIXME: Temporary console log 
+            console.log(`barcodeScanned: ${barcodeScanned}`);
+
+            setBarcodeScanned(false);
+            setPreviousBarcode("");
+
+        }, 1000)
+
      
     }
 }

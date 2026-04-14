@@ -1,17 +1,27 @@
-import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable , ScrollView} from "react-native";
+import { View, Text, TextInput, Image, StyleSheet, Dimensions, TouchableOpacity, Pressable, ScrollView, Modal } from "react-native";
 import React from 'react';
+import { useState } from 'react';
 //FIXME: TEMPORARY IMPORT
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 //FIXME: TEMPORARY IMPORT
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
-import  HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton"; 
+//BEGIN Custom component imports
+//FIXME: TEMPORARY IMPORT
+import HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton";
+
+import CreateItemModal from "@/components/CreateItemModal/CreateItemModal";
+import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
+import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
+
 
 //FIXME: TEMPORARY IMPORT
 import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
+//END Custom component imports
+
 //Utilized for home button onPress events and barcode scanner button
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 const isLargeScreen = width > 768; //large view
@@ -19,81 +29,84 @@ const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per ro
 
 
 export default function Home() {
+    //BEGIN HOOK INSTANTIATIONS MARK: Hook instantiations
+    const [createItemVisible, setCreateItemVisible] = useState<boolean>(false)
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();
+
+    const navigation = useNavigation();
+
+    //END HOOK INSTANTIATIONS
     const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
             
-            {/*Inventory type dropdown TODO: Turn into own component with appropriate dropdown later for reusability and functionality
-           Also change styling when dropdown is incorporated */
+            {/*BEGIN MODALS*/
             }
-            <View style={styles.inventoryHeader}>
-                <Text style={{margin: 2, padding: 5, fontSize: 22}}>{inventoryName ?? 'Inventory'}</Text>
-            </View>
-
-            {//Search bar TODO: Move to own component file for reusability's sake. Do the same for sort, filter, and other buttons that appear more than once
+            <CreateItemModal 
+            visible={createItemVisible} 
+            setCreateItemVisible={setCreateItemVisible}/>
+            {/*END MODALS*/
             }
-            <View style={styles.searchBarContainer}>
-                <TextInput
-                    style={styles.searchBar}
-                    placeholder="Search for items here..."
-                    placeholderTextColor="grey"
-                ></TextInput>
+            {/*Inventory type dropdown */
+            }<InventoryHeader inventoryName={inventoryName === undefined ? "" : inventoryName} />
 
-                {//Input barcode via scan TODO: Turn into own component
-                }
-                <Pressable style={[styles.barcodeScan]} onPress={()=>{router.navigate('../scanner');}}>
-                    <Image 
-                    style={{height: 40,width: 40}}source={require("../../assets/images/barcodeScanIcon.png")}/>
-                </Pressable>
-            </View>
+            {//Contains both the search bar and the barcode scanner button
+            }<ItemsSearchBar />
 
-            {//Home view buttons TODO: Turn into components and pass relevant props such as name
-            }
-            <ScrollView>
-            <View style={styles.container}>
-                
+            {//Home view buttons TODO: Consider turning into components and pass relevant props such as name
+            }<ScrollView>
+                <View style={styles.container}>
 
-                <View style={styles.row}>
-                    {//Create item button
-                    }
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Inventory</Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button}>
-                        <Image style={{height: 75, width: 75}}source={require("../../assets/images/manageUsersIcon.png")}/>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Manage Users</Text>
-                       
-                    </TouchableOpacity>
+                    <View style={styles.row}>
+                        {//Create item button
+                        }
+                        <TouchableOpacity 
+                        style={styles.button}
+                        onPress={()=>{router.navigate("/items")}}
+                        >
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.button}>
+                            <Image style={{ height: 75, width: 75 }} source={require("../../assets/images/manageUsersIcon.png")} />
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Manage Users</Text>
+
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.row}>
+                        <TouchableOpacity 
+                        style={styles.button}
+                        onPress={()=>{
+                            setCreateItemVisible(true);
+                            navigation.setOptions({headerTitle: "Create Item"});
+                        }}
+                        >
+                            <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("../../assets/images/plusIcon.png")} />
+                            <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
+
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Needs attention</Text>
+                        </TouchableOpacity>
+
+
+                    </View>
+
+                    <View style={styles.row}>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Delete Item</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button}>
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Edit Item</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-
-                <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Image style={{marginTop: 40, height: 75, width: 75}}source={require("../../assets/images/plusIcon.png")}/>
-                        <Text style={[styles.buttonText, {marginBottom: 20, padding: 4, textAlign: "center"}]}>Create Item Master Data</Text>
-                        
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Needs attention</Text>
-                    </TouchableOpacity>
-                    
-                    
-                </View>
-
-                <View style={styles.row}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Delete Item</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={[styles.buttonText, {marginTop: 10}]}>Edit Item</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
             </ScrollView>
         </>
 
@@ -103,15 +116,15 @@ export default function Home() {
 
 const styles = StyleSheet.create({
     inventoryHeader: {
-        justifyContent: "center", 
-        alignItems: "center" 
+        justifyContent: "center",
+        alignItems: "center"
     },
-    
+
     searchBarContainer: {
         justifyContent: "center",
         alignItems: "center",
     },
-    
+
     searchBar: {
         margin: 10,
         padding: 20,
@@ -120,7 +133,7 @@ const styles = StyleSheet.create({
 
         fontSize: 18,
         color: "#1d1b20",
-        
+
         borderRadius: 20,
 
 
@@ -140,7 +153,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 30,
         backgroundColor: "#3bb7ff",
-    
+
     },
 
     text: {
@@ -156,7 +169,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     row: {
-        flexDirection: 'row',       
+        flexDirection: 'row',
         marginBottom: 20,
     },
     button: {
