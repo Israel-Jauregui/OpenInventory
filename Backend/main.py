@@ -56,6 +56,8 @@ class ItemResponse(BaseModel):
     price: float
     category: str
     brand: str
+    quantity: int
+    low_stock_trigger: int
     
 class UserCreate(BaseModel):
     username: str
@@ -160,7 +162,7 @@ def create_global_item(
 def get_item_by_barcode(barcode: str, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
     
     # 1. Search our global catalog for the specific barcode
-    item = db.query(models.Item).filter(models.Item.barcode == barcode).first()
+    item = db.query(models.Item).filter(models.Item.upc == barcode).first()
     
     # 2. If it doesn't exist, tell the app it's time to show the "Create Item" form
     if not item:
@@ -285,6 +287,7 @@ def create_inventory(invName : str, db: Session = Depends(get_db), current_user:
     newInvUser = models.InventoryUser(user_id=current_user.user_id, inventory_id=newInv.inventory_id)
     db.add(newInvUser)
     db.commit()
+    return {"message": "Inventory created successfully!", "inventory_id": newInv.inventory_id}
     
 @app.post("/inventory/adduser")
 def add_user_to_inv(addUserReq: AddUserToInv, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user) ):
@@ -299,7 +302,7 @@ def add_user_to_inv(addUserReq: AddUserToInv, db: Session = Depends(get_db), cur
     userToAdd = findUser.user_id
     existing = (db.query(models.InventoryUser).filter(models.InventoryUser.user_id == userToAdd, models.InventoryUser.inventory_id == addUserReq.invId).first())
     if existing:
-        return("User already added to inventory!")
+        raise HTTPException(status_code=400, detail="User already added to inventory!")
      
         
     newInvUser = models.InventoryUser(user_id=userToAdd, inventory_id=addUserReq.invId)
@@ -324,6 +327,10 @@ def add_item_to_inventory(addItem: AddItemToInv, db: Session = Depends(get_db), 
 @app.post("/inventory/updatecount")
 def update_count(req: UpdateCountRequest, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     item = (db.query(models.InventoryEntry).filter(models.InventoryEntry.inventory_id == req.inventory_id, models.InventoryEntry.item_id == req.item_id).first())
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found in this inventory.")
+    
     item.quantity = item.quantity + req.quantityDelta
     
     if item.quantity < 0:
@@ -343,7 +350,7 @@ def get_inventory_items(inventory_id : int, db: Session = Depends(get_db), curre
     if inventory:
         for items in inventory:
             item = (db.query(models.Item).filter(models.Item.item_id == items.item_id).first())
-            itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=item.photo_url, price=item.price, category=item.category, brand=item.brand)
+            itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=item.photo_url, price=item.price, category=item.category, brand=item.brand, quantity=items.quantity, low_stock_trigger=items.low_stock_trigger)
             inventoryContents.append(itemToAdd)
     else:
         raise HTTPException(status_code=400,
