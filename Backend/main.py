@@ -27,6 +27,11 @@ load_dotenv()
 
 #barcodeLookupApiKey = os.getenv("BARCODELOOKUPAPIKEY")
 
+class UpdateCountRequest(BaseModel):
+    inventory_id:int
+    item_id:int
+    quantityDelta:int
+
 class AddItemToInv(BaseModel):
     inventory_id : int
     item_id : int
@@ -41,29 +46,17 @@ class InventoryResponse(BaseModel):
     invId: int
     invName: str
 
-class ProductUPC(BaseModel):
-    upc : str
 
-class ItemCreate(BaseModel):
-    barcode: str
-    item_name: str
-    desc: Optional[str] = ""
-    photo_url: Optional[str] = ""
-    category: Optional[str] = "Unknown"
-    brand: Optional[str] = "Unknown"
-
-class ProductDetails(BaseModel):
+class ItemResponse(BaseModel):
+    item_id : int
     item_name: str
     desc: str
-    price: str
     upc: str
     photo_url: str
+    price: float
     category: str
     brand: str
     
-class Inventory(BaseModel):
-    inventory_name : str
-
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -327,3 +320,33 @@ def add_item_to_inventory(addItem: AddItemToInv, db: Session = Depends(get_db), 
     db.add(itemEntry)
     db.commit()
     return {"message": "Item added to inventory!"}
+
+@app.post("/inventory/updatecount")
+def update_count(req: UpdateCountRequest, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    item = (db.query(models.InventoryEntry).filter(models.InventoryEntry.inventory_id == req.inventory_id, models.InventoryEntry.item_id == req.item_id).first())
+    item.quantity = item.quantity + req.quantityDelta
+    
+    if item.quantity < 0:
+        raise HTTPException(status_code=400,
+            detail="Quantity cannot be below zero!")
+        
+    db.commit()
+    
+    return {"message" : "Item quantity updated!"}
+
+
+@app.get("/inventory/{inventory_id}/items")
+def get_inventory_items(inventory_id : int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    inventory = (db.query(models.InventoryEntry).filter(models.InventoryEntry.inventory_id == inventory_id).all())
+    inventoryContents = []
+    
+    if inventory:
+        for items in inventory:
+            item = (db.query(models.Item).filter(models.Item.item_id == items.item_id).first())
+            itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=item.photo_url, price=item.price, category=item.category, brand=item.brand)
+            inventoryContents.append(itemToAdd)
+    else:
+        raise HTTPException(status_code=400,
+            detail="No entries found for inventory!")
+        
+    return inventoryContents
