@@ -54,7 +54,7 @@ export default function InventorySelect() {
             </TouchableOpacity>
 
             <Text style={styles.createInventoryHeader}>Create a new inventory</Text>
-            <TextInput style={styles.createInventoryNameField} placeholder="Enter inventory name..."></TextInput>
+            <TextInput style={styles.createInventoryNameField} placeholder="Enter inventory name..." placeholderTextColor={"#bfbfbf"}></TextInput>
             <Text style={styles.createInventoryAltText}>All you need right now is the inventory's name; you may add items or configurations later at any time.</Text>
             <TouchableOpacity
               style={styles.createInventoryButton}>
