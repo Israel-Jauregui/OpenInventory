@@ -33,12 +33,11 @@ export default function Login() {
             placeholderTextColor="rgba(100, 100, 100, 0.41)" />
 
         }
-
-        <View style={styles.loginButtonWrapper} >
-          <TouchableOpacity onPress={() => router.replace("/(tabs)/inventory-select")}>
+        <TouchableOpacity 
+        style={styles.loginButtonWrapper}
+        onPress={() => router.replace("/(tabs)/inventory-select")}>
             <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
 
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
         }
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    marginTop:10,
+    marginTop: 10,
 
     padding: 20,
 
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     */
     borderRadius: 35,
-    
+
     backgroundColor: "#ffffff",
 
 
@@ -97,9 +96,9 @@ const styles = StyleSheet.create({
     /*
     borderWidth: 2,
     */
-   borderRadius: 30,
-    
-    
+    borderRadius: 30,
+
+
     color: "black",
     backgroundColor: "#e4e4e4",
 
