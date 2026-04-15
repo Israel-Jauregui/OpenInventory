@@ -12,6 +12,7 @@ export default function Login() {
       style={styles.mainContainer}
     >
       {//FIXME: Optional Main Login text header here
+        <Text style={styles.mainHeader}>OpenInventory</Text>
       }
 
 
@@ -60,11 +61,13 @@ const styles = StyleSheet.create({
 
 
 
-    experimental_backgroundImage: "linear-gradient(0340deg, #6fbeff 0%, rgba(223, 237, 227, 1) 45%, rgb(240, 240, 240) 70%, #209aff 100%)",
+    experimental_backgroundImage: "linear-gradient(0340deg, #a2d5ff 0%, #b2dbff 20%, #68bbff 45%, #3da6fc 60%, #a0d4ff 100%)",
   },
 
   mainHeader: {
-    fontSize: 48
+    fontSize: 30,
+    textAlign: "center",
+    
   },
 
   fieldsContainer: {
@@ -76,9 +79,6 @@ const styles = StyleSheet.create({
 
     padding: 20,
 
-    /*borderColor: "black",
-    borderWidth: 2,
-    */
     borderRadius: 35,
 
     backgroundColor: "#ffffff",
@@ -116,10 +116,6 @@ const styles = StyleSheet.create({
     padding: 10,
 
     borderRadius: 30,
-    /*
-    borderColor: "black",
-    borderWidth: 2,
-    */
 
     backgroundColor: "#36a2fa",
 

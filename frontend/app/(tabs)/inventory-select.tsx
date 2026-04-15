@@ -54,7 +54,7 @@ export default function InventorySelect() {
             </TouchableOpacity>
 
             <Text style={styles.createInventoryHeader}>Create a new inventory</Text>
-            <TextInput style={styles.createInventoryNameField} placeholder="Inventory Name"></TextInput>
+            <TextInput style={styles.createInventoryNameField} placeholder="Enter inventory name..."></TextInput>
             <Text style={styles.createInventoryAltText}>All you need right now is the inventory's name; you may add items or configurations later at any time.</Text>
             <TouchableOpacity
               style={styles.createInventoryButton}>
@@ -87,10 +87,8 @@ export default function InventorySelect() {
             style={
               [styles.card,
               {
-                backgroundColor: "rgba(11, 74, 73, 0.71)",
-                borderWidth: 4,
-                borderColor: "#6fbeff"
-
+                backgroundColor: "#36a2fa",
+                
               }]}
             onPress={() => { setModalVisible(true) }}
           >
@@ -179,6 +177,7 @@ const styles = StyleSheet.create({
   },
 
   createInventoryHeader: {
+    
     marginBottom: "20%",
 
 
@@ -193,7 +192,7 @@ const styles = StyleSheet.create({
     width: "80%",
 
     fontSize: 22,
-
+    color: "#949494",
     borderColor: "#6fbeff",
     borderWidth: 1,
     borderRadius: 20,
@@ -212,18 +211,19 @@ const styles = StyleSheet.create({
   },
 
   createInventoryButton: {
-    marginTop: "15%",
+    marginTop: 20,
+    
     padding: 20,
-
+    
     alignItems: "center",
 
     width: "80%",
 
-    backgroundColor: "rgba(11, 74, 73, 0.71)",
+    backgroundColor: "#36a2fa",
 
     borderWidth: 4,
     borderRadius: 12,
-    borderColor: "#6fbeff",
+    borderColor: "#36a2fa",
 
   },
 
