@@ -65,7 +65,11 @@ const styles = StyleSheet.create({
   },
 
   mainHeader: {
+
+    color: "white",
+
     fontSize: 30,
+
     textAlign: "center",
     
   },

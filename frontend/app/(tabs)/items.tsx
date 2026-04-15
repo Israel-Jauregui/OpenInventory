@@ -19,7 +19,7 @@ export default function ItemsView() {
 
 
         {//TEMPORARY
-        }<ScrollView contentContainerStyle={{alignItems: "center", justifyContent: "center", gap: 2}}>
+        }<ScrollView contentContainerStyle={{alignItems: "center", justifyContent: "center", gap: 8}}>
             <ItemEntry />
             <ItemEntry />
             <ItemEntry />
