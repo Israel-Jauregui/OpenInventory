@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, Modal, TextInput } from "react-native";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from "expo-router";
+
+
 
 
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
@@ -10,43 +12,145 @@ import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/Temporar
 const { width } = Dimensions.get("window");
 
 //TODO: Replace with real inventory data from backend
-const PLACEHOLDER_INVENTORIES = [
-  { id: "1", name: "Warehouse A" },
-  { id: "2", name: "Warehouse B" },
-  { id: "3", name: "Office Supplies" },
-];
+
+//Type definition for a given inventory
+type inventory = { invId: string, invName: string };
+
+let PLACEHOLDER_INVENTORIES: inventory[] = [];
 
 export default function InventorySelect() {
-   //BEGIN HOOK INSTANTIATIONS
+  //BEGIN HOOK INSTANTIATIONS
 
   const [modalVisible, setModalVisible] = useState(false);
+
+  //Used in modal for creating a new inventory
+  const [newInventoryName, setNewInventoryName] = useState("");
+
   const router = useRouter();
 
+
   //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-      const token = useContext(TemporaryTokenContext);
+  const token = useContext(TemporaryTokenContext);
+
+  //MARK: Initial fetch of inventories
+  useEffect(() => {
+
+    //Retrieves inventories for selection
+    async function initialGetInventories() {
+      //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
+
+      const options = {
+
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+      }
+
+      //FIXME: TEMPORARY CONDITIONAL FETCH
+      if (!PLACEHOLDER_INVENTORIES.length) {
+        try {
+          const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
+
+          if (response.status === 200) {
+            const responseJSON = await response.json()
+
+
+
+            //TODO: Incorporate other form of handling there being no inventories if needed, otherwise remove this set of if/else branches
+            if (responseJSON.length) {
+              //FIXME: Temporarly adds pulled inventories on top of placeholders
+              responseJSON.forEach((inventory: inventory) => {
+                PLACEHOLDER_INVENTORIES.push(inventory)
+              })
+
+              console.log(PLACEHOLDER_INVENTORIES)
+            }
+            else {
+              console.log("No inventories")
+            }
+
+          }
+          else {
+            throw new Error(`Failed to retrieve inventories. Server response code: ${response.status}`);
+          }
+
+
+
+        } catch (error) {
+
+          //TODO: Use for displaying error states
+          console.log(error);
+        }
+      }
+
+    }
+
+    initialGetInventories();
+
+
+  }, []);
 
   //END HOOK INSTANTIATIONS
 
-  const handleSelect = (inventory: { id: string; name: string }) => {
+  //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+
+
+ const handleSelect = (inventory: { invId: string; invName: string }) => {
     //TODO: Store selected inventory in global state / context
     router.replace({
       pathname: "/(tabs)/home",
-      params: { inventoryId: inventory.id, inventoryName: inventory.name },
+      params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
     });
   };
 
-   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+  //END FUNCTION DECLARATIONS (For functions that require component scope)
 
-   //Retrieves inventories for selection
-   async function initialGetInventories(){
-    //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
-    
+  //Creates a new inventory. If creation is successful, automatically routes user into that new inventory.
+  async function createInventory(newInventoryName: string) {
 
-   }
+    if(newInventoryName){
 
-  
-  
-   //END FUNCTION DECLARATIONS (For functions that require component scope)
+      const options = {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
+      }
+
+      try {
+          const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/create?invName=${newInventoryName}`, options);
+
+
+          console.log(response.status);
+          if(response.status === 200){
+            const responseJSON = await response.json();
+
+            //FIXME: TEMPORARY LOG
+            console.log(responseJSON);
+
+            
+            setModalVisible(false);
+            //Automatically routes the user to the new inventory upon successful creation
+            handleSelect({invId: responseJSON.invId, invName: newInventoryName});
+          }
+          else{
+            
+            throw new Error(`Failed to create inventory. Status code: ${response.status}`)
+          }
+      } catch (error) {
+          alert(`TEMPORARY ALERT(add more polished handling): ${error}`);
+      }
+    }
+
+  }
+
+ 
+
+
+
 
 
   return (
@@ -80,10 +184,20 @@ export default function InventorySelect() {
             </TouchableOpacity>
 
             <Text style={styles.createInventoryHeader}>Create a new inventory</Text>
-            <TextInput style={styles.createInventoryNameField} placeholder="Enter inventory name..." placeholderTextColor={"#bfbfbf"}></TextInput>
+            <TextInput
+              style={styles.createInventoryNameField}
+              placeholder="Enter inventory name..."
+              placeholderTextColor={"#bfbfbf"}
+
+              onChangeText={(text) => { setNewInventoryName(text)
+               }}
+            ></TextInput>
             <Text style={styles.createInventoryAltText}>All you need right now is the inventory's name; you may add items or configurations later at any time.</Text>
+
             <TouchableOpacity
-              style={styles.createInventoryButton}>
+              style={styles.createInventoryButton}
+              onPress={()=>{newInventoryName !== "" ? createInventory(newInventoryName) : alert("TEMPORARY ALERT (incorporate more polished handling): Please enter an inventory name.")}}
+            >
               <Text style={styles.createInventoryButtonText}>Create</Text>
             </TouchableOpacity>
           </View>
@@ -96,14 +210,14 @@ export default function InventorySelect() {
 
       <FlatList
         data={PLACEHOLDER_INVENTORIES}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.invId}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.card}
             onPress={() => handleSelect(item)}
           >
-            <Text style={styles.cardText}>{item.name}</Text>
+            <Text style={styles.cardText}>{item.invName}</Text>
             <Image style={styles.cardIcon} source={require("../../assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
@@ -114,7 +228,7 @@ export default function InventorySelect() {
               [styles.card,
               {
                 backgroundColor: "#36a2fa",
-                
+
               }]}
             onPress={() => { setModalVisible(true) }}
           >
@@ -203,7 +317,7 @@ const styles = StyleSheet.create({
   },
 
   createInventoryHeader: {
-    
+
     marginBottom: "20%",
 
 
@@ -238,9 +352,9 @@ const styles = StyleSheet.create({
 
   createInventoryButton: {
     marginTop: 20,
-    
+
     padding: 20,
-    
+
     alignItems: "center",
 
     width: "80%",
