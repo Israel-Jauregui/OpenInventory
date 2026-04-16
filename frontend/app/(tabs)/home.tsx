@@ -38,7 +38,7 @@ export default function Home() {
     const navigation = useNavigation();
 
     //END HOOK INSTANTIATIONS
-    const { inventoryName } = useLocalSearchParams<{ inventoryName?: string }>();
+    const { inventoryName, inventoryId } = useLocalSearchParams<{ inventoryName?: string, inventoryId?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (

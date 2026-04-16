@@ -81,7 +81,7 @@ export default function InventorySelect() {
         } catch (error) {
 
           //TODO: Use for displaying error states
-          console.log(error);
+          alert(`TEMPORARY ALERT (add more polished / robust handling): ${error}`)
         }
       }
 
@@ -132,7 +132,9 @@ export default function InventorySelect() {
             console.log(responseJSON);
 
             
+            //Needed so that modal is removed before routing to new inventory
             setModalVisible(false);
+
             //Automatically routes the user to the new inventory upon successful creation
             handleSelect({invId: responseJSON.invId, invName: newInventoryName});
           }
@@ -146,9 +148,6 @@ export default function InventorySelect() {
     }
 
   }
-
- 
-
 
 
 

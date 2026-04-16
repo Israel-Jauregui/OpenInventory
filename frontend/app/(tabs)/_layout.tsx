@@ -3,13 +3,17 @@ import { Button, Pressable, Text } from "react-native";
 
 //TODO: Create and pass context for relevant inventory data
 
+import { CurrentInventoryContext } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
+
+import { useContext } from 'react'; 
+
 function TabLayout() {
     const router = useRouter();
+
 
     return (
 
         <Tabs backBehavior="history">
-           
             <Tabs.Screen
                 name="inventory-select"
                 options={{
@@ -26,6 +30,9 @@ function TabLayout() {
                     ),
                 }}
             />
+
+            
+            
             <Tabs.Screen
                 name="home"
                 options={{
@@ -78,6 +85,8 @@ function TabLayout() {
                     ),
                 }}
             />
+          
+
 
 
         </Tabs>
