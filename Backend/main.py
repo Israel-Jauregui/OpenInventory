@@ -67,7 +67,7 @@ class UserCreate(BaseModel):
 # --- SIMPLIFIED SECURITY CONSTANTS ---
 SECRET_KEY = "openinventory-super-secret-key" 
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 300 # Set to 5 hours so you don't get logged out while testing
+ACCESS_TOKEN_EXPIRE_MINUTES = 43200 # Set to 5 hours so you don't get logged out while testing
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
