@@ -2,6 +2,11 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, 
 import { useState } from 'react';
 import { useRouter } from "expo-router";
 
+
+//FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
+import { useContext } from 'react';
+import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext';
+
 const { width } = Dimensions.get("window");
 
 //TODO: Replace with real inventory data from backend
@@ -12,8 +17,15 @@ const PLACEHOLDER_INVENTORIES = [
 ];
 
 export default function InventorySelect() {
+   //BEGIN HOOK INSTANTIATIONS
+
   const [modalVisible, setModalVisible] = useState(false);
   const router = useRouter();
+
+  //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
+      const token = useContext(TemporaryTokenContext);
+
+  //END HOOK INSTANTIATIONS
 
   const handleSelect = (inventory: { id: string; name: string }) => {
     //TODO: Store selected inventory in global state / context
@@ -22,6 +34,20 @@ export default function InventorySelect() {
       params: { inventoryId: inventory.id, inventoryName: inventory.name },
     });
   };
+
+   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+
+   //Retrieves inventories for selection
+   async function initialGetInventories(){
+    //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
+    
+
+   }
+
+  
+  
+   //END FUNCTION DECLARATIONS (For functions that require component scope)
+
 
   return (
     <View style={styles.container}>
