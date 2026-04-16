@@ -28,9 +28,12 @@ export default function Login() {
       const options = {
         method: "POST",
         headers: { 
+          //Specifies type of content to be received
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded"
          },
+         //qs simply puts data into an acceptable format for the endpoint, which is just an encoded URL parameter for the keys / values of the username and password
+         //The password is technically sent in plaintext over the query paramter
         body: qs.stringify({
           username: username,
           password: password
@@ -55,6 +58,8 @@ export default function Login() {
   //END FUNCTION DECLARATIONS (For functions that require component scope)
 
   //MARK: Component return
+
+  //TODO: Add modal for account creation
   return (
 
     //Main view
