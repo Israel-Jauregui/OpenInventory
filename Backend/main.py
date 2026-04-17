@@ -14,7 +14,7 @@ import shutil
 import uuid
 from fastapi import File, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
-
+from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -63,6 +63,15 @@ class UserCreate(BaseModel):
     username: str
     password: str
     wants_notif: bool = True # Defaults to True if the mobile app doesn't send it
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8081"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
 
 # --- SIMPLIFIED SECURITY CONSTANTS ---
 SECRET_KEY = "openinventory-super-secret-key" 
