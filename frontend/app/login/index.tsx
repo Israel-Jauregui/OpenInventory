@@ -1,10 +1,65 @@
 import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useRouter, Link } from 'expo-router';
 
+
+import { useState } from 'react';
+
+import qs from 'qs';
+
 //TODO: Import appropriate package(s) for handling login authorization
 export default function Login() {
+
+  //BEGIN HOOKS INSTANTIATION
+
+  const [username, setUsername] = useState<string>("");
+
+  //Utilizing useState for password via plaintext is acceptable since such data will not persist locally after being submitted to the API as long as the state is cleared after submission
+  const [password, setPassword] = useState<string>("")
+
   const router = useRouter();
 
+  //END HOOKS INSTANTIATION
+
+  //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+
+  //MARK: handleLoginAttempt
+  async function handleLoginAttempt() {
+    try {
+      const options = {
+        method: "POST",
+        headers: { 
+          //Specifies type of content to be received
+          "Accept": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded"
+         },
+         //qs simply puts data into an acceptable format for the endpoint, which is just an encoded URL parameter for the keys / values of the username and password
+         //The password is technically sent in plaintext over the query paramter
+        body: qs.stringify({
+          username: username,
+          password: password
+        }),
+
+      }
+
+      //FIXME: Temporary log
+      console.log(options.body);
+
+      //FIXME: Eventually use .env for resource IP in every endpoint
+      const response = await fetch("http://165.227.213.87:8000/login", options);
+
+      const responseJSON = await response.json();
+      console.log(responseJSON.access_token);
+      
+
+    } catch (error) {
+
+    }
+  }
+  //END FUNCTION DECLARATIONS (For functions that require component scope)
+
+  //MARK: Component return
+
+  //TODO: Add modal for account creation
   return (
 
     //Main view
@@ -17,29 +72,45 @@ export default function Login() {
 
 
       {//Field container TODO: Fine-tune KeyboardAvoidingView behavior and props so that everything including "Need an account?" is visible (though may not be necessary since typing infers having an account) above the keyboard while typing
-      }
-      <KeyboardAvoidingView style={styles.fieldsContainer} behavior="padding" keyboardVerticalOffset={25}>
+        //FIXME: KeyboardAvoidingView currently hides text for both fields whilst typing
+      }<KeyboardAvoidingView style={styles.fieldsContainer} behavior="padding" keyboardVerticalOffset={-60}>
         {//Username input
-        }
-        <TextInput
-          style={[styles.textInputField, {}]}
+        }<TextInput
+          style={[styles.textInputField]}
           placeholder="Username"
-          placeholderTextColor="rgba(100, 100, 100, 0.41)" />
+          placeholderTextColor="rgba(100, 100, 100, 0.41)"
+
+          onChangeText={(text) => { setUsername(text); }}
+
+        />
+
 
         {//Password input
           <TextInput
             style={[styles.textInputField]}
             secureTextEntry={true}
             placeholder="Password"
-            placeholderTextColor="rgba(100, 100, 100, 0.41)" />
+            placeholderTextColor="rgba(100, 100, 100, 0.41)"
+
+            onChangeText={(text) => { setPassword(text); }}
+
+          
+          />
 
         }
 
-        <View style={styles.loginButtonWrapper} >
-          <TouchableOpacity onPress={() => router.replace("/(tabs)/inventory-select")}>
-            <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
-          </TouchableOpacity>
-        </View>
+        {//Login button
+        }<TouchableOpacity
+          style={styles.loginButtonWrapper}
+          onPress={handleLoginAttempt}>
+          <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.loginButtonWrapper, { backgroundColor: "pink" }]}
+          onPress={() => router.replace("/(tabs)/inventory-select")}>
+          <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>{"\u{1F5E3}"}TEMPORARY BYPASS</Text>
+        </TouchableOpacity>
 
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
         }
@@ -54,6 +125,8 @@ export default function Login() {
 
 }
 
+
+//MARK: Styling
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -66,9 +139,13 @@ const styles = StyleSheet.create({
   },
 
   mainHeader: {
+
+    color: "white",
+
     fontSize: 30,
+
     textAlign: "center",
-    
+
   },
 
   fieldsContainer: {
@@ -76,12 +153,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
 
-    marginTop:10,
+    marginTop: 10,
 
     padding: 20,
 
     borderRadius: 35,
-    
+
     backgroundColor: "#ffffff",
 
 
@@ -94,10 +171,15 @@ const styles = StyleSheet.create({
     margin: 7,
     padding: 20,
 
-   borderRadius: 30,
-    
-    
+    /*
+    borderWidth: 2,
+    */
+    borderRadius: 30,
+
+
+    //Changing color property will alter the input text's color
     color: "black",
+
     backgroundColor: "#e4e4e4",
 
     fontSize: 15,
