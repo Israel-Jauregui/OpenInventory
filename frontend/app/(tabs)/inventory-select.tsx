@@ -16,20 +16,15 @@ const { width } = Dimensions.get("window");
 //Type definition for a given inventory (matches backend InventoryResponse)
 type inventory = { invId: number, invName: string };
 
-let PLACEHOLDER_INVENTORIES: inventory[] = [];
+// Remove placeholder inventories, use state instead
 
 export default function InventorySelect() {
+
   //BEGIN HOOK INSTANTIATIONS
-
   const [modalVisible, setModalVisible] = useState(false);
-
-  //Used in modal for creating a new inventory
   const [newInventoryName, setNewInventoryName] = useState("");
-
+  const [inventories, setInventories] = useState<inventory[]>([]);
   const router = useRouter();
-
-
-  //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
   const { token } = useContext(TemporaryTokenContext);
 
   //MARK: Initial fetch of inventories
@@ -49,14 +44,8 @@ export default function InventorySelect() {
         const response = await fetch(`http://165.227.213.87:8000/inventory/getinventories`, options);
         if (response.ok) {
           const responseJSON: inventory[] = await response.json();
-          if (responseJSON.length) {
-            // Replace placeholder inventories with fetched data
-            PLACEHOLDER_INVENTORIES.length = 0;
-            responseJSON.forEach((inv) => PLACEHOLDER_INVENTORIES.push(inv));
-            console.log(PLACEHOLDER_INVENTORIES);
-          } else {
-            console.log("No inventories");
-          }
+          setInventories(responseJSON);
+          console.log(responseJSON);
         } else {
           const errorData = await response.json();
           throw new Error(errorData.detail || `Failed to retrieve inventories. Server response code: ${response.status}`);
@@ -184,8 +173,8 @@ export default function InventorySelect() {
 
 
       <FlatList
-        data={PLACEHOLDER_INVENTORIES}
-        keyExtractor={(item) => item.invId}
+        data={inventories}
+        keyExtractor={(item) => item.invId.toString()}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -196,20 +185,19 @@ export default function InventorySelect() {
             <Image style={styles.cardIcon} source={require("../../assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
-
         ListFooterComponent={
           <TouchableOpacity
             style={
               [styles.card,
               {
                 backgroundColor: "#36a2fa",
-
               }]}
             onPress={() => { setModalVisible(true) }}
           >
             <Text style={[styles.cardText, { color: "white", fontWeight: "600" }]}>Create new inventory</Text>
             <Image style={styles.cardIcon} source={require("../../assets/images/plusIcon.png")} />
-          </TouchableOpacity>}
+          </TouchableOpacity>
+        }
       />
 
 
