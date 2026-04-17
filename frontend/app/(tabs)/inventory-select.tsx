@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     //Allows for empty space above modal
     top: "7%",
 
-    height: "95%",
+    height: "100%",
     width: "98%",
 
     backgroundColor: "white",
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
 
   createInventoryButton: {
     marginTop: 20,
-
+    marginBottom: 150,
     padding: 20,
 
     alignItems: "center",
