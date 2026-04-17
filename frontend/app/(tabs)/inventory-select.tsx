@@ -13,8 +13,8 @@ const { width } = Dimensions.get("window");
 
 //TODO: Replace with real inventory data from backend
 
-//Type definition for a given inventory
-type inventory = { invId: string, invName: string };
+//Type definition for a given inventory (matches backend InventoryResponse)
+type inventory = { invId: number, invName: string };
 
 let PLACEHOLDER_INVENTORIES: inventory[] = [];
 
@@ -30,67 +30,43 @@ export default function InventorySelect() {
 
 
   //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-  const token = useContext(TemporaryTokenContext);
+  const { token } = useContext(TemporaryTokenContext);
 
   //MARK: Initial fetch of inventories
   useEffect(() => {
-
-    //Retrieves inventories for selection
+    // Retrieves inventories for selection from /inventory/getinventories
     async function initialGetInventories() {
-      //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
-
+      console.log('JWT token being sent:', token);
       const options = {
-
         method: "GET",
         headers: {
           "Accept": "application/json",
           "Authorization": `Bearer ${token}`
         },
-      }
+      };
 
-      //FIXME: TEMPORARY CONDITIONAL FETCH
-      if (!PLACEHOLDER_INVENTORIES.length) {
-        try {
-          const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
-
-          if (response.status === 200) {
-            const responseJSON = await response.json()
-
-
-
-            //TODO: Incorporate other form of handling there being no inventories if needed, otherwise remove this set of if/else branches
-            if (responseJSON.length) {
-              //FIXME: Temporarly adds pulled inventories on top of placeholders
-              responseJSON.forEach((inventory: inventory) => {
-                PLACEHOLDER_INVENTORIES.push(inventory)
-              })
-
-              console.log(PLACEHOLDER_INVENTORIES)
-            }
-            else {
-              console.log("No inventories")
-            }
-
+      try {
+        const response = await fetch(`http://165.227.213.87:8000/inventory/getinventories`, options);
+        if (response.ok) {
+          const responseJSON: inventory[] = await response.json();
+          if (responseJSON.length) {
+            // Replace placeholder inventories with fetched data
+            PLACEHOLDER_INVENTORIES.length = 0;
+            responseJSON.forEach((inv) => PLACEHOLDER_INVENTORIES.push(inv));
+            console.log(PLACEHOLDER_INVENTORIES);
+          } else {
+            console.log("No inventories");
           }
-          else {
-            throw new Error(`Failed to retrieve inventories. Server response code: ${response.status}`);
-          }
-
-
-
-        } catch (error) {
-
-          //TODO: Use for displaying error states
-          alert(`TEMPORARY ALERT (add more polished / robust handling): ${error}`)
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || `Failed to retrieve inventories. Server response code: ${response.status}`);
         }
+      } catch (error) {
+        alert(`TEMPORARY ALERT (add more polished / robust handling): ${error}`);
       }
-
     }
-
     initialGetInventories();
-
-
-  }, []);
+  }, [token]);
 
   //END HOOK INSTANTIATIONS
 

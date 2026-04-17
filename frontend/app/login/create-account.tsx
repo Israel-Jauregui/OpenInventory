@@ -1,40 +1,40 @@
 import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { View, Text, TextInput, Button, Switch, StyleSheet } from 'react-native';
 
 export default function CreateAccount() {
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [wantsNotif, setWantsNotif] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const handleSubmit = () => {
-    // Add your fetch logic here
-const handleSubmit = async () => {
-  setError('');
-  setSuccess('');
-  try {
-    const res = await fetch('http://165.227.213.87:8000/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username,
-        password,
-        wants_notif: wantsNotif,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.detail || 'Signup failed');
-    } else {
-      setSuccess(data.message || 'Signup successful!');
-      // Optionally, navigate to login or another page here
-    }
-  } catch (err) {
-    setError('Network error');
-  }
-};
 
-    // Example: send username, password, wantsNotif to backend
+  const handleSubmit = async () => {
+    setError('');
+    setSuccess('');
+    try {
+      const res = await fetch('http://165.227.213.87:8000/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          password,
+          wants_notif: wantsNotif,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.detail || 'Signup failed');
+      } else {
+        setSuccess(data.message || 'Signup successful!');
+        setTimeout(() => {
+          router.replace('/login');
+        }, 2000);
+      }
+    } catch (err) {
+      setError('Network error');
+    }
   };
 
   return (
@@ -61,6 +61,8 @@ const handleSubmit = async () => {
           onValueChange={setWantsNotif}
         />
       </View>
+      {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}
+      {success ? <Text style={{ color: 'green' }}>{success}</Text> : null}
       <Button title="Sign Up" onPress={handleSubmit} />
     </View>
   );

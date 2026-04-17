@@ -2,9 +2,10 @@ import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platfo
 import { useRouter, Link } from 'expo-router';
 
 
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 
 import qs from 'qs';
+import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext';
 
 //TODO: Import appropriate package(s) for handling login authorization
 export default function Login() {
@@ -17,6 +18,7 @@ export default function Login() {
   const [password, setPassword] = useState<string>("")
 
   const router = useRouter();
+  const { setToken } = useContext(TemporaryTokenContext);
 
   //END HOOKS INSTANTIATION
 
@@ -28,31 +30,28 @@ export default function Login() {
       const options = {
         method: "POST",
         headers: { 
-          //Specifies type of content to be received
           "Accept": "application/json",
           "Content-Type": "application/x-www-form-urlencoded"
-         },
-         //qs simply puts data into an acceptable format for the endpoint, which is just an encoded URL parameter for the keys / values of the username and password
-         //The password is technically sent in plaintext over the query paramter
+        },
         body: qs.stringify({
           username: username,
           password: password
         }),
+      };
 
-      }
-
-      //FIXME: Temporary log
-      console.log(options.body);
-
-      //FIXME: Eventually use .env for resource IP in every endpoint
       const response = await fetch("http://165.227.213.87:8000/login", options);
-
       const responseJSON = await response.json();
-      console.log(responseJSON.access_token);
-      
 
+      if (response.ok && responseJSON.access_token) {
+        setToken(responseJSON.access_token);
+        console.log('JWT token received:', responseJSON.access_token);
+        router.replace('/(tabs)/inventory-select');
+      } else {
+        // Optionally, show error feedback here
+        alert(responseJSON.detail || 'Login failed');
+      }
     } catch (error) {
-
+      alert('Network error');
     }
   }
   //END FUNCTION DECLARATIONS (For functions that require component scope)

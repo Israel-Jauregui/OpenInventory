@@ -3,8 +3,19 @@ The token must be replaced upon expiration, and it is currently linked to the pa
 Also does not need to wrap the appropriate screens as a provider since components wont need to alter it for now
 */
 
-import { createContext } from 'react'; 
+import React, { createContext, useState } from 'react';
 
+export const TemporaryTokenContext = createContext({
+	token: "",
+	setToken: (token: string) => {},
+});
 
-export const TemporaryTokenContext = createContext("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYXJrZXIiLCJleHAiOjE3NzYzNzIwNjd9.rWQquBco8s8k9EhjoscTmzuclStRoYDBVSwL7Yv69Lo");
+export function TemporaryTokenProvider({ children }: { children: React.ReactNode }) {
+	const [token, setToken] = useState("");
+	return (
+		<TemporaryTokenContext.Provider value={{ token, setToken }}>
+			{children}
+		</TemporaryTokenContext.Provider>
+	);
+}
 
