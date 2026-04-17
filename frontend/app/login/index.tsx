@@ -114,8 +114,8 @@ export default function Login() {
 
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
         }
-        <Link href="/" asChild>
-          <Text style={styles.signupText}>Need an account?</Text>
+        <Link href="/login/create-account" asChild>
+  <Text style={styles.signupText}>Need an account?</Text>
         </Link>
 
       </KeyboardAvoidingView>
