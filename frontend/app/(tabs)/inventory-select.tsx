@@ -16,18 +16,19 @@ const { width } = Dimensions.get("window");
 //Type definition for a given inventory
 type inventory = { invId: string, invName: string };
 
-let PLACEHOLDER_INVENTORIES: inventory[] = [];
 
 export default function InventorySelect() {
   //BEGIN HOOK INSTANTIATIONS
 
+  console.log(process.env.EXPO_PUBLIC_API_BASE_URL)
   const [modalVisible, setModalVisible] = useState(false);
 
   //Used in modal for creating a new inventory
   const [newInventoryName, setNewInventoryName] = useState("");
-
+  
+  //uses a state to keep it loaded and updated
+  const [inventories, setInventories] = useState<inventory[]>([]);
   const router = useRouter();
-
 
   //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
   const token = useContext(TemporaryTokenContext);
@@ -48,41 +49,19 @@ export default function InventorySelect() {
         },
       }
 
-      //FIXME: TEMPORARY CONDITIONAL FETCH
-      if (!PLACEHOLDER_INVENTORIES.length) {
-        try {
-          const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
+      try {
+        const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
 
-          if (response.status === 200) {
-            const responseJSON = await response.json()
-
-
-
-            //TODO: Incorporate other form of handling there being no inventories if needed, otherwise remove this set of if/else branches
-            if (responseJSON.length) {
-              //FIXME: Temporarly adds pulled inventories on top of placeholders
-              responseJSON.forEach((inventory: inventory) => {
-                PLACEHOLDER_INVENTORIES.push(inventory)
-              })
-
-              console.log(PLACEHOLDER_INVENTORIES)
-            }
-            else {
-              console.log("No inventories")
-            }
-
-          }
-          else {
-            throw new Error(`Failed to retrieve inventories. Server response code: ${response.status}`);
-          }
-
-
-
-        } catch (error) {
-
-          //TODO: Use for displaying error states
-          alert(`TEMPORARY ALERT (add more polished / robust handling): ${error}`)
+        if (response.status === 200) {
+          const responseJSON = await response.json();
+          setInventories(responseJSON);
         }
+        else {
+          throw new Error(`Failed to retrieve inventories. Server response code: ${response.status}`);
+        }
+      } catch (error) {
+        //TODO: Use for displaying error states
+        alert(`TEMPORARY ALERT (add more polished / robust handling): ${error}`);
       }
 
     }
@@ -132,6 +111,9 @@ export default function InventorySelect() {
             console.log(responseJSON);
 
             
+            //Add the new inventory to state
+            setInventories(prev => [...prev, { invId: responseJSON.invId, invName: newInventoryName }]);
+
             //Needed so that modal is removed before routing to new inventory
             setModalVisible(false);
 
@@ -208,7 +190,7 @@ export default function InventorySelect() {
 
 
       <FlatList
-        data={PLACEHOLDER_INVENTORIES}
+        data={inventories}
         keyExtractor={(item) => item.invId}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
