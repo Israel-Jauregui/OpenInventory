@@ -47,6 +47,10 @@ export default function Login() {
       //FIXME: Eventually use .env for resource IP in every endpoint
       const response = await fetch("http://165.227.213.87:8000/login", options);
 
+      if(!response.ok){
+        throw new Error(`Failed to login. Status code: ${response.status}`)
+      }
+
       const responseJSON = await response.json();
       console.log(responseJSON.access_token);
       
