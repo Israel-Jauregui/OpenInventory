@@ -31,6 +31,8 @@ const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per ro
 export default function Home() {
     //BEGIN HOOK INSTANTIATIONS MARK: Hook instantiations
     const [createItemVisible, setCreateItemVisible] = useState<boolean>(false)
+    const [manageUsersVisible, setManageUsersVisible] = useState<boolean>(false);
+
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
     const router = useRouter();

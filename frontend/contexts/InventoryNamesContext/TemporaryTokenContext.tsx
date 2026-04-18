@@ -7,4 +7,3 @@ import { createContext } from 'react';
 
 
 export const TemporaryTokenContext = createContext("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYXJrZXIiLCJleHAiOjE3NzkxMTYyNzd9.46ajYm3kI7-xIJWYnmb8azPhhhEL83OrbFBq2drZHRE");
-

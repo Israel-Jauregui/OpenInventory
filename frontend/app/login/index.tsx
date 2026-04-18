@@ -1,4 +1,4 @@
-import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useRouter, Link } from 'expo-router';
 
 
@@ -77,19 +77,18 @@ export default function Login() {
 
       {//Field container TODO: Fine-tune KeyboardAvoidingView behavior and props so that everything including "Need an account?" is visible (though may not be necessary since typing infers having an account) above the keyboard while typing
         //FIXME: KeyboardAvoidingView currently hides text for both fields whilst typing
-      }<KeyboardAvoidingView style={styles.fieldsContainer} behavior="padding" keyboardVerticalOffset={-60}>
+      }<KeyboardAvoidingView style={styles.fieldsContainer}>
         {//Username input
-        }<TextInput
-          style={[styles.textInputField]}
-          placeholder="Username"
-          placeholderTextColor="rgba(100, 100, 100, 0.41)"
+        }
+          <TextInput
+            style={[styles.textInputField, { marginTop: 40 }, { color: "black" }]}
+            placeholder="Username"
+            placeholderTextColor="rgba(100, 100, 100, 0.41)"
+            value={username}
+            onChangeText={(text) => { setUsername(text); }}
 
-          onChangeText={(text) => { setUsername(text); }}
-
-        />
-
-
-        {//Password input
+          />        
+          {//Password input
           <TextInput
             style={[styles.textInputField]}
             secureTextEntry={true}
@@ -175,11 +174,7 @@ const styles = StyleSheet.create({
     margin: 7,
     padding: 20,
 
-    /*
-    borderWidth: 2,
-    */
     borderRadius: 30,
-
 
     //Changing color property will alter the input text's color
     color: "black",
@@ -190,7 +185,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
 
 
-    height: "10%",
+    height: 60,
     width: "90%",
   },
 

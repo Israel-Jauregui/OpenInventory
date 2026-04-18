@@ -219,8 +219,6 @@ export default function InventorySelect() {
       />
 
 
-
-
     </View >
   );
 }
