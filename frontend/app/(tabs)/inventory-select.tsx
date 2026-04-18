@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
 import { useContext } from 'react';
-import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext';
+import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext/TemporaryTokenContext';
 
 const { width } = Dimensions.get("window");
 

@@ -6,7 +6,7 @@ import { useNavigation } from 'expo-router';
 import { useContext } from 'react';
 
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext';
+import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext/TemporaryTokenContext';
 
 type CreateItemModalProps = {
     visible: boolean,
