@@ -6,7 +6,7 @@ import { useNavigation } from 'expo-router';
 import { useContext } from 'react';
 
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext/TemporaryTokenContext';
+import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
 
 type CreateItemModalProps = {
     visible: boolean,
@@ -41,7 +41,7 @@ export default function CreateItemModal({ visible, setCreateItemVisible }: Creat
             }
         }
 
-        const response = await fetch("http://165.227.213.87:8000/inventory/getinventories", options);
+        const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
         const responseJSON = await response.json();
         console.log(responseJSON);
     }

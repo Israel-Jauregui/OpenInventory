@@ -4,7 +4,7 @@ import { SetStateAction, useState, useContext } from 'react';
 import { useNavigation } from 'expo-router';
 
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { TemporaryTokenContext } from '@/contexts/InventoryNamesContext/TemporaryTokenContext/TemporaryTokenContext';
+import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
 
 type ManageUsersModalProps = {
     visible: boolean,
