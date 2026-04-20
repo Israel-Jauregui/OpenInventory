@@ -1,10 +1,8 @@
 import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useRouter, Link } from 'expo-router';
-
-
 import { useState } from 'react';
-
-import qs from 'qs';
+ 
+import { useSession } from "@/contexts/AuthContext/AuthContext"; 
 
 //TODO: Import appropriate package(s) for handling login authorization
 export default function Login() {
@@ -18,47 +16,15 @@ export default function Login() {
 
   const router = useRouter();
 
+  //Grabs appropriate function from AuthContext via destructuring
+  const { handleLoginAttempt } = useSession();
+
   //END HOOKS INSTANTIATION
 
   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+ 
+  //MARK: handleLoginAttempt FIXME: Moved to AuthContext
 
-  //MARK: handleLoginAttempt
-  async function handleLoginAttempt() {
-    try {
-      const options = {
-        method: "POST",
-        headers: { 
-          //Specifies type of content to be received
-          "Accept": "application/json",
-          "Content-Type": "application/x-www-form-urlencoded"
-         },
-         //qs simply puts data into an acceptable format for the endpoint, which is just an encoded URL parameter for the keys / values of the username and password
-         //The password is technically sent in plaintext over the query paramter
-        body: qs.stringify({
-          username: username,
-          password: password
-        }),
-
-      }
-
-      //FIXME: Temporary log
-      console.log(options.body);
-
-      //FIXME: Eventually use .env for resource IP in every endpoint
-      const response = await fetch("http://165.227.213.87:8000/login", options);
-
-      if(!response.ok){
-        throw new Error(`Failed to login. Status code: ${response.status}`)
-      }
-
-      const responseJSON = await response.json();
-      console.log(responseJSON.access_token);
-      
-
-    } catch (error) {
-
-    }
-  }
   //END FUNCTION DECLARATIONS (For functions that require component scope)
 
   //MARK: Component return
@@ -105,7 +71,7 @@ export default function Login() {
         {//Login button
         }<TouchableOpacity
           style={styles.loginButtonWrapper}
-          onPress={handleLoginAttempt}>
+          onPress={()=>{handleLoginAttempt(username, password)}}>
           <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
         </TouchableOpacity>
 

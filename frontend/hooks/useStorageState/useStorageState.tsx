@@ -3,6 +3,7 @@
 
 //BEGIN imports
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 //END imports
 
@@ -11,7 +12,7 @@ import * as SecureStore from 'expo-secure-store';
 //BEGIN FUNCTION DEFINITIONS
 
 //Used for storing key / value pairs which will be the JWTs in this case. string | null is Typescript's way of specifying multiple possible types
-
+//FIXME: May not be needed
 function useAsyncState<T>() {
 
 
@@ -21,16 +22,28 @@ function useAsyncState<T>() {
 export async function setStorageItemAsync(key: string, value: string | null) {
 
     //Configured for mobile only at the moment; use Platform.OS ==='web' and corresponding localStorage methods for web (which are .setItem() and .removeItem())
-    if (value === null) {
+    //Calling this function with value = null will be taken as a call to delete the specified item
+    if (Platform.OS === 'web') {
 
-        await SecureStore.deleteItemAsync(key);
+        if (value === null) {
+            localStorage.removeItem(key);
+        }
+        else {
+            localStorage.setItem(key, value);
+        }
     } else {
-        await SecureStore.setItemAsync(key, value);
+        if (value === null) {
+
+            await SecureStore.deleteItemAsync(key);
+        } else {
+            await SecureStore.setItemAsync(key, value);
+        }
     }
+
 
 }
 
-export function useStorageState(key: string){
+export function useStorageState(key: string) {
 
     const [storageState, setStorageState] = useState<string | null>();
 
@@ -39,14 +52,22 @@ export function useStorageState(key: string){
     //useEffect will still behave as expected when useStorageState is called inside AuthContext. It will also only run after AuthContext mount if the key argument changes.
     useEffect(() => {
 
-        SecureStore.getItemAsync(key).then((value: string | null)=>{
-            setStorageState(value);
-        })
+        if (Platform.OS === 'web') {
+            
+            setStorageState(localStorage.getItem(key));
+        }
+        else {
+
+
+            SecureStore.getItemAsync(key).then((value: string | null) => {
+                setStorageState(value);
+            })
+        }
 
     }, [key])
 
-    //Used for manually setting the storage's actual stored value; this is the actual "setter" function in terms of managing session state
-    function setStorageValue(value: string | null){
+    //Used for manually setting the storage's actual stored value; this is the actual setter function in terms of managing session state / state of the token
+    function setStorageValue(value: string | null) {
 
         //Synchronizes state and the actual stored value
         setStorageState(value);
