@@ -80,9 +80,17 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
             const responseJSON = await response.json();
 
-            //FIXME: Place token into storage and set storageState to that token
+            //TODO: Place token into storage and set storageState to that token
             console.log("ResponseJSON: ", responseJSON)
+
+            
             setUser(username);
+
+            
+            setToken(responseJSON.access_token);
+
+            //FIXME: Temporary console log
+            console.log(`Token state: ${token}`);
 
 
 
@@ -139,6 +147,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setUser(null);
 
         //TODO: Remove stored token locally; however, it will still be valid on the server side for up to ~30 days
+        //Deletes the token key / value pair when argument is null
+        setToken(null);
     }
 
     return (<>

@@ -75,7 +75,7 @@ export function useStorageState(key: string) {
     }
 
 
-    return [storageState, setStorageValue];
+    return [storageState, setStorageValue] as const;
 }
 //END FUNCTION DEFINITIONS
 
