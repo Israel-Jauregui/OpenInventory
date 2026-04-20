@@ -74,7 +74,7 @@ export function useStorageState(key: string) {
         setStorageItemAsync(key, value);
     }
 
-
+    //as const must be added since it prevents TypeScript from widening the type to string for example
     return [storageState, setStorageValue] as const;
 }
 //END FUNCTION DEFINITIONS
