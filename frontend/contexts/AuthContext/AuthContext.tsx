@@ -81,6 +81,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
 
     //MARK: Login function
+    //TODO: Consider adding parameters that accept state setters for form errors and clearing fields after unsuccessful login.
     async function handleLoginAttempt(username: string, password: string) {
         try {
             const options = {
@@ -163,7 +164,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
             const responseJSON = await response.json();
 
-
+            //TODO: Consider adding a handleLoginAttempt that uses the username and password that was passed to the server to automatically redirect upon signup, or just require user to navigate back to login and input username and password there.
             //FIXME: TEMPORARY LOG
             console.log(responseJSON);
 
@@ -185,7 +186,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setToken(null);
     }
 
-    //MARK: Fetch wrapper
+    /*MARK: Fetch wrapper TODO: Add function that wraps a fetch request that takes parameters such as endpoint and options. Should also accept the token, then automatically insert it into the Authorization header. 
+     Definition may need to be moved somewhere else depending on when token state updates.
+     Should also call setToken(null) upon 401 and maybe simultaneously upon token expiry since 401 may result when token is still being retrieved from storage.
+     */
     return (<>
 
         <AuthContext.Provider value={

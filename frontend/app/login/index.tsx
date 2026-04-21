@@ -9,6 +9,10 @@ export default function Login() {
 
   //BEGIN HOOKS INSTANTIATION
 
+  //Altered by handleLoginAttempt if username and/or password is incorrect
+  const [formError, setFormError] = useState(null);
+
+
   const [username, setUsername] = useState<string>("");
 
   //Utilizing useState for password via plaintext is acceptable since such data will not persist locally after being submitted to the API as long as the state is cleared after submission
@@ -44,6 +48,9 @@ export default function Login() {
       {//Field container TODO: Fine-tune KeyboardAvoidingView behavior and props so that everything including "Need an account?" is visible (though may not be necessary since typing infers having an account) above the keyboard while typing
         //FIXME: KeyboardAvoidingView currently hides text for both fields whilst typing
       }<KeyboardAvoidingView style={styles.fieldsContainer}>
+
+        {//Form error text
+        }
         {//Username input
         }
           <TextInput
