@@ -44,6 +44,7 @@ export function useSession() {
 //Used for wrapping the app; provides AuthContext which gives information about the current user and their JWT
 export function SessionProvider({ children }: PropsWithChildren) {
 
+    //TODO: Consider adding to an object called session that also contains token, and use that for auth instead
     const [user, setUser] = useState<string | null>(null);
 
     /*
@@ -184,6 +185,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setToken(null);
     }
 
+    //MARK: Fetch wrapper
     return (<>
 
         <AuthContext.Provider value={

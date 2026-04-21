@@ -1,6 +1,8 @@
 import { Tabs, useRouter } from 'expo-router';
 import { Button, Pressable, Text } from "react-native";
 
+import LogoutButton from '@/components/LogoutButton/LogoutButton';
+
 //TODO: Create and pass context for relevant inventory data
 
 import { CurrentInventoryContext } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
@@ -24,9 +26,7 @@ function TabLayout() {
                     headerStyle: { backgroundColor: '#f5f5f5' },
                     animation: 'shift',
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 20, color: '#007AFF' }}>Logout</Text>
-                        </Pressable>
+                        <LogoutButton />
                     ),
                 }}
             />
@@ -44,9 +44,7 @@ function TabLayout() {
                         </Pressable>
                     ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
-                        </Pressable>
+                        <LogoutButton />
                     ),
                 }}
             />
@@ -61,9 +59,7 @@ function TabLayout() {
                         </Pressable>
                     ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
-                        </Pressable>
+                        <LogoutButton />
                     ),
                 }}
             />
@@ -79,9 +75,7 @@ function TabLayout() {
                         </Pressable>
                     ),
                     headerRight: () => (
-                        <Pressable onPress={() => router.replace('/login')} style={{ marginRight: 15 }}>
-                            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
-                        </Pressable>
+                        <LogoutButton />
                     ),
                 }}
             />
