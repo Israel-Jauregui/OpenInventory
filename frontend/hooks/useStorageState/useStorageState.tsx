@@ -61,6 +61,8 @@ export function useStorageState(key: string) {
 
             SecureStore.getItemAsync(key).then((value: string | null) => {
                 setStorageState(value);
+
+                console.log(`Retrieved ${value} from storage`);
             })
 
 
@@ -69,6 +71,7 @@ export function useStorageState(key: string) {
 
 
     }, [key])
+
 
     //Used for manually setting the storage's actual stored value; this is the actual setter function in terms of managing session state / state of the token
     function setStorageValue(value: string | null) {

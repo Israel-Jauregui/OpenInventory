@@ -61,14 +61,18 @@ export function SessionProvider({ children }: PropsWithChildren) {
     //Reading from storage is async, so either FIXME: add isLoading, or use this branch to check token exp once token is retrieved
     //!!token makes it so that token is always represented as a boolean since token itself may be undefined
     if (!!token) {
+        console.log(`Token to be decoded: ${token}`);
         const decodedJWT = jwtDecode(token);
         console.log("Decoded token object: ", decodedJWT)
 
         //Convert seconds into milliseconds since that is the format of the Date object
         const exp = decodedJWT.exp as number * 1000;
         const isExpired = Date.now() >= exp;
+        
+        //JWTs cannot be revoked within here (must be from server via blacklist for example), so TODO: an addition of making a request to an authenticated endpoint and then setting token to null if the response is 401 may be needed here
         if (isExpired) {
 
+            setToken(null);
         }
     }
     //MARK: Context
