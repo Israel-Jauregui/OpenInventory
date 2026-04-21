@@ -20,7 +20,6 @@ function useAsyncState<T>() {
 
 //Function is async to maintain app responsiveness while storing data 
 export async function setStorageItemAsync(key: string, value: string | null) {
-
     //Configured for mobile only at the moment; use Platform.OS ==='web' and corresponding localStorage methods for web (which are .setItem() and .removeItem())
     //Calling this function with value = null will be taken as a call to delete the specified item
     if (Platform.OS === 'web') {
@@ -52,8 +51,9 @@ export function useStorageState(key: string) {
     //useEffect will still behave as expected when useStorageState is called inside AuthContext. It will also only run after AuthContext mount if the key argument changes.
     useEffect(() => {
 
+
         if (Platform.OS === 'web') {
-            
+
             setStorageState(localStorage.getItem(key));
         }
         else {
@@ -62,7 +62,11 @@ export function useStorageState(key: string) {
             SecureStore.getItemAsync(key).then((value: string | null) => {
                 setStorageState(value);
             })
+
+
         }
+
+
 
     }, [key])
 

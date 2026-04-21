@@ -4,6 +4,8 @@ import { useStorageState } from '@/hooks/useStorageState/useStorageState';
 import { useState } from 'react';
 import qs from 'qs';
 
+import { jwtDecode } from 'jwt-decode';
+
 //Specifies information about the current user's authentication state and provides 
 const AuthContext = createContext<{
 
@@ -42,9 +44,33 @@ export function useSession() {
 //Used for wrapping the app; provides AuthContext which gives information about the current user and their JWT
 export function SessionProvider({ children }: PropsWithChildren) {
 
-    const [user, setUser] = useState<string | null>(null)
+    const [user, setUser] = useState<string | null>(null);
+
+    /*
+    //FIXME: Add back if necessary. Pass setter function into useStorageState if added back and add its type and parameter to useStorageState and other functions that may need it
+    //Passed to provider's value to ensure that app rendering is consistent with async behavior of storage. Also passed to useStorageState so that it can alter this state.
+    const [isLoading, setIsLoading] = useState(false);
+
+    //FIXME: TEMPORARY
+    console.log(`isLoading: ${isLoading}`);
+    */
+
+    //useStorageState automatically returns the value of token key / value pair in storage, so checking for expiry upon startup can be done here
     const [token, setToken] = useStorageState("token");
 
+    //Reading from storage is async, so either FIXME: add isLoading, or use this branch to check token exp once token is retrieved
+    //!!token makes it so that token is always represented as a boolean since token itself may be undefined
+    if (!!token) {
+        const decodedJWT = jwtDecode(token);
+        console.log("Decoded token object: ", decodedJWT)
+
+        //Convert seconds into milliseconds since that is the format of the Date object
+        const exp = decodedJWT.exp as number * 1000;
+        const isExpired = Date.now() >= exp;
+        if (isExpired) {
+
+        }
+    }
     //MARK: Context
     //Grabs and returns provided AuthContext from SessionProvider. Required for components that want to use anything that is specified in AuthContext's value property
 
@@ -83,11 +109,14 @@ export function SessionProvider({ children }: PropsWithChildren) {
             //TODO: Place token into storage and set storageState to that token
             console.log("ResponseJSON: ", responseJSON)
 
-            
-            setUser(username);
 
             
+
+
             setToken(responseJSON.access_token);
+
+            //TODO: Change to accept token's property that specifies the username so that username comes from the server itself
+            setUser(username);
 
             //FIXME: Temporary console log
             console.log(`Token state: ${token}`);
@@ -95,7 +124,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
 
         } catch (error) {
-
+            console.log(error);
         }
     }
 
@@ -158,6 +187,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 handleLoginAttempt,
                 handleSignup,
                 handleLogout,
+                //The token state is passed so that context consumers can use it in relevant fetch requests that require it
+                token,
                 user
             }
         }>
