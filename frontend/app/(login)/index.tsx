@@ -83,7 +83,7 @@ export default function Login() {
         </TouchableOpacity>
 
         {//Secondary account creation link
-        }<TouchableOpacity onPress={() => { router.navigate("/create-account") }}>
+        }<TouchableOpacity onPress={() => { router.push("/create-account") }}>
           <Text style={styles.signupText}>Need an account?</Text>
         </TouchableOpacity>
 

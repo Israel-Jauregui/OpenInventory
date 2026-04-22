@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Pressable, Text } from "react-native";
-import { useNavigation } from "expo-router";
-import { useRouter } from "expo-router";
+import { Pressable, Text, StyleProp, ViewStyle, TextStyle, StyleSheet } from "react-native";
+import { useNavigation, useRouter } from "expo-router";
 
-export default function BackButton() {
+type Props = {
+    style?: StyleProp<ViewStyle>
+    textStyle?: StyleProp<TextStyle>
+};
+export default function BackButton({ style, textStyle }: Props) {
     //Used for obtaining information about the previous page so that BackButton is conditionally rendered
     const navigation = useNavigation();
     const [canGoBack, setCanGoBack] = useState<boolean>(navigation.canGoBack);
@@ -18,12 +21,9 @@ export default function BackButton() {
                     router.back();
                     setCanGoBack(navigation.canGoBack);
                 }}
-                style={{ marginLeft: 10 }}>
+                style={[styles.container, style]}>
                 <Text
-                    style={{
-                        fontSize: 18, marginLeft: 10, color: '#007AFF'
-
-                    }}>
+                    style={[styles.text, textStyle]}>
 
                     {"Back"}
                 </Text>
@@ -33,3 +33,17 @@ export default function BackButton() {
 
     </>);
 }
+
+const styles = StyleSheet.create(
+    {
+        container: {
+            marginLeft: 10,
+            alignItems: "center",
+            justifyContent: "center"
+        },
+        text: {
+            fontSize: 18,
+            marginLeft: 10,
+            color: '#007AFF'
+        },
+    });

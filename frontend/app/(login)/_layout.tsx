@@ -17,15 +17,12 @@ export default function LoginLayout() {
                 //TODO: Figure out how to get custom BackButton to render over the default headerBack component
                 options={{
                     headerTitle: '',
-                    headerBackButtonDisplayMode: "minimal",
-
+                    headerBackVisible: false,
                     headerLeft: () => {
-                        //FIXME: Not rendering even with normal text (remove text once done, then change headerBackVisible to false)
+                        return(
                         <>
-                            <Text>back</Text>
-
-                            <BackButton />
-                        </>
+                            <BackButton style={{marginLeft: 0, padding: 5}} textStyle={{marginLeft: 0}} />
+                        </>);
                     },
                     animation: 'slide_from_right',
                     animationDuration: 275,

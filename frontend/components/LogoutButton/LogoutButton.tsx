@@ -9,7 +9,7 @@ export default function functionName() {
     return (<>
 
         <Pressable onPress={handleLogout} style={{ marginRight: 15 }}>
-            <Text style={{ fontSize: 20, color: '#007AFF' }}>Logout</Text>
+            <Text style={{ fontSize: 18, color: '#007AFF' }}>Logout</Text>
         </Pressable>
     </>);
 }
