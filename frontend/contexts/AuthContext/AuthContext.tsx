@@ -212,12 +212,13 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
             if (response.ok) {
 
-                //Just the response is returned so that custom handling for each responseJSON or other format can be implemented. Requires .then to be utilized since all asyncs will return a Promise
+                //Just the response is returned so that custom handling for each responseJSON or other format can be implemented. Requires .then to be utilized since all asyncs will return a Promise requiring resolution
                 return response;
             }
             else if (response.status === 401) {
 
-                //TODO: Check for token expiry here, then either call handleLogout (sets token / user to null) for simplicity's sake or handle another way
+                //Logs out if expired
+                checkTokenExpiry(token);
 
             }
             else {
@@ -225,6 +226,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
             }
         } catch (error) {
             console.error(error);
+
+            //TODO: Consider adding boolean parameter to toggle alert(error) so that error is more immediately evident on mobile
         }
 
 
@@ -239,8 +242,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 handleSignup,
                 handleLogout,
                 fetchWithAuth,
-                //The token state is passed so that context consumers can use it in relevant fetch requests that require it
+                //The token state is passed so that routes can use it as their guard prop values to determine whether to allow user in
                 token,
+
+                //TODO: Determine purpose since token is used as guard prop value in routes; could be used as source of truth for username
                 user
             }
         }>

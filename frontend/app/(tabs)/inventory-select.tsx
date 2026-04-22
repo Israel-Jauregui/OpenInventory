@@ -24,7 +24,7 @@ export default function InventorySelect() {
 
   //Used in modal for creating a new inventory
   const [newInventoryName, setNewInventoryName] = useState("");
-  
+
   //uses a state to keep it loaded and updated
   const [inventories, setInventories] = useState<inventory[]>([]);
   const router = useRouter();
@@ -40,14 +40,14 @@ export default function InventorySelect() {
 
     fetchWithAuth("/inventory/getinventories", {
 
-        method: "GET",
-        headers: {
-          "Accept": "application/json",
-        },
-      }).then(async (response)=>{
-        const responseJSON = await response?.json();
-        setInventories(responseJSON);
-      });
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    }).then(async (response) => {
+      const responseJSON = await response?.json();
+      setInventories(responseJSON);
+    });
 
 
 
@@ -94,7 +94,7 @@ export default function InventorySelect() {
   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
 
 
- const handleSelect = (inventory: { invId: string; invName: string }) => {
+  const handleSelect = (inventory: { invId: string; invName: string }) => {
     //TODO: Store selected inventory in global state / context
     router.replace({
       pathname: "/(tabs)/home",
@@ -107,8 +107,28 @@ export default function InventorySelect() {
   //Creates a new inventory. If creation is successful, automatically routes user into that new inventory.
   async function createInventory(newInventoryName: string) {
 
-    if(newInventoryName){
+    if (newInventoryName) {
 
+
+      fetchWithAuth(`/inventory/create?invName=${newInventoryName}`, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+        },
+      }).then(async (response) => {
+        const responseJSON = await response?.json();
+
+        //Add the new inventory to state
+        setInventories(prev => [...prev, { invId: responseJSON.invId, invName: newInventoryName }]);
+
+        //Needed so that modal is removed before routing to new inventory
+        setModalVisible(false);
+
+        //Automatically routes the user to the new inventory upon successful creation
+        handleSelect({ invId: responseJSON.invId, invName: newInventoryName });
+
+      })
+      /*
       const options = {
           method: "POST",
           headers: {
@@ -145,6 +165,7 @@ export default function InventorySelect() {
       } catch (error) {
           alert(`TEMPORARY ALERT(add more polished handling): ${error}`);
       }
+          */
     }
 
   }
@@ -188,14 +209,15 @@ export default function InventorySelect() {
               placeholder="Enter inventory name..."
               placeholderTextColor={"#bfbfbf"}
 
-              onChangeText={(text) => { setNewInventoryName(text)
-               }}
+              onChangeText={(text) => {
+                setNewInventoryName(text)
+              }}
             ></TextInput>
             <Text style={styles.createInventoryAltText}>All you need right now is the inventory's name; you may add items or configurations later at any time.</Text>
 
             <TouchableOpacity
               style={styles.createInventoryButton}
-              onPress={()=>{newInventoryName !== "" ? createInventory(newInventoryName) : alert("TEMPORARY ALERT (incorporate more polished handling): Please enter an inventory name.")}}
+              onPress={() => { newInventoryName !== "" ? createInventory(newInventoryName) : alert("TEMPORARY ALERT (incorporate more polished handling): Please enter an inventory name.") }}
             >
               <Text style={styles.createInventoryButtonText}>Create</Text>
             </TouchableOpacity>
