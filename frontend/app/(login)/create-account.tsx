@@ -16,6 +16,8 @@ export default function CreateAccount() {
     //Utilizing useState for password via plaintext is acceptable since such data will not persist locally after being submitted to the API as long as the state is cleared after submission
     const [password, setPassword] = useState<string>("")
 
+    const [wantsNotif, setWantsNotif] = useState<boolean>(false);
+
     return (<>
         {//Main view
         }
@@ -55,6 +57,15 @@ export default function CreateAccount() {
 
 
                 />
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Text>Enable notifications</Text>
+                    {//Toggle for notifications
+                    }<Switch
+                        style={styles.notificationSwitch}
+                        value={wantsNotif}
+                        ios_backgroundColor={"grey"}
+                    />
+                </View>
 
                 {//Signup button
                 }<TouchableOpacity
@@ -135,15 +146,18 @@ const styles = StyleSheet.create({
         width: "90%",
     },
 
+    notificationSwitch: {
+        marginLeft: 18,
+    },
     signupButtonWrapper: {
         margin: 5,
         marginTop: 25,
         padding: 10,
-        
+
         borderRadius: 30,
 
         backgroundColor: "#36a2fa",
-        
+
         width: "90%"
     },
 
