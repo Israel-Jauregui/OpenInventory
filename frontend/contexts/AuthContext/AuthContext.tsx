@@ -6,13 +6,14 @@ import qs from 'qs';
 
 import { jwtDecode } from 'jwt-decode';
 
-//Specifies information about the current user's authentication state and provides 
+//Specifies information about the current user's authentication state and provides functions for handling auth-related events
 const AuthContext = createContext<{
 
     //Type definitions for default object in context
     handleLoginAttempt: (username: string, password: string) => Promise<void>,
     handleSignup: (username: string, password: string, wants_notif: boolean) => Promise<void>,
     handleLogout: () => Promise<void>,
+    fetchWithAuth: (endpoint: RequestInfo, options: RequestInit) => Promise<Response | undefined>,
     token?: string | ((value: string | null) => void) | null,
     user?: string | null,
 
@@ -22,6 +23,7 @@ const AuthContext = createContext<{
     handleLoginAttempt: () => Promise.resolve(undefined),
     handleSignup: () => Promise.resolve(undefined),
     handleLogout: () => Promise.resolve(undefined),
+    fetchWithAuth: () => Promise.resolve(undefined),
     token: null,
     user: null
 
@@ -59,27 +61,34 @@ export function SessionProvider({ children }: PropsWithChildren) {
     //useStorageState automatically returns the value of token key / value pair in storage, so checking for expiry upon startup can be done here
     const [token, setToken] = useStorageState("token");
 
-    //Reading from storage is async, so either FIXME: add isLoading, or use this branch to check token exp once token is retrieved
-    //!!token makes it so that token is always represented as a boolean since token itself may be undefined
-    if (!!token) {
-        console.log(`Token to be decoded: ${token}`);
-        const decodedJWT = jwtDecode(token);
-        console.log("Decoded token object: ", decodedJWT)
+    //Initial token expiry check (fetch wrapper will check in response to receiving a 401)
+    checkTokenExpiry(token);
 
-        //Convert seconds into milliseconds since that is the format of the Date object
-        const exp = decodedJWT.exp as number * 1000;
-        const isExpired = Date.now() >= exp;
-        
-        //JWTs cannot be revoked within here (must be from server via blacklist for example), so TODO: an addition of making a request to an authenticated endpoint and then setting token to null if the response is 401 may be needed here
-        if (isExpired) {
-
-            setToken(null);
-        }
-    }
     //MARK: Context
     //Grabs and returns provided AuthContext from SessionProvider. Required for components that want to use anything that is specified in AuthContext's value property
 
+    //MARK: Check token expiry
 
+    function checkTokenExpiry(token: string | null | undefined): void {
+        //Reading from storage is async, so either FIXME: add isLoading, or use this branch to check token exp once token is retrieved
+        //!!token makes it so that token is always represented as a boolean since token itself may be undefined
+        if (!!token) {
+            console.log(`Token to be decoded: ${token}`);
+            const decodedJWT = jwtDecode(token);
+            console.log("Decoded token object: ", decodedJWT)
+
+            //Convert seconds into milliseconds since that is the format of the Date object
+            const exp = decodedJWT.exp as number * 1000;
+            const isExpired = Date.now() >= exp;
+
+            //JWTs cannot be revoked within here (must be from server via blacklist for example), so TODO: an addition of making a request to an authenticated endpoint and then setting token to null if the response is 401 may be needed here
+            
+            if(isExpired){
+                console.log(`Token ${token} has expired. Logging user out.`);
+                handleLogout();
+            }
+        }
+    }
     //MARK: Login function
     //TODO: Consider adding parameters that accept state setters for form errors and clearing fields after unsuccessful login.
     async function handleLoginAttempt(username: string, password: string) {
@@ -116,7 +125,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
             console.log("ResponseJSON: ", responseJSON)
 
 
-            
+
 
 
             setToken(responseJSON.access_token);
@@ -186,10 +195,42 @@ export function SessionProvider({ children }: PropsWithChildren) {
         setToken(null);
     }
 
-    /*MARK: Fetch wrapper TODO: Add function that wraps a fetch request that takes parameters such as endpoint and options. Should also accept the token, then automatically insert it into the Authorization header. 
+    /*MARK: Fetch wrapper
+     TODO: Add function that wraps a fetch request that takes parameters such as endpoint and options. Should also accept the token, then automatically insert it into the Authorization header. 
      Definition may need to be moved somewhere else depending on when token state updates.
      Should also call setToken(null) upon 401 and maybe simultaneously upon token expiry since 401 may result when token is still being retrieved from storage.
      */
+    async function fetchWithAuth(endpoint: RequestInfo, options: RequestInit): Promise<Response | undefined> {
+
+        //Adds the Authorization header with the current token to every request. headers property becomes undefined if original passed options did not have it defined originally, which prevents an error from being thrown.
+        const optionsWithAuthorization = { ...options, headers: { ...options?.headers, "Authorization": `Bearer ${token}` } };
+
+
+
+        try {
+            const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}${endpoint}`, optionsWithAuthorization);
+
+            if (response.ok) {
+
+                //Just the response is returned so that custom handling for each responseJSON or other format can be implemented. Requires .then to be utilized since all asyncs will return a Promise
+                return response;
+            }
+            else if (response.status === 401) {
+
+                //TODO: Check for token expiry here, then either call handleLogout (sets token / user to null) for simplicity's sake or handle another way
+
+            }
+            else {
+                throw new Error(`Request at endpoint ${endpoint} failed. Status code: ${response.status}`)
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+
+    }
+
+
     return (<>
 
         <AuthContext.Provider value={
@@ -197,6 +238,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 handleLoginAttempt,
                 handleSignup,
                 handleLogout,
+                fetchWithAuth,
                 //The token state is passed so that context consumers can use it in relevant fetch requests that require it
                 token,
                 user

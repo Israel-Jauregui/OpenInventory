@@ -3,15 +3,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from "expo-router";
 
 
-
-
+import { useSession } from "@/contexts/AuthContext/AuthContext";
 //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
 import { useContext } from 'react';
 import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
 
 const { width } = Dimensions.get("window");
 
-//TODO: Replace with real inventory data from backend
+
 
 //Type definition for a given inventory
 type inventory = { invId: string, invName: string };
@@ -30,12 +29,30 @@ export default function InventorySelect() {
   const [inventories, setInventories] = useState<inventory[]>([]);
   const router = useRouter();
 
+  //TODO: FINISH INCORPORATING
+  const { fetchWithAuth } = useSession();
+
   //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
   const token = useContext(TemporaryTokenContext);
 
   //MARK: Initial fetch of inventories
   useEffect(() => {
 
+    fetchWithAuth("/inventory/getinventories", {
+
+        method: "GET",
+        headers: {
+          "Accept": "application/json",
+        },
+      }).then(async (response)=>{
+        const responseJSON = await response?.json();
+        setInventories(responseJSON);
+      });
+
+
+
+
+    /*
     //Retrieves inventories for selection
     async function initialGetInventories() {
       //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
@@ -67,6 +84,7 @@ export default function InventorySelect() {
     }
 
     initialGetInventories();
+    */
 
 
   }, []);
