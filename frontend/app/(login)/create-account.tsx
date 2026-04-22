@@ -1,13 +1,163 @@
-import { useRouter, useNavigation } from 'expo-router'; 
+import { useRouter, useNavigation } from 'expo-router';
+import { useState } from 'react';
+import { View, KeyboardAvoidingView, TouchableOpacity, Text, TextInput, Switch, StyleSheet } from 'react-native'
+
+import { useSession } from '@/contexts/AuthContext/AuthContext';
 
 export default function CreateAccount() {
+
+    const { fetchWithAuth } = useSession();
 
     const navigation = useRouter();
     const router = useRouter();
 
+    const [username, setUsername] = useState<string>("");
 
-    return(<>
-    
+    //Utilizing useState for password via plaintext is acceptable since such data will not persist locally after being submitted to the API as long as the state is cleared after submission
+    const [password, setPassword] = useState<string>("")
+
+    return (<>
+        {//Main view
+        }
+        <View
+            style={styles.mainContainer}
+        >
+            {//FIXME: Optional Main text header here
+            }<Text style={styles.mainHeader}>Create account</Text>
+
+
+
+            {//Field container TODO: Fine-tune KeyboardAvoidingView behavior and props so that everything including "Need an account?" is visible (though may not be necessary since typing infers having an account) above the keyboard while typing
+            }
+            <KeyboardAvoidingView style={styles.fieldsContainer}>
+
+                {//Form error text
+                }
+                {//Username input
+                }
+                <TextInput
+                    style={[styles.textInputField, { marginTop: 40 }, { color: "black" }]}
+                    placeholder="Username"
+                    placeholderTextColor="rgba(100, 100, 100, 0.41)"
+                    value={username}
+                    onChangeText={(text) => { setUsername(text); }}
+
+                />
+                {//Password input
+                }
+                <TextInput
+                    style={[styles.textInputField]}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    placeholderTextColor="rgba(100, 100, 100, 0.41)"
+
+                    onChangeText={(text) => { setPassword(text); }}
+
+
+                />
+
+                {//Signup button
+                }<TouchableOpacity
+                    style={styles.signupButtonWrapper}
+                    onPress={() => { }}>
+                    <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>Register</Text>
+                </TouchableOpacity>
+
+
+                {//Alternative back button to login
+                }<TouchableOpacity onPress={() => { router.back() }}>
+                    <Text style={styles.loginNavigatorText}>Already have an account?</Text>
+                </TouchableOpacity>
+
+            </KeyboardAvoidingView>
+        </View>
 
     </>);
 }
+
+//MARK: Styling
+const styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+
+
+
+        experimental_backgroundImage: "linear-gradient(0340deg, #a2d5ff 0%, #b2dbff 20%, #68bbff 45%, #3da6fc 60%, #a0d4ff 100%)",
+    },
+
+    mainHeader: {
+
+        color: "white",
+
+        fontSize: 30,
+
+        textAlign: "center",
+
+    },
+
+    fieldsContainer: {
+
+        justifyContent: "center",
+        alignItems: "center",
+
+        marginTop: 10,
+
+        padding: 20,
+
+        borderRadius: 35,
+
+        backgroundColor: "#ffffff",
+
+
+        height: "50%",
+        width: "80%"
+
+    },
+
+    textInputField: {
+        margin: 7,
+        padding: 20,
+
+        borderRadius: 30,
+
+        //Changing color property will alter the input text's color
+        color: "black",
+
+        backgroundColor: "#e4e4e4",
+
+        fontSize: 15,
+        textAlign: "left",
+
+
+        height: 60,
+        width: "90%",
+    },
+
+    signupButtonWrapper: {
+        margin: 5,
+        marginTop: 25,
+        padding: 10,
+        
+        borderRadius: 30,
+
+        backgroundColor: "#36a2fa",
+        
+        width: "90%"
+    },
+
+    loginNavigatorText: {
+
+        margin: 20,
+        color: "#292929",
+
+        fontSize: 16,
+        fontWeight: "600",
+        textDecorationLine: "underline"
+
+    },
+
+
+
+});
