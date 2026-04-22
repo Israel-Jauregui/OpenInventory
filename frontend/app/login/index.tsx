@@ -82,12 +82,6 @@ export default function Login() {
           <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.loginButtonWrapper, { backgroundColor: "pink" }]}
-          onPress={() => router.replace("/(tabs)/inventory-select")}>
-          <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>{"\u{1F5E3}"}TEMPORARY BYPASS</Text>
-        </TouchableOpacity>
-
         {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
         }
         <Link href="/" asChild>
