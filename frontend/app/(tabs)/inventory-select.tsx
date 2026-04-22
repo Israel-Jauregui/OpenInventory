@@ -4,9 +4,8 @@ import { useRouter } from "expo-router";
 
 
 import { useSession } from "@/contexts/AuthContext/AuthContext";
-//FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { useContext } from 'react';
-import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
+
+
 
 const { width } = Dimensions.get("window");
 
@@ -32,8 +31,7 @@ export default function InventorySelect() {
   //TODO: FINISH INCORPORATING
   const { fetchWithAuth } = useSession();
 
-  //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-  const token = useContext(TemporaryTokenContext);
+
 
   //MARK: Initial fetch of inventories
   useEffect(() => {
