@@ -28,7 +28,6 @@ function RootNavigator() {
 
       <Stack.Protected guard={!token}>
         <Stack.Screen name="login" options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 275 }} />
-        <Stack.Screen name="create-account" options={{ headerShown: false, animation: 'slide_from_left', animationDuration: 275 }} />
       </Stack.Protected >
 
     </ Stack>
