@@ -1,6 +1,6 @@
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 
 export default function LoginLayout(){
 
-    return <Stack />;
+    return <Slot />;
 }
