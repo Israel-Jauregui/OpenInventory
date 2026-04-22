@@ -3,8 +3,8 @@ import { SetStateAction, useState, useContext } from 'react';
 
 import { useNavigation } from 'expo-router';
 
-//FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
+import { useSession } from '@/contexts/AuthContext/AuthContext';
+
 
 type ManageUsersModalProps = {
     visible: boolean,
@@ -18,8 +18,8 @@ export default function ManageUsersModal({ visible, setManageUsersVisible, inven
     //BEGIN HOOK INSTANTIATIONS
     const navigation = useNavigation();
 
-    //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-    const token = useContext(TemporaryTokenContext);
+    const { fetchWithAuth } = useSession();
+
 
     const [users, setUsers] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -32,6 +32,17 @@ export default function ManageUsersModal({ visible, setManageUsersVisible, inven
 
     async function fetchUsers() {
         setLoading(true);
+        fetchWithAuth("inventory/getusers", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+            }
+        }).then(async (response) => {
+            const responseJSON = await response?.json();
+            setUsers(responseJSON);
+        }
+        ).finally(() => { setLoading(false) });
+        /*
         try {
             const options = {
                 method: "GET",
@@ -50,6 +61,7 @@ export default function ManageUsersModal({ visible, setManageUsersVisible, inven
         } finally {
             setLoading(false);
         }
+        */
     }
 
     //END FUNCTION DECLARATIONS (For functions that require component scope)

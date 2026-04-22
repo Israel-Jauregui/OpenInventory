@@ -3,10 +3,9 @@ import { SetStateAction } from 'react';
 
 import { useNavigation } from 'expo-router';
 
-import { useContext } from 'react';
+import { useSession } from '@/contexts/AuthContext/AuthContext';
 
-//FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-import { TemporaryTokenContext } from '@/contexts/TemporaryTokenContext/TemporaryTokenContext';
+
 
 type CreateItemModalProps = {
     visible: boolean,
@@ -22,8 +21,9 @@ export default function CreateItemModal({ visible, setCreateItemVisible }: Creat
     //BEGIN HOOK INSTANTIATIONS
     const navigation = useNavigation();
 
-    //FIXME: TEMPORARY UNTIL AUTHCONTEXT AND EXPO-SECURE-STORE ARE USED
-    const token = useContext(TemporaryTokenContext);
+    const { fetchWithAuth } = useSession(); 
+
+
 
     //END HOOK INSTANTIATIONS
 
@@ -33,6 +33,18 @@ export default function CreateItemModal({ visible, setCreateItemVisible }: Creat
     
     async function handleSubmit() {
 
+
+        //TODO: Replace with appropriate fetch to create an item; current is a placeholder
+        fetchWithAuth("/inventory/getinventories", {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+            }
+        }).then(async (response)=>{
+            const responseJSON = await response?.json();
+            console.log(responseJSON);
+        });
+        /*
         const options = {
             method: "GET",
             headers: {
@@ -44,6 +56,7 @@ export default function CreateItemModal({ visible, setCreateItemVisible }: Creat
         const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/inventory/getinventories`, options);
         const responseJSON = await response.json();
         console.log(responseJSON);
+        */
     }
 
     //END FUNCTION DECLARATIONS (For functions that require component scope)
