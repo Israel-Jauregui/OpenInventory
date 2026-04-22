@@ -1,6 +1,7 @@
 import { Tabs, useRouter } from 'expo-router';
-import { Button, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 
+import BackButton from '@/components/BackButton/BackButton';
 import LogoutButton from '@/components/LogoutButton/LogoutButton';
 
 //TODO: Create and pass context for relevant inventory data
@@ -39,9 +40,7 @@ function TabLayout() {
                     headerTitle: 'Home',
                     title: "Home",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.replace('/(tabs)/inventory-select')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
-                        </Pressable>
+                        <BackButton />
                     ),
                     headerRight: () => (
                         <LogoutButton />
@@ -54,9 +53,7 @@ function TabLayout() {
                     headerTitle: 'Items',
                     title: "Items",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.push('/(tabs)/home')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
-                        </Pressable>
+                        <BackButton />
                     ),
                     headerRight: () => (
                         <LogoutButton />
@@ -70,9 +67,7 @@ function TabLayout() {
                     headerTitle: 'Alerts',
                     title: "Alerts",
                     headerLeft: () => (
-                        <Pressable onPress={() => router.push('/(tabs)/home')} style={{ marginLeft: 10 }}>
-                            <Text style={{ fontSize: 18, marginLeft: 10, color: '#007AFF' }}>{"Back"}</Text>
-                        </Pressable>
+                        <BackButton />
                     ),
                     headerRight: () => (
                         <LogoutButton />

@@ -1,8 +1,8 @@
-import { View, Button, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
+import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useRouter, Link } from 'expo-router';
 import { useState } from 'react';
- 
-import { useSession } from "@/contexts/AuthContext/AuthContext"; 
+
+import { useSession } from "@/contexts/AuthContext/AuthContext";
 
 //TODO: Import appropriate package(s) for handling login authorization
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
   //END HOOKS INSTANTIATION
 
   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
- 
+
   //MARK: handleLoginAttempt FIXME: Moved to AuthContext
 
   //END FUNCTION DECLARATIONS (For functions that require component scope)
@@ -53,15 +53,15 @@ export default function Login() {
         }
         {//Username input
         }
-          <TextInput
-            style={[styles.textInputField, { marginTop: 40 }, { color: "black" }]}
-            placeholder="Username"
-            placeholderTextColor="rgba(100, 100, 100, 0.41)"
-            value={username}
-            onChangeText={(text) => { setUsername(text); }}
+        <TextInput
+          style={[styles.textInputField, { marginTop: 40 }, { color: "black" }]}
+          placeholder="Username"
+          placeholderTextColor="rgba(100, 100, 100, 0.41)"
+          value={username}
+          onChangeText={(text) => { setUsername(text); }}
 
-          />        
-          {//Password input
+        />
+        {//Password input
           <TextInput
             style={[styles.textInputField]}
             secureTextEntry={true}
@@ -70,7 +70,7 @@ export default function Login() {
 
             onChangeText={(text) => { setPassword(text); }}
 
-          
+
           />
 
         }
@@ -78,15 +78,14 @@ export default function Login() {
         {//Login button
         }<TouchableOpacity
           style={styles.loginButtonWrapper}
-          onPress={()=>{handleLoginAttempt(username, password)}}>
+          onPress={() => { handleLoginAttempt(username, password) }}>
           <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
         </TouchableOpacity>
 
-        {//Secondary account creation link FIXME: TEMPORARILY RETURNS TO LOGIN PAGE
-        }
-        <Link href="/" asChild>
+        {//Secondary account creation link
+        }<TouchableOpacity onPress={() => { router.navigate("/create-account") }}>
           <Text style={styles.signupText}>Need an account?</Text>
-        </Link>
+        </TouchableOpacity>
 
       </KeyboardAvoidingView>
     </View>
