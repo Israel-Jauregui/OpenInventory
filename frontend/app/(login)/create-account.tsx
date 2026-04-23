@@ -4,6 +4,8 @@ import { View, KeyboardAvoidingView, TouchableOpacity, Text, TextInput, Switch, 
 
 import { useSession } from '@/contexts/AuthContext/AuthContext';
 
+import DataField from '@/components/DataField/DataField'; 
+
 export default function CreateAccount() {
 
     const { fetchWithAuth } = useSession();
@@ -57,6 +59,8 @@ export default function CreateAccount() {
 
 
                 />
+
+
                 <View style={{flexDirection: "row", alignItems: "center"}}>
                     <Text>Enable notifications</Text>
                     {//Toggle for notifications
@@ -131,6 +135,9 @@ const styles = StyleSheet.create({
         margin: 7,
         padding: 20,
 
+
+        borderColor: "#36a2fa",
+        borderWidth: 1,
         borderRadius: 30,
 
         //Changing color property will alter the input text's color
