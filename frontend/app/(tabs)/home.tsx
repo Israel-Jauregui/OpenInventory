@@ -20,6 +20,9 @@ import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
 //END Custom component imports
 
+import { useCurrentInventoryContext } from "@/contexts/InventoryNamesContext/CurrentInventoryContext";
+
+
 //Utilized for home button onPress events and barcode scanner button
 import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 
@@ -39,8 +42,11 @@ export default function Home() {
 
     const navigation = useNavigation();
 
+    const { currentInventory } = useCurrentInventoryContext();
     //END HOOK INSTANTIATIONS
-    const { inventoryName, inventoryId } = useLocalSearchParams<{ inventoryName?: string, inventoryId?: string }>();
+
+    //FIXME: Can be added back if needed
+    //const { inventoryName, inventoryId } = useLocalSearchParams<{ inventoryName?: string, inventoryId?: string }>();
 
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
@@ -54,7 +60,7 @@ export default function Home() {
             {/*END MODALS*/
             }
             {/*Inventory type dropdown */
-            }<InventoryHeader inventoryName={inventoryName === undefined ? "" : inventoryName} />
+            }<InventoryHeader inventoryName={currentInventory.invName} />
 
             {//Contains both the search bar and the barcode scanner button
             }<ItemsSearchBar />

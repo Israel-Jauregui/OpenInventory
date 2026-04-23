@@ -217,7 +217,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
     async function fetchWithAuth(endpoint: RequestInfo, options: RequestInit): Promise<Response | undefined> {
 
         //Adds the Authorization header with the current token to every request. headers property becomes undefined if original passed options did not have it defined originally, which prevents an error from being thrown.
-        const optionsWithAuthorization = { ...options, headers: { ...options?.headers, "Authorization": `Bearer ${token}` } };
+        const optionsWithAuthorization = { ...options, headers: { ...options.headers, "Authorization": `Bearer ${token}` } };
 
 
 

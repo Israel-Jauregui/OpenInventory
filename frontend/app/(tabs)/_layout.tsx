@@ -6,79 +6,83 @@ import LogoutButton from '@/components/LogoutButton/LogoutButton';
 
 //TODO: Create and pass context for relevant inventory data
 
-import { CurrentInventoryContext } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
+import { CurrentInventoryProvider } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
 
-import { useContext } from 'react'; 
 
 function TabLayout() {
     const router = useRouter();
 
 
     return (
-
-        <Tabs backBehavior="history">
-            <Tabs.Screen
-                name="inventory-select"
-                options={{
-                    headerTitle: '',
-                    tabBarStyle: { display: 'none' },
-                    tabBarItemStyle: { display: 'none' },
-                    headerShadowVisible: false,
-                    headerStyle: { backgroundColor: '#f5f5f5' },
-                    animation: 'shift',
-                    headerRight: () => (
-                        <LogoutButton />
-                    ),
-                }}
-            />
-
-            
-            
-            <Tabs.Screen
-                name="home"
-                options={{
-                    headerTitle: 'Home',
-                    title: "Home",
-                    headerLeft: () => (
-                        <BackButton />
-                    ),
-                    headerRight: () => (
-                        <LogoutButton />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="items"
-                options={{
-                    headerTitle: 'Items',
-                    title: "Items",
-                    headerLeft: () => (
-                        <BackButton />
-                    ),
-                    headerRight: () => (
-                        <LogoutButton />
-                    ),
-                }}
-            />
-
-            <Tabs.Screen
-                name="alerts"
-                options={{
-                    headerTitle: 'Alerts',
-                    title: "Alerts",
-                    headerLeft: () => (
-                        <BackButton />
-                    ),
-                    headerRight: () => (
-                        <LogoutButton />
-                    ),
-                }}
-            />
-          
+        <>
+            {//CurrentInventoryProvider wraps all tabs for now just in case (for example) alerts requires current inventory data to make a request
+            }
+            <CurrentInventoryProvider>
+                <Tabs backBehavior="history">
+                    <Tabs.Screen
+                        name="inventory-select"
+                        options={{
+                            headerTitle: '',
+                            tabBarStyle: { display: 'none' },
+                            tabBarItemStyle: { display: 'none' },
+                            headerShadowVisible: false,
+                            headerStyle: { backgroundColor: '#f5f5f5' },
+                            animation: 'shift',
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
 
 
 
-        </Tabs>
+                    <Tabs.Screen
+                        name="home"
+                        options={{
+                            headerTitle: 'Home',
+                            title: "Home",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
+                    <Tabs.Screen
+                        name="items"
+                        options={{
+                            headerTitle: 'Items',
+                            title: "Items",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
+
+                    <Tabs.Screen
+                        name="alerts"
+                        options={{
+                            headerTitle: 'Alerts',
+                            title: "Alerts",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
+
+
+
+
+                </Tabs>
+            </CurrentInventoryProvider>
+        </>
     );
 
 }

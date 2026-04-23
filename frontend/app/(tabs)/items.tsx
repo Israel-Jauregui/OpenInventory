@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 
 import { useEffect, useContext } from 'react'; 
 
-
+import { useCurrentInventoryContext } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
 
 //BEGIN Custom component imports
 import ItemEntry from '@/components/ItemEntry/ItemEntry';
@@ -15,13 +15,12 @@ import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
 //TODO: Incorporate fetch that displays all items
 export default function ItemsView() {
 
-
+    const { currentInventory } = useCurrentInventoryContext();
 
     
-
     //TODO: Convert ScrollView into a SectionList that displays items under each category. 
     return (<>
-        <InventoryHeader inventoryName="Needs inventoryName context" />
+        <InventoryHeader inventoryName={currentInventory.invName} />
         <ItemsSearchBar />
 
 

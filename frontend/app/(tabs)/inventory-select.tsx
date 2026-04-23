@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from "expo-router";
 
 
+//MARK: Imports related to context
 import { useSession } from "@/contexts/AuthContext/AuthContext";
-
+import { useCurrentInventoryContext } from "@/contexts/InventoryNamesContext/CurrentInventoryContext"; 
 
 
 const { width } = Dimensions.get("window");
@@ -12,7 +13,7 @@ const { width } = Dimensions.get("window");
 
 
 //Type definition for a given inventory
-type inventory = { invId: string, invName: string };
+export type inventory = { invId: string, invName: string };
 
 
 export default function InventorySelect() {
@@ -28,12 +29,15 @@ export default function InventorySelect() {
   const [inventories, setInventories] = useState<inventory[]>([]);
   const router = useRouter();
 
-  //TODO: FINISH INCORPORATING
+  
   const { fetchWithAuth } = useSession();
+  const { setCurrentInventory } = useCurrentInventoryContext();
+
 
 
 
   //MARK: Initial fetch of inventories
+  //TODO: Add pull to refresh functionality
   useEffect(() => {
 
     fetchWithAuth("/inventory/getinventories", {
@@ -93,11 +97,18 @@ export default function InventorySelect() {
 
 
   const handleSelect = (inventory: { invId: string; invName: string }) => {
-    //TODO: Store selected inventory in global state / context
+
+
+    //Store selected inventory in global state / context (global for authenticated screens)
+    setCurrentInventory(inventory);
+
+    
     router.replace({
       pathname: "/(tabs)/home",
-      params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
+      //FIXME: Add back params if needed; context accomplishes the same task though this can still be considered
+      //params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
     });
+    
   };
 
   //END FUNCTION DECLARATIONS (For functions that require component scope)
