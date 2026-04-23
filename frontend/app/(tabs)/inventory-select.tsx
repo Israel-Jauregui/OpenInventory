@@ -40,6 +40,9 @@ export default function InventorySelect() {
   //TODO: Add pull to refresh functionality
   useEffect(() => {
 
+    //Used for resetting currently selected inventory upon navigation from other pages
+    setCurrentInventory({invId: "", invName: ""});
+
     fetchWithAuth("/inventory/getinventories", {
 
       method: "GET",
@@ -126,7 +129,8 @@ export default function InventorySelect() {
         },
       }).then(async (response) => {
         const responseJSON = await response?.json();
-
+        //FIXME: Temporary responseJSON log
+        console.log(responseJSON);
         //Add the new inventory to state
         setInventories(prev => [...prev, { invId: responseJSON.invId, invName: newInventoryName }]);
 
@@ -134,7 +138,7 @@ export default function InventorySelect() {
         setModalVisible(false);
 
         //Automatically routes the user to the new inventory upon successful creation
-        handleSelect({ invId: responseJSON.invId, invName: newInventoryName });
+        handleSelect({ invId: responseJSON.inventory_id, invName: newInventoryName });
 
       })
       /*
