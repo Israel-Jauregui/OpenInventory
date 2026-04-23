@@ -1,6 +1,7 @@
 //AuthContext.tsx: Context provider that indicates whether the user is authenticated and performs signIn/Out operations. Very heavily influenced by examples on https://docs.expo.dev/router/advanced/authentication/
 import { use, createContext, PropsWithChildren } from 'react';
 import { useStorageState } from '@/hooks/useStorageState/useStorageState';
+import { useRouter } from 'expo-router'
 import { useState } from 'react';
 import qs from 'qs';
 
@@ -45,6 +46,9 @@ export function useSession() {
 
 //Used for wrapping the app; provides AuthContext which gives information about the current user and their JWT
 export function SessionProvider({ children }: PropsWithChildren) {
+
+    //Used for navigating upon successful auth functions such as account creation during handleSignup
+    const router = useRouter();
 
     //TODO: Consider adding to an object called session that also contains token, and use that for auth instead
     const [user, setUser] = useState<string | null>(null);
@@ -169,6 +173,10 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
             if (!response.ok) {
                 throw new Error(`Failed to create account. Status code: ${response.status}`);
+            }
+            else if(response.status === 201){
+                //Puts user back to login screen TODO: Optionally automatically login via handleLoginAttempt so that token is still set properly
+                router.back();
             }
 
             const responseJSON = await response.json();
