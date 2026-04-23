@@ -224,7 +224,30 @@ export default function InventorySelect() {
 
       </Modal >
 
-      <Text style={styles.heading}>Select an Inventory</Text>
+      <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+
+        {//Select header
+        }<Text style={[styles.heading, {marginLeft: "20%"}]}>Select an Inventory</Text>
+
+        {//Additional create inventory button
+        }<TouchableOpacity
+          style={{
+            margin: 10,
+            marginLeft: 15,
+            height: 50,
+            width: 50,
+            backgroundColor: "#36a2fa",
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 50,
+            borderColor: "#a1d2fb",
+            borderWidth: 3,
+          }}
+          onPress={() => { setModalVisible(true); }
+          }>
+          <Image style={{ height: 35, width: 35 }} source={require("../../assets/images/plusIcon.png")} />
+        </TouchableOpacity>
+      </View>
 
 
       <FlatList
@@ -274,7 +297,6 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 26,
     fontWeight: "bold",
-    marginBottom: 24,
     color: "#333",
   },
   list: {

@@ -4,8 +4,19 @@
 //MARK: Imports
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
+
+//TODO: Add image prop and work out type.
+//FIXME: Props are all optional for now since current instances of component are placeholders
+type Props = {
+    itemName?: string,
+    quantity?: number,
+    category?: string,
+    brand?: string,
+    price?: string,
+    upc?: string,
+}
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
-export default function ItemEntry() {
+export default function ItemEntry({itemName, quantity, category, brand, price, upc}: Props) {
 
     //MARK: Returned component
     return (<>
@@ -26,8 +37,8 @@ export default function ItemEntry() {
                 
             */
             }<View style={styles.labelsContainer}>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>Item_Name</Text>
-                <Text>Quantity: { }</Text>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>{itemName}</Text>
+                <Text>Quantity: {}</Text>
                 <Text>Category: { }</Text>
                 <Text>Brand: { }</Text>
                 <Text>Price: { }</Text>
