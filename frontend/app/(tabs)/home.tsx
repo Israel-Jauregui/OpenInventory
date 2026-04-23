@@ -60,7 +60,7 @@ export default function Home() {
             {/*END MODALS*/
             }
             {/*Inventory type dropdown */
-            }<InventoryHeader inventoryName={currentInventory.invName} />
+            }<InventoryHeader inventoryName={`${currentInventory.invName} (TEMPORARY) ID: ${currentInventory.invId}`} />
 
             {//Contains both the search bar and the barcode scanner button
             }<ItemsSearchBar />
