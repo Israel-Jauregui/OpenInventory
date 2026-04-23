@@ -4,13 +4,19 @@ import { useState } from 'react';
 
 import { useSession } from "@/contexts/AuthContext/AuthContext";
 
+import DataField from "@/components/DataField/DataField";
+
 //TODO: Import appropriate package(s) for handling login authorization
 export default function Login() {
 
   //BEGIN HOOKS INSTANTIATION
 
-  //Altered by handleLoginAttempt if username and/or password is incorrect
-  const [formError, setFormError] = useState(null);
+  //Utilizes an object so that one state setter can update error states that are similar in appearance
+  //Isn't technically needed for username / password (since it's just two fields), though this format can definitely benefit holding data for more complex forms
+  const [formError, setFormError] = useState<{ usernameError: string, passwordError: string }>({
+    usernameError: "",
+    passwordError: "",
+  });
 
 
   const [username, setUsername] = useState<string>("");
@@ -49,41 +55,78 @@ export default function Login() {
         //FIXME: KeyboardAvoidingView currently hides text for both fields whilst typing
       }<KeyboardAvoidingView style={styles.fieldsContainer}>
 
-        {//Form error text
-        }
         {//Username input
         }
-        <TextInput
-          style={[styles.textInputField, { marginTop: 40 }, { color: "black" }]}
+        <DataField
+          style={{ width: "90%" }}
           placeholder="Username"
           placeholderTextColor="rgba(100, 100, 100, 0.41)"
-          value={username}
           onChangeText={(text) => { setUsername(text); }}
-
         />
+        {//Form error state for username that is conditionally rendered
+        }{formError.usernameError ? <Text style={{ margin: 4, marginLeft: "23%", color: "red", width: "100%" }}>{formError.usernameError}</Text> : null}
+
         {//Password input
-          <TextInput
-            style={[styles.textInputField]}
-            secureTextEntry={true}
-            placeholder="Password"
-            placeholderTextColor="rgba(100, 100, 100, 0.41)"
-
-            onChangeText={(text) => { setPassword(text); }}
-
-
-          />
-
         }
+        <DataField
+          style={{ width: "90%" }}
+          secureTextEntry={true}
+          placeholder="Password"
+          placeholderTextColor="rgba(100, 100, 100, 0.41)"
+
+          onChangeText={(text) => { setPassword(text); }}
+        />
+
+        {//Form error state for username that is conditionally rendered
+        }{formError.passwordError ? <Text style={{ margin: 4, marginLeft: "23%", color: "red", width: "100%" }}>{formError.passwordError}</Text> : null}
+
 
         {//Login button
         }<TouchableOpacity
           style={styles.loginButtonWrapper}
-          onPress={() => { handleLoginAttempt(username, password) }}>
+          onPress={() => {
+            if (!username || !password) {
+              //Spread syntax is still used just in case more error states are added for any reason
+              setFormError({
+                ...formError,
+                usernameError: !username ? "Username is required" : "",
+                passwordError: !password ? "Password is required" : "",
+              });
+            
+              return;
+
+            } else if(username && password) {
+              setFormError({
+                ...formError,
+                usernameError: "",
+                passwordError: "",
+              });
+              handleLoginAttempt(username, password).then(async (response)=>{
+                if(response?.status === 200){
+                  setFormError({...formError, usernameError: "", passwordError: ""})
+                }
+                else if(response?.status === 401){
+                  throw new Error(`Failed to login. Status code: ${response?.status}`)
+                }
+              }).catch((error)=>{
+                console.log(error);
+                //FIXME: Consider changing usernameError: ""
+                setFormError({usernameError: "", passwordError: "Username or password is incorrect"})
+              });
+            }
+
+
+
+          }}>
           <Text style={{ textAlign: "center", fontSize: 20, color: "#ffffff" }}>LOGIN</Text>
         </TouchableOpacity>
 
         {//Secondary account creation link
-        }<TouchableOpacity onPress={() => { router.push("/create-account") }}>
+        }<TouchableOpacity onPress={() => { 
+          //Resets all form error states before pushing another screen
+          setFormError({usernameError: "", passwordError: ""});
+          router.push("/create-account");
+          }}>
           <Text style={styles.signupText}>Need an account?</Text>
         </TouchableOpacity>
 

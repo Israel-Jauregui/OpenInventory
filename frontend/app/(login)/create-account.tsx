@@ -106,7 +106,11 @@ export default function CreateAccount() {
 
 
                 {//Alternative back button to login
-                }<TouchableOpacity onPress={() => { router.back() }}>
+                }<TouchableOpacity onPress={() => { 
+
+                    //Resets form error states before backing out
+                    setFormError({usernameError: "", passwordError: ""});
+                    router.back(); }}>
                     <Text style={styles.loginNavigatorText}>Already have an account?</Text>
                 </TouchableOpacity>
 

@@ -11,8 +11,8 @@ import { jwtDecode } from 'jwt-decode';
 const AuthContext = createContext<{
 
     //Type definitions for default object in context
-    handleLoginAttempt: (username: string, password: string) => Promise<void>,
-    handleSignup: (username: string, password: string, wants_notif: boolean) => Promise<void>,
+    handleLoginAttempt: (username: string, password: string) => Promise<void | Response>,
+    handleSignup: (username: string, password: string, wants_notif: boolean) => Promise<void | Response>,
     handleLogout: () => Promise<void>,
     fetchWithAuth: (endpoint: RequestInfo, options: RequestInit) => Promise<Response | undefined>,
     token?: string | ((value: string | null) => void) | null,
@@ -119,7 +119,11 @@ export function SessionProvider({ children }: PropsWithChildren) {
             //FIXME: Eventually use .env for resource IP in every endpoint
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/login`, options);
 
-            if (!response.ok) {
+            if(response.status === 401){
+                //Returned for custom handling since 401 usually represents incorrect credentials
+                return response;
+            }
+            else if (!response.ok) {
                 throw new Error(`Failed to login. Status code: ${response.status}`)
             }
 
@@ -139,6 +143,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
 
             //FIXME: Temporary console log
             console.log(`Token state: ${token}`);
+
+            return response;
 
 
 
