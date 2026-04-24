@@ -29,7 +29,7 @@ export default function ItemsView() {
     //FIXME: May or may not need to be destructured; the former will require changes in InventoryDataContext
     const inventoryItems = useInventoryDataContext();
 
-    const renderItem: ListRenderItem<item> = ({item}) => {
+    const renderItem: ListRenderItem<item> = ({item}: {item: item}) => {
         return (<>
             <ItemEntry item={item} />
         </>)

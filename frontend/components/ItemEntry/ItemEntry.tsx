@@ -32,10 +32,10 @@ export default function ItemEntry({ item }: { item: item }) {
 
             {//Image container
             }<View style={styles.imageContainer}>
-                <Image 
-                style={styles.rowImage}
-                source={{uri: item.photo_url}}
-                 />
+                <Image
+                    style={styles.rowImage}
+                    source={{ uri: item.photo_url }}
+                />
             </View>
 
             {/*Container for item data labels such as name, UPC, etc.
@@ -45,12 +45,12 @@ export default function ItemEntry({ item }: { item: item }) {
                 
             */
             }<View style={styles.labelsContainer}>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>{item.item_name}</Text>
-                <Text>Quantity: {item.quantity}</Text>
-                <Text>Category: {item.category}</Text>
-                <Text>Brand: {item.brand}</Text>
-                <Text>Price: {item.price}</Text>
-                <Text>UPC: {item.upc}</Text>
+                <Text style={styles.itemName}>{item.item_name}</Text>
+                <Text style={styles.labelText}>Quantity: <Text style={{ fontWeight: "normal" }}>{item.quantity}</Text></Text>
+                <Text style={styles.labelText}>Category: <Text style={{ fontWeight: "normal" }}>{item.category}</Text></Text>
+                <Text style={styles.labelText}>Brand: <Text style={{ fontWeight: "normal" }}>{item.brand}</Text></Text>
+                <Text style={styles.labelText}>Price: <Text style={{ fontWeight: "normal" }}>{item.price}</Text></Text>
+                <Text style={styles.labelText}>UPC: <Text style={{ fontWeight: "normal" }}>{item.upc}</Text></Text>
             </View>
 
             {/*Container for buttons that modify or display item data TODO: Consider moving to component*/
@@ -111,21 +111,50 @@ const styles = StyleSheet.create(
             height: 100,
             width: 100,
             //FIXME: TEMPORARY COLORING FOR JUDGING DIMENSIONS
-            backgroundColor: "blue"
+            //backgroundColor: "blue"
         },
+        
+        itemName: {
+            
+            right: 1.5,
+
+            fontSize: 20, 
+            fontWeight: "bold", 
+
+            /* FIXME: Add back if needed
+            padding: 5,
+            width: "100%",
+            backgroundColor: "white",
+            borderWidth: 1,
+            */
+          
+
+            
+        
+        },
+        
 
         labelsContainer: {
             //Adjust gap for spacing between data labels
             gap: 2,
 
             margin: 10,
+            padding: 5,
 
             //10 pixels lower than rowContainer's fixed height
             height: 140,
             width: 180,
 
+            //FIXME: Add back if needed
+            //backgroundColor: "white"
+
 
         },
+
+        labelText: {
+            fontWeight: "700",
+        },
+
         quantityAdjuster: {
 
         },
