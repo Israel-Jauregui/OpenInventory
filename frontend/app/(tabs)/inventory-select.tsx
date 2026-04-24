@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 //MARK: Imports related to context
 import { useSession } from "@/contexts/AuthContext/AuthContext";
-import { useCurrentInventoryContext } from "@/contexts/InventoryNamesContext/CurrentInventoryContext"; 
+import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext"; 
 
 
 const { width } = Dimensions.get("window");

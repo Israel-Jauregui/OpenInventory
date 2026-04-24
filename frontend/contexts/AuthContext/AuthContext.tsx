@@ -225,7 +225,8 @@ export function SessionProvider({ children }: PropsWithChildren) {
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}${endpoint}`, optionsWithAuthorization);
 
             if (response.ok) {
-
+                //FIXME: Temporary console log
+                console.log(`fetchWithAuth for ${endpoint} status code: ${response.status}`)
                 //Just the response is returned so that custom handling for each responseJSON or other format can be implemented. Requires .then to be utilized since all asyncs will return a Promise requiring resolution
                 return response;
             }

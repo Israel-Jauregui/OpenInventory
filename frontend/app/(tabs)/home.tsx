@@ -20,7 +20,7 @@ import BarcodeScanInput from "@/components/BarcodeScanInput/BarcodeScanInput";
 
 //END Custom component imports
 
-import { useCurrentInventoryContext } from "@/contexts/InventoryNamesContext/CurrentInventoryContext";
+import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
 
 
 //Utilized for home button onPress events and barcode scanner button

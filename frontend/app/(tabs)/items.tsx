@@ -3,7 +3,7 @@ import { ScrollView } from 'react-native';
 
 import { useEffect, useContext } from 'react';
 
-import { useCurrentInventoryContext } from '@/contexts/InventoryNamesContext/CurrentInventoryContext';
+import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 
 //BEGIN Custom component imports
 import ItemEntry from '@/components/ItemEntry/ItemEntry';
@@ -14,8 +14,8 @@ import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
 
 /*
     TODO: Incorporate fetch that displays all items. 
-    Managing state of each item could be done with Context API + useReducer(), though
-    more research should be done towards the libraries Zustand and TanStack (also known as React Queery) since context may cause
+    Managing state of each item could be done with Context API + useState() or useReducer(), though
+    more research should be done towards the libraries Zustand and TanStack (also known as React Query) since context may cause
     unnecessary rerenders when such context is updated.
     This explains the general difference between Context and state management libraries
     https://blog.isquaredsoftware.com/2021/01/context-redux-differences/
