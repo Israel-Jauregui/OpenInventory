@@ -44,9 +44,9 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
         //FIXME: Temporary console log
         console.log(`Fetching initial inventories for inventory of invId: ${currentInventory.invId}, invName: ${currentInventory.invName}`);
+       
 
-
-        if (currentInventory.invId !== null || currentInventory.invId !== undefined) {
+        if (currentInventory.invId !== "" && currentInventory.invId !== null && currentInventory.invId !== undefined) {
             fetchWithAuth(`/inventory/${currentInventory.invId}/items`,
                 {
                     method: "GET",
