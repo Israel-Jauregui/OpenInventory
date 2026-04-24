@@ -19,7 +19,7 @@ export type inventory = { invId: string, invName: string };
 export default function InventorySelect() {
   //BEGIN HOOK INSTANTIATIONS
 
-  console.log(process.env.EXPO_PUBLIC_API_BASE_URL)
+ 
   const [modalVisible, setModalVisible] = useState(false);
 
   //Used in modal for creating a new inventory

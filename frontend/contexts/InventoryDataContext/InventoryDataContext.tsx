@@ -62,11 +62,13 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //Used for rendering the initial state of inventory items upon application load. Is assigned to inventoryItems which is then passed to consumers via InventoryDataContext.
     useEffect(() => {
 
-        //FIXME: Temporary console log
-        console.log(`Fetching initial inventories for inventory of invId: ${currentInventory.invId}, invName: ${currentInventory.invName}`);
+
 
 
         if (currentInventory.invId !== "" && currentInventory.invId !== null && currentInventory.invId !== undefined) {
+            //FIXME: Temporary console log
+            console.log(`Fetching initial inventories for inventory of invId: ${currentInventory.invId}, invName: ${currentInventory.invName}`);
+
             fetchWithAuth(`/inventory/${currentInventory.invId}/items`,
                 {
                     method: "GET",
@@ -80,7 +82,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
                 console.log(responseJSON);
 
                 //Updates inventoryItems with the current state of the inventory on server-side
-                dispatch({type: "initialFetch", inventoryItems: responseJSON});
+                dispatch({ type: "initialFetch", inventoryItems: responseJSON });
 
             });
 
