@@ -2,9 +2,9 @@
 import { ScrollView, FlatList } from 'react-native';
 
 import { useEffect, useContext } from 'react';
- 
-import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 
+import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
+import { useInventoryDataContext } from '@/contexts/InventoryDataContext/InventoryDataContext';
 //BEGIN Custom component imports
 import ItemEntry from '@/components/ItemEntry/ItemEntry';
 import InventoryHeader from '@/components/InventoryHeader/InventoryHeader';
@@ -23,6 +23,9 @@ import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
 export default function ItemsView() {
 
     const { currentInventory } = useCurrentInventoryContext();
+
+    //FIXME: May or may not need to be destructured; the former will require changes in InventoryDataContext
+    const inventoryItems = useInventoryDataContext();
 
 
     //TODO: Convert ScrollView into either a FlatList or SectionList that displays items (under each category if SectionList). 

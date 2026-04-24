@@ -32,6 +32,8 @@ export function useInventoryDataContext() {
     if (!inventoryDataContextObject) {
         throw new Error("useInventoryDataContext requries this component to have a wrapped InventoryDataProvider in order to have access to InventoryDataContext");
     }
+
+    return inventoryDataContextObject;
 }
 
 export function useInventoryDataDispatchContext() {
@@ -40,6 +42,8 @@ export function useInventoryDataDispatchContext() {
     if (!inventoryDataDispatchContextObject) {
         throw new Error("useInventoryDataDispatchContext requries this component to have a wrapped InventoryDataProvider in order to have access to InventoryDataDispatchContext");
     }
+
+    return inventoryDataDispatchContextObject;
 }
 
 
@@ -75,6 +79,9 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
                 console.log(responseJSON);
 
+                //Updates inventoryItems with the current state of the inventory on server-side
+                dispatch({type: "initialFetch", inventoryItems: responseJSON});
+
             });
 
 
@@ -83,7 +90,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
 
 
-    })
+    }, [])
 
 
     return (<>
