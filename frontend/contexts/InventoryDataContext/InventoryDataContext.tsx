@@ -4,7 +4,8 @@ import { useSession } from '../AuthContext/AuthContext';
 import { useCurrentInventoryContext } from '../CurrentInventoryContext/CurrentInventoryContext';
 //Type definition for an item that follows Item class / model in API
 export type item = {
-    "item_id": number,
+    //Changed item_id type to string from response's item_id: number since FlatList's keyExtractor expects a string
+    "item_id": string,
     "item_name": string,
     "desc": string,
     "upc": string,
@@ -134,5 +135,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         }
 
     }
+
+    //TODO: Define custom handler functions for events such as handleAddItem which makes a request to the server, then either dispatches a part of the response OR dispatches the local state (e.g. the obtained fields of an item before submitting rather than the returned item from the server)
 
 }

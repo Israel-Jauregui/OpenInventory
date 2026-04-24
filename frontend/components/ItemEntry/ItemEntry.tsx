@@ -3,10 +3,12 @@
 
 //MARK: Imports
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-
+import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
 //TODO: Add image prop and work out type.
 //FIXME: Props are all optional for now since current instances of component are placeholders
+//DEPRECATED
+/*
 type Props = {
     itemName?: string,
     quantity?: number,
@@ -15,8 +17,11 @@ type Props = {
     price?: string,
     upc?: string,
 }
+    */
+
+//TODO: Import item type and use that as parameter instead
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
-export default function ItemEntry({itemName, quantity, category, brand, price, upc}: Props) {
+export default function ItemEntry({ item }: { item: item }) {
 
     //MARK: Returned component
     return (<>
@@ -27,7 +32,10 @@ export default function ItemEntry({itemName, quantity, category, brand, price, u
 
             {//Image container
             }<View style={styles.imageContainer}>
-                <Image style={styles.rowImage} />
+                <Image 
+                style={styles.rowImage}
+                source={{uri: item.photo_url}}
+                 />
             </View>
 
             {/*Container for item data labels such as name, UPC, etc.
@@ -37,29 +45,29 @@ export default function ItemEntry({itemName, quantity, category, brand, price, u
                 
             */
             }<View style={styles.labelsContainer}>
-                <Text style={{ fontSize: 20, fontWeight: "bold" }}>{itemName}</Text>
-                <Text>Quantity: {}</Text>
-                <Text>Category: { }</Text>
-                <Text>Brand: { }</Text>
-                <Text>Price: { }</Text>
-                <Text>UPC: { }</Text>
+                <Text style={{ fontSize: 20, fontWeight: "bold" }}>{item.item_name}</Text>
+                <Text>Quantity: {item.quantity}</Text>
+                <Text>Category: {item.category}</Text>
+                <Text>Brand: {item.brand}</Text>
+                <Text>Price: {item.price}</Text>
+                <Text>UPC: {item.upc}</Text>
             </View>
 
             {/*Container for buttons that modify or display item data TODO: Consider moving to component*/
             }<View style={styles.buttonsContainer}>
                 {//Item description / view button
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 25, width: 25}}source={require("../../assets/images/itemDescIcon.png")}/>
+                    <Image style={{ height: 25, width: 25 }} source={require("../../assets/images/itemDescIcon.png")} />
                 </TouchableOpacity>
 
                 {//Edit item data button
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 40, width: 40}}source={require("../../assets/images/editIcon.png")}/>
+                    <Image style={{ height: 40, width: 40 }} source={require("../../assets/images/editIcon.png")} />
                 </TouchableOpacity>
 
                 {//Delete item master data
                 }<TouchableOpacity style={styles.button}>
-                    <Image style={{height: 25, width: 25, borderColor: "red "}}source={require("../../assets/images/deleteIcon.png")}/>
+                    <Image style={{ height: 25, width: 25, borderColor: "red " }} source={require("../../assets/images/deleteIcon.png")} />
                 </TouchableOpacity>
             </View>
 
@@ -90,7 +98,7 @@ const styles = StyleSheet.create(
             alignItems: "center",
 
             marginLeft: 20,
-            
+
             height: 120,
             width: 120,
 
@@ -116,7 +124,7 @@ const styles = StyleSheet.create(
             height: 140,
             width: 180,
 
-            
+
         },
         quantityAdjuster: {
 
