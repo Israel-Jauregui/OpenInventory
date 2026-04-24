@@ -1,8 +1,8 @@
 
-import { ScrollView } from 'react-native';
+import { ScrollView, FlatList } from 'react-native';
 
 import { useEffect, useContext } from 'react';
-
+ 
 import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 
 //BEGIN Custom component imports

@@ -1,5 +1,5 @@
 
-import { createContext, useReducer, useEffect, PropsWithChildren, ActionDispatch } from 'react';
+import { createContext, use, useReducer, useEffect, PropsWithChildren, ActionDispatch } from 'react';
 import { useSession } from '../AuthContext/AuthContext';
 import { useCurrentInventoryContext } from '../CurrentInventoryContext/CurrentInventoryContext';
 //Type definition for an item that follows Item class / model in API
@@ -24,7 +24,23 @@ const InventoryDataContext = createContext<item[]>([]);
 //Type can be changed if needed
 const InventoryDataDispatchContext = createContext<ActionDispatch<any>>(() => null);
 
+//Use hooks for consumers to grab inventory data / dispatch function
+export function useInventoryDataContext() {
 
+    const inventoryDataContextObject = use(InventoryDataContext);
+
+    if (!inventoryDataContextObject) {
+        throw new Error("useInventoryDataContext requries this component to have a wrapped InventoryDataProvider in order to have access to InventoryDataContext");
+    }
+}
+
+export function useInventoryDataDispatchContext() {
+    const inventoryDataDispatchContextObject = use(InventoryDataDispatchContext);
+
+    if (!inventoryDataDispatchContextObject) {
+        throw new Error("useInventoryDataDispatchContext requries this component to have a wrapped InventoryDataProvider in order to have access to InventoryDataDispatchContext");
+    }
+}
 
 
 //TODO: Possibly conditionally render children via isLoading flag
@@ -44,7 +60,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
         //FIXME: Temporary console log
         console.log(`Fetching initial inventories for inventory of invId: ${currentInventory.invId}, invName: ${currentInventory.invName}`);
-       
+
 
         if (currentInventory.invId !== "" && currentInventory.invId !== null && currentInventory.invId !== undefined) {
             fetchWithAuth(`/inventory/${currentInventory.invId}/items`,
