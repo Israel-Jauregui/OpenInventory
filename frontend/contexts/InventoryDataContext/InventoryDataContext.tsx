@@ -92,7 +92,12 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
 
 
-    }, [])
+    }, 
+    /*
+    currentInventory.invId in the dependency array prevents inventory-select from prematurely fetching when there is no invId available.
+    This also doubles as a way to refetch upon changing inventories since there is a nonzero chance that inventory-select does not remount due to being a Tab, thus preventing useEffect from executing again.
+    */
+    [currentInventory.invId])
 
 
     return (<>
