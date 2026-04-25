@@ -46,16 +46,6 @@ export default function ItemsView() {
             keyExtractor={(itemData: item) => itemData.item_id}
         />
 
-        {/*
-        {//TEMPORARY
-        }<ScrollView contentContainerStyle={{ alignItems: "center", justifyContent: "center", gap: 8 }}>
-            <ItemEntry />
-            <ItemEntry />
-            <ItemEntry />
-            <ItemEntry />
-            <ItemEntry />
-        </ScrollView>
-        */}
 
     </>);
 }

@@ -2,6 +2,8 @@
 import { createContext, use, useReducer, useEffect, PropsWithChildren, ActionDispatch } from 'react';
 import { useSession } from '../AuthContext/AuthContext';
 import { useCurrentInventoryContext } from '../CurrentInventoryContext/CurrentInventoryContext';
+
+//MARK: item type
 //Type definition for an item that follows Item class / model in API
 export type item = {
     //Changed item_id type to string from response's item_id: number since FlatList's keyExtractor expects a string
@@ -63,9 +65,20 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //Used for rendering the initial state of inventory items upon application load. Is assigned to inventoryItems which is then passed to consumers via InventoryDataContext.
     useEffect(() => {
 
+        getInventoryItems();
 
+    },
+        /*
+        currentInventory.invId in the dependency array prevents inventory-select from prematurely fetching when there is no invId available.
+        This also doubles as a way to refetch upon changing inventories since there is a nonzero chance that inventory-select does not remount due to being a Tab, thus preventing useEffect from executing again.
+        */
+        [currentInventory.invId]);
 
+    //BEGIN FUNCTION DEFINITIONS (For functions that require component scope)
+    //MARK: Functions (component)
+    //TODO: Implement in items.tsx to add pull-to-refresh functionality, but first look into / incorporate how that will impact sorting and filters.
 
+    async function getInventoryItems() {
         if (currentInventory.invId !== "" && currentInventory.invId !== null && currentInventory.invId !== undefined) {
             //FIXME: Temporary console log
             console.log(`Fetching initial inventories for inventory of invId: ${currentInventory.invId}, invName: ${currentInventory.invName}`);
@@ -90,17 +103,10 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
         }
 
+    }
+    //END FUNCTION DEFINITIONS (For functions that require component scope)
 
-
-
-    }, 
-    /*
-    currentInventory.invId in the dependency array prevents inventory-select from prematurely fetching when there is no invId available.
-    This also doubles as a way to refetch upon changing inventories since there is a nonzero chance that inventory-select does not remount due to being a Tab, thus preventing useEffect from executing again.
-    */
-    [currentInventory.invId])
-
-
+    //MARK: Component return
     return (<>
 
         <InventoryDataContext.Provider value={inventoryItems}>
@@ -110,6 +116,8 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         </InventoryDataContext.Provider>
     </>);
 
+
+    //MARK: Reducer and action types
     //Type definition for the dispatched action 
     //TODO: Add additional type for every new dispatcher action case that is created
     //Example of additional type is {type: "deleteItem", item_id: number} for action.type case "deleteItem" that deletes an item with item_id

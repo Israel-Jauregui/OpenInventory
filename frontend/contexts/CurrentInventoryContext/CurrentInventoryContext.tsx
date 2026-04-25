@@ -1,10 +1,11 @@
 import { use, createContext, PropsWithChildren, useState, SetStateAction } from 'react';
 
-import { inventory } from '@/app/(tabs)/inventory-select';
 
 
 
 
+//Type definition for a given inventory
+export type inventory = { invId: string, invName: string };
 
 const CurrentInventoryContext = createContext<{
     //Type definitions for default values (actual default context values are in parentheses)
