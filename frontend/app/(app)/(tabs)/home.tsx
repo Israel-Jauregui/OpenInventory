@@ -90,10 +90,15 @@ export default function Home() {
                     <View style={styles.row}>
                         <TouchableOpacity 
                         style={styles.button}
-                        onPress={()=>{
+                        onPress={
+                            
+                            /*FIXME: Add back if create.tsx is reverted ()=>{
                             setCreateItemVisible(true);
-                            navigation.setOptions({headerTitle: "Create Item"});
-                        }}
+                            navigation.setOptions({headerTitle: "Create Item"});}
+                            */
+                            //TODO: Pass relevant params (may also need router.push instead)
+                            ()=>{router.navigate("/inventory/item/create")}
+                        }
                         >
                             <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("@/assets/images/plusIcon.png")} />
                             <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>

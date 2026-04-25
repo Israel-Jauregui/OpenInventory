@@ -15,6 +15,10 @@ export default function AppRoutesLayout() {
                         headerRight: () => { return (<><LogoutButton style={{marginRight: 0, padding: 5}}/></>); },
                     }} />
                 <Stack.Screen name="(tabs)" />
+                {//Remove below Stacks if necessary aside from scanner
+                }
+                <Stack.Screen name="inventory/item/create" options={{presentation: "modal"}}/>
+                <Stack.Screen name="inventory/item/[itemId]/edit" options={{presentation: "modal"}}/>
                 <Stack.Screen name="scanner/index" />
             </Stack>
         </CurrentInventoryProvider>
