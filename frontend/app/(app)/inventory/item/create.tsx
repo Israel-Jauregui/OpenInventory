@@ -1,9 +1,13 @@
+import CreateEditItemModal from "@/components/CreateItemModal/CreateEditItemModal";
+import { useLocalSearchParams } from "expo-router";
 
+export default function CreateItemModal() {
 
-export default function CreateModal() {
-
+    //Possible locations that can be passed from include home.tsx and items.tsx
+    const { mode } = useLocalSearchParams<{mode: "create" | "edit"}>();
     return(<>
-    
+
+            <CreateEditItemModal mode={mode}/>
 
     </>);
 }

@@ -5,7 +5,7 @@ import { useNavigation } from 'expo-router';
 
 import { useSession } from '@/contexts/AuthContext/AuthContext';
 
-
+//WILL BE DEPRECATED IF CREATE AND EDIT ARE MERGED INTO ONE COMPONENT THAT IS CONDITIONALLY RENDERED
 
 type CreateItemModalProps = {
     visible: boolean,

@@ -97,7 +97,7 @@ export default function Home() {
                             navigation.setOptions({headerTitle: "Create Item"});}
                             */
                             //TODO: Pass relevant params (may also need router.push instead)
-                            ()=>{router.navigate("/inventory/item/create")}
+                            ()=>{router.navigate({pathname: "/inventory/item/create"})}
                         }
                         >
                             <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("@/assets/images/plusIcon.png")} />

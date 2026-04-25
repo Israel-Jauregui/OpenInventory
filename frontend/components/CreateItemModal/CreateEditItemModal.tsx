@@ -1,14 +1,36 @@
-import { StyleSheet } from "react-native"; 
+import { View, Text, StyleSheet } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import DataField from "../DataField/DataField";
 
-export default function CreateEditItemModal() {
 
-    return(<>
-    
+type Props = {
+    //Designates that mode prop will only take either of these values
+    mode: "create" | "edit"
+}
+export default function CreateEditItemModal({ mode }: Props) {
+
+    //BEGIN HOOK INSTANTIATIONS
+  
+    //END HOOK INSTANTIATIONS
+
+    return (<>
+        {
+            //TODO: May just need to have conditional for things such as which handle function is used rather than the ENTIRE component
+            mode === "create" ?
+                //Returned component for create
+                <>
+                    <Text>In Create Modal</Text>
+                </>
+                :
+                //Returned component for edit
+                <>
+                </>
+        }
 
     </>);
 }
 
 const styles = StyleSheet.create(
-{
+    {
 
-});
+    });
