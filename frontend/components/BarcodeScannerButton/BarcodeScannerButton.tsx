@@ -16,7 +16,7 @@ export default function BarcodeScannerButton({ style }: Props) {
             onPress={() => { router.navigate('../scanner'); }}
         >
             <Image
-                style={{ height: 40, width: 40 }} source={require("../../assets/images/barcodeScanIcon.png")}
+                style={{ height: 40, width: 40 }} source={require("@/assets/images/barcodeScanIcon.png")}
             />
         </Pressable>
     </>);
