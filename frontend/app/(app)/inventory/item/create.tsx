@@ -5,6 +5,7 @@ export default function CreateItemModal() {
 
     //Possible locations that can be passed from include home.tsx and items.tsx
     const { mode } = useLocalSearchParams<{mode: "create" | "edit"}>();
+    console.log(mode);
     return(<>
 
             <CreateEditItemModal mode={mode}/>
