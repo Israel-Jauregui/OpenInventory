@@ -5,21 +5,8 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
-//TODO: Add image prop and work out type.
-//FIXME: Props are all optional for now since current instances of component are placeholders
-//DEPRECATED
-/*
-type Props = {
-    itemName?: string,
-    quantity?: number,
-    category?: string,
-    brand?: string,
-    price?: string,
-    upc?: string,
-}
-    */
 
-//TODO: Import item type and use that as parameter instead
+
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
 export default function ItemEntry({ item }: { item: item }) {
 

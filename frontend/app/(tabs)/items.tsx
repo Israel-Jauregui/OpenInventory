@@ -4,18 +4,17 @@ import { ScrollView, FlatList, ListRenderItem, ListRenderItemInfo } from 'react-
 import { useEffect, useContext } from 'react';
 
 import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
-import { useInventoryDataContext } from '@/contexts/InventoryDataContext/InventoryDataContext';
+import { useInventoryDataContext, item } from '@/contexts/InventoryDataContext/InventoryDataContext';
+
 //BEGIN Custom component imports
 import ItemEntry from '@/components/ItemEntry/ItemEntry';
 import InventoryHeader from '@/components/InventoryHeader/InventoryHeader';
 import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
 //END Custom component imports
 
-import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
 
 /*
-    TODO: Incorporate fetch that displays all items. 
     Managing state of each item could be done with Context API + useState() or useReducer(), though
     more research should be done towards the libraries Zustand and TanStack (also known as React Query) since context may cause
     unnecessary rerenders when such context is updated.
@@ -26,7 +25,7 @@ export default function ItemsView() {
 
     const { currentInventory } = useCurrentInventoryContext();
 
-    //FIXME: May or may not need to be destructured; the former will require changes in InventoryDataContext
+    //FIXME: Will need to be destructured if more values are added to InventoryDataContext's value prop
     const inventoryItems = useInventoryDataContext();
 
     const renderItem: ListRenderItem<item> = ({item}: {item: item}) => {
@@ -35,7 +34,7 @@ export default function ItemsView() {
         </>)
     };
 
-    //TODO: Convert ScrollView into either a FlatList or SectionList that displays items (under each category if SectionList). 
+    //TODO: Consider changing FlatList to a SectionList
     return (<>
         <InventoryHeader inventoryName={currentInventory.invName} />
         <ItemsSearchBar />

@@ -76,8 +76,8 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
     //BEGIN FUNCTION DEFINITIONS (For functions that require component scope)
     //MARK: Functions (component)
-    //TODO: Implement in items.tsx to add pull-to-refresh functionality, but first look into / incorporate how that will impact sorting and filters.
 
+    //TODO: Implement in items.tsx to add pull-to-refresh functionality, but first look into / incorporate how that will impact sorting and filters.
     async function getInventoryItems() {
         if (currentInventory.invId !== "" && currentInventory.invId !== null && currentInventory.invId !== undefined) {
             //FIXME: Temporary console log
