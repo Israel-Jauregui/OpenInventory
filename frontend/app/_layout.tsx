@@ -2,6 +2,8 @@ import { Stack } from "expo-router";
 
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider, useSession } from "@/contexts/AuthContext/AuthContext";
+
+
 //_layout.tsx:  Parent layout of the app. Used for wrapping the entire app with relevant context providers, themes, etc. (any components that must be applied globally)
 export default function RootLayout() {
 
