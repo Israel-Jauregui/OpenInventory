@@ -17,9 +17,11 @@ function TabLayout() {
         <>
             {//CurrentInventoryProvider wraps all tabs for now just in case (for example) alerts requires current inventory data to make a request
             }
-            <CurrentInventoryProvider>
-                <InventoryDataProvider>
-                    <Tabs backBehavior="history">
+
+            <InventoryDataProvider>
+                
+                <Tabs backBehavior="history">
+                    {/*
                         <Tabs.Screen
                             name="inventory-select"
                             options={{
@@ -34,56 +36,57 @@ function TabLayout() {
                                 ),
                             }}
                         />
+                    */}
 
 
 
-                        <Tabs.Screen
-                            name="home"
-                            options={{
-                                headerTitle: 'Home',
-                                title: "Home",
-                                headerLeft: () => (
-                                    <BackButton />
-                                ),
-                                headerRight: () => (
-                                    <LogoutButton />
-                                ),
-                            }}
-                        />
-                        <Tabs.Screen
-                            name="items"
-                            options={{
-                                headerTitle: 'Items',
-                                title: "Items",
-                                headerLeft: () => (
-                                    <BackButton />
-                                ),
-                                headerRight: () => (
-                                    <LogoutButton />
-                                ),
-                            }}
-                        />
+                    <Tabs.Screen
+                        name="home"
+                        options={{
+                            headerTitle: 'Home',
+                            title: "Home",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
+                    <Tabs.Screen
+                        name="items"
+                        options={{
+                            headerTitle: 'Items',
+                            title: "Items",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
 
-                        <Tabs.Screen
-                            name="alerts"
-                            options={{
-                                headerTitle: 'Alerts',
-                                title: "Alerts",
-                                headerLeft: () => (
-                                    <BackButton />
-                                ),
-                                headerRight: () => (
-                                    <LogoutButton />
-                                ),
-                            }}
-                        />
-
-
+                    <Tabs.Screen
+                        name="alerts"
+                        options={{
+                            headerTitle: 'Alerts',
+                            title: "Alerts",
+                            headerLeft: () => (
+                                <BackButton />
+                            ),
+                            headerRight: () => (
+                                <LogoutButton />
+                            ),
+                        }}
+                    />
 
 
-                    </Tabs>
-                </InventoryDataProvider>
-            </CurrentInventoryProvider>
+
+
+                </Tabs>
+            </InventoryDataProvider>
+
         </>
     );
 

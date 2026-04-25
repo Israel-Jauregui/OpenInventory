@@ -1,12 +1,22 @@
 import { Stack } from 'expo-router';
-
+import LogoutButton from '@/components/LogoutButton/LogoutButton';
+import { CurrentInventoryProvider } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 export default function AppRoutesLayout() {
 
     return (<>
 
-        <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="scanner" />
-        </Stack>
+        <CurrentInventoryProvider>
+            <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen
+                    name="inventory/inventory-select"
+                    options={{
+                        headerShown: true,
+                        headerTitle: '',
+                        headerRight: () => { return (<><LogoutButton style={{marginRight: 0, padding: 5}}/></>); },
+                    }} />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="scanner/index" />
+            </Stack>
+        </CurrentInventoryProvider>
     </>);
 }

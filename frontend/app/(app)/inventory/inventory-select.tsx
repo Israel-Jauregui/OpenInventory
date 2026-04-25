@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, Modal, TextInput } from "react-native";
 import { useState, useEffect } from 'react';
+import { SafeAreaView } from "react-native-safe-area-context"; 
 import { useRouter } from "expo-router";
 
 import { inventory } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
@@ -7,7 +8,6 @@ import { inventory } from "@/contexts/CurrentInventoryContext/CurrentInventoryCo
 //MARK: Imports related to context
 import { useSession } from "@/contexts/AuthContext/AuthContext";
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
-
 
 const { width } = Dimensions.get("window");
 
@@ -119,7 +119,7 @@ export default function InventorySelect() {
 
 
     router.replace({
-      pathname: "./home",
+      pathname: "../(tabs)/home",
       //FIXME: Add back params if needed; context accomplishes the same task though this can still be considered
       //params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
     });
