@@ -4,16 +4,17 @@ import { SetStateAction } from 'react';
 type Props = {
 
     style?: StyleProp<TextStyle>,
+    //Optional header text that is rendered above field
+    header?: string
+    headerStyle?: StyleProp<TextStyle>
     textInputProps?: TextInputProps,
-
-
     
 } 
 //I don't even know how this black magic actually works but StackOverflow did it again
 //Adds all ability to accept regular TextInputProps (e.g. secureTextEntry, placeholder, and far far more) via type intersection
  & TextInputProps;
 
-export default function DataField({ style, ...textInputProps}: Props) {
+export default function DataField({ style, header, headerStyle, ...textInputProps}: Props) {
 
     return (<>
 
