@@ -2,24 +2,23 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Dimensions, 
 import { useState, useEffect } from 'react';
 import { useRouter } from "expo-router";
 
+import { inventory } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
 
 //MARK: Imports related to context
 import { useSession } from "@/contexts/AuthContext/AuthContext";
-import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext"; 
+import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
 
 
 const { width } = Dimensions.get("window");
 
 
 
-//Type definition for a given inventory
-export type inventory = { invId: string, invName: string };
 
 
 export default function InventorySelect() {
   //BEGIN HOOK INSTANTIATIONS
 
- 
+
   const [modalVisible, setModalVisible] = useState(false);
 
   //Used in modal for creating a new inventory
@@ -27,9 +26,12 @@ export default function InventorySelect() {
 
   //uses a state to keep it loaded and updated
   const [inventories, setInventories] = useState<inventory[]>([]);
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const router = useRouter();
 
-  
+
   const { fetchWithAuth } = useSession();
   const { setCurrentInventory } = useCurrentInventoryContext();
 
@@ -40,20 +42,8 @@ export default function InventorySelect() {
   //TODO: Add pull to refresh functionality
   useEffect(() => {
 
-    //Used for resetting currently selected inventory upon navigation from other pages
-    setCurrentInventory({invId: "", invName: ""});
 
-    fetchWithAuth("/inventory/getinventories", {
-
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-      },
-    }).then(async (response) => {
-      const responseJSON = await response?.json();
-      setInventories(responseJSON);
-    });
-
+    getInventories();
 
 
 
@@ -95,8 +85,30 @@ export default function InventorySelect() {
   }, []);
 
   //END HOOK INSTANTIATIONS
-
+  
   //BEGIN FUNCTION DECLARATIONS (For functions that require component scope)
+
+
+  async function getInventories() {
+
+    setIsFetching(true);
+  
+
+    //Used for resetting currently selected inventory upon navigation from other pages
+    setCurrentInventory({ invId: "", invName: "" });
+
+    fetchWithAuth("/inventory/getinventories", {
+
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    }).then(async (response) => {
+      const responseJSON = await response?.json();
+      setInventories(responseJSON);
+    }).finally(()=>{setIsFetching(false);});
+
+  }
 
 
   const handleSelect = (inventory: { invId: string; invName: string }) => {
@@ -105,13 +117,13 @@ export default function InventorySelect() {
     //Store selected inventory in global state / context (global for authenticated screens)
     setCurrentInventory(inventory);
 
-    
+
     router.replace({
       pathname: "/(tabs)/home",
       //FIXME: Add back params if needed; context accomplishes the same task though this can still be considered
       //params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
     });
-    
+
   };
 
   //END FUNCTION DECLARATIONS (For functions that require component scope)
@@ -242,7 +254,7 @@ export default function InventorySelect() {
       <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
 
         {//Select header
-        }<Text style={[styles.heading, {marginLeft: "20%"}]}>Select an Inventory</Text>
+        }<Text style={[styles.heading, { marginLeft: "20%" }]}>Select an Inventory</Text>
 
         {//Additional create inventory button
         }<TouchableOpacity
@@ -278,6 +290,9 @@ export default function InventorySelect() {
             <Image style={styles.cardIcon} source={require("../../assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
+
+        refreshing={isFetching}
+        onRefresh={getInventories}
 
         ListFooterComponent={
           <TouchableOpacity
