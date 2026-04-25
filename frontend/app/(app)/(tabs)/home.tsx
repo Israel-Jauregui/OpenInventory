@@ -8,7 +8,7 @@ import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implement
 
 //BEGIN Custom component imports
 //FIXME: TEMPORARY IMPORT
-import HomeInventoryButton from "../../components/HomeInventoryButton/HomeInventoryButton";
+import HomeInventoryButton from "../../../components/HomeInventoryButton/HomeInventoryButton";
 
 import CreateItemModal from "@/components/CreateItemModal/CreateItemModal";
 import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
@@ -81,7 +81,7 @@ export default function Home() {
                         </TouchableOpacity>
 
                         <TouchableOpacity style={styles.button}>
-                            <Image style={{ height: 75, width: 75 }} source={require("../../assets/images/manageUsersIcon.png")} />
+                            <Image style={{ height: 75, width: 75 }} source={require("@/assets/images/manageUsersIcon.png")} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Manage Users</Text>
 
                         </TouchableOpacity>
@@ -95,7 +95,7 @@ export default function Home() {
                             navigation.setOptions({headerTitle: "Create Item"});
                         }}
                         >
-                            <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("../../assets/images/plusIcon.png")} />
+                            <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("@/assets/images/plusIcon.png")} />
                             <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
 
                         </TouchableOpacity>

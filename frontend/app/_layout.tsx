@@ -1,14 +1,16 @@
 import { Stack } from "expo-router";
 
-
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { SessionProvider, useSession } from "@/contexts/AuthContext/AuthContext";
 //_layout.tsx:  Parent layout of the app. Used for wrapping the entire app with relevant context providers, themes, etc. (any components that must be applied globally)
 export default function RootLayout() {
 
   return (
-    <SessionProvider>
-      <RootNavigator />
-    </SessionProvider>
+    <SafeAreaProvider>
+      <SessionProvider>
+        <RootNavigator />
+      </SessionProvider>
+    </SafeAreaProvider>
 
   );
 }
@@ -22,7 +24,7 @@ function RootNavigator() {
   return (<>
     <Stack>
       <Stack.Protected guard={!!token}>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(app)" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={!token}>

@@ -119,7 +119,7 @@ export default function InventorySelect() {
 
 
     router.replace({
-      pathname: "/(tabs)/home",
+      pathname: "./home",
       //FIXME: Add back params if needed; context accomplishes the same task though this can still be considered
       //params: { inventoryId: inventory.invId, inventoryName: inventory.invName },
     });
@@ -224,7 +224,7 @@ export default function InventorySelect() {
                     transform: [{ rotate: "45deg" }]
                   }}
 
-                source={require("../../assets/images/plusIcon.png")}
+                source={require("@/assets/images/plusIcon.png")}
               />
             </TouchableOpacity>
 
@@ -272,7 +272,7 @@ export default function InventorySelect() {
           }}
           onPress={() => { setModalVisible(true); }
           }>
-          <Image style={{ height: 35, width: 35 }} source={require("../../assets/images/plusIcon.png")} />
+          <Image style={{ height: 35, width: 35 }} source={require("@/assets/images/plusIcon.png")} />
         </TouchableOpacity>
       </View>
 
@@ -287,7 +287,7 @@ export default function InventorySelect() {
             onPress={() => handleSelect(item)}
           >
             <Text style={styles.cardText}>{item.invName}</Text>
-            <Image style={styles.cardIcon} source={require("../../assets/images/chevronRight.png")} />
+            <Image style={styles.cardIcon} source={require("@/assets/images/chevronRight.png")} />
           </TouchableOpacity>
         )}
 
@@ -305,7 +305,7 @@ export default function InventorySelect() {
             onPress={() => { setModalVisible(true) }}
           >
             <Text style={[styles.cardText, { color: "white", fontWeight: "600" }]}>Create new inventory</Text>
-            <Image style={styles.cardIcon} source={require("../../assets/images/plusIcon.png")} />
+            <Image style={styles.cardIcon} source={require("@/assets/images/plusIcon.png")} />
           </TouchableOpacity>}
       />
 
