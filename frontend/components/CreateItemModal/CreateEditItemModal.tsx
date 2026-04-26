@@ -90,9 +90,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         />
 
+                        {//Stock settings container and fields
+                        }
                         <View style={
                             {
-                                flex: 1,
                                 backgroundColor: "#c6d7e7",
 
                                 margin: 0,
@@ -101,12 +102,14 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 borderColor: "#36a2fa",
                                 borderWidth: 1,
                                 borderRadius: 20,
-                                
+
                                 width: 300,
 
 
                             }}>
-                            <Text style={{margin: 10, top: 0, left: 0, fontSize: 16, color: "#437a9e", fontWeight: "600"}}>STOCK SETTINGS</Text>
+                            <Text style={{ margin: 10, top: 0, left: 0, fontSize: 16, color: "#437a9e", fontWeight: "600" }}>STOCK SETTINGS</Text>
+                            {//Stock settings fields
+                            }
                             <View style={
                                 {
                                     //TODO: Possibly move these properties into rowPresentation style in the stylesheet and also use on category / brand fields View container
@@ -133,6 +136,15 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     value="0"
                                 />
                             </View>
+
+                            {//Dagger mark description for low stock alert field
+                            }
+                            <View style={{alignItems: "center", paddingTop: -5, padding: 5}}>
+                                <Text style={{width: 250, color: "#437a9e"}}>
+                                    {"\u2020"}You'll receive a push notification (if enabled) when this item's quantity drops to the specified number.
+                                </Text>
+                            </View>
+
                         </View>
 
                     </ScrollView>
