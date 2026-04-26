@@ -27,20 +27,30 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             mode === "create" ?
                 //Returned component for create
                 <>
-                    <ScrollView>
+                    <ScrollView contentContainerStyle={{ alignItems: "center" }}>
 
-                        <View style={[styles.center,]}>
+                        <View style={[styles.center, { height: "15%" }]}>
                             <DataField
                                 textInputStyle={{ width: 300 }}
                                 header="ITEM NAME"
-                                headerStyle={{}}
+                                containerStyle={{ padding: 20 }}
                                 placeholder="Item Name"
                                 placeholderTextColor="#979797"
                                 requiredAsterisk={true}
                             />
                         </View>
 
-                        <View style={{flexDirection: "row", alignItems: "center", padding: 20}}>
+                        <View style={
+                            {
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+
+                                padding: 20,
+
+                                width: "90%",
+
+                            }}>
                             <DataField
                                 header="CATEGORY"
                                 headerStyle={{}}
@@ -57,12 +67,14 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                         </View>
 
                         <DataField
+                            textInputStyle={{ width: 300 }}
                             header="DESCRIPTION"
                             placeholder="Description"
                             placeholderTextColor="#979797"
                         />
 
                         <DataField
+                            textInputStyle={{ width: 300 }}
                             header="PRICE"
                             placeholder="Price"
 
@@ -70,25 +82,58 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                         />
 
                         <DataField
+                            textInputStyle={{ width: 300 }}
                             header="BARCODE"
-                            placeholder="Barcode"
+                            placeholder="Scan or type barcode"
 
                             placeholderTextColor="#979797"
 
                         />
 
-                        <DataField
-                            header="Initial quantity"
-                            placeholder="0"
-                            placeholderTextColor="#979797"
-                            value="0"
-                        />
-                        <DataField
-                            header="Low stock alert trigger"
-                            placeholder="0"
-                            placeholderTextColor="#979797"
-                            value="0"
-                        />
+                        <View style={
+                            {
+                                flex: 1,
+                                backgroundColor: "#c6d7e7",
+
+                                margin: 0,
+                                padding: 0,
+
+                                borderColor: "#36a2fa",
+                                borderWidth: 1,
+                                borderRadius: 20,
+                                
+                                width: 300,
+
+
+                            }}>
+                            <Text style={{margin: 10, top: 0, left: 0, fontSize: 16, color: "#437a9e", fontWeight: "600"}}>STOCK SETTINGS</Text>
+                            <View style={
+                                {
+                                    //TODO: Possibly move these properties into rowPresentation style in the stylesheet and also use on category / brand fields View container
+
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+
+                                    padding: 0,
+                                    margin: 5
+                                }}>
+                                <DataField
+                                    header="Initial quantity"
+                                    headerStyle={{ color: "#246fa1" }}
+                                    placeholder="0"
+                                    placeholderTextColor="#979797"
+                                    value="0"
+                                />
+                                <DataField
+                                    header={`Low stock alert${"\u2020"}`}
+                                    headerStyle={{ color: "#246fa1" }}
+                                    placeholder="0"
+                                    placeholderTextColor="#979797"
+                                    value="0"
+                                />
+                            </View>
+                        </View>
 
                     </ScrollView>
                 </>
