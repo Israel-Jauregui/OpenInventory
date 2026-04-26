@@ -42,7 +42,7 @@ export default function CreateAccount() {
 
                 {//Username input MARK: Begin input fields
                 }<DataField
-                    style={{ marginTop: 40, width: "90%" }}
+                    containerStyle={{ flex: 0, marginTop: 40, width: "90%" }}
                     placeholder="Username"
                     placeholderTextColor="rgba(100, 100, 100, 0.41)"
 
@@ -55,7 +55,7 @@ export default function CreateAccount() {
 
                 {//Password input
                 }<DataField
-                    style={{ width: "90%" }}
+                    containerStyle={{ flex: 0, width: "90%" }}
                     secureTextEntry={true}
                     placeholder="Password"
                     placeholderTextColor="rgba(100, 100, 100, 0.41)"

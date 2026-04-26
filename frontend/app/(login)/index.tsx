@@ -58,7 +58,7 @@ export default function Login() {
         {//Username input
         }
         <DataField
-          style={{ width: "90%" }}
+          containerStyle={{ flex: 0, width: "90%" }}
           placeholder="Username"
           placeholderTextColor="rgba(100, 100, 100, 0.41)"
           onChangeText={(text) => { setUsername(text); }}
@@ -69,7 +69,7 @@ export default function Login() {
         {//Password input
         }
         <DataField
-          style={{ width: "90%" }}
+          containerStyle={{flex: 0, width: "90%" }}
           secureTextEntry={true}
           placeholder="Password"
           placeholderTextColor="rgba(100, 100, 100, 0.41)"

@@ -1,5 +1,5 @@
-import { useState } from "react"; 
-import { View, Text, StyleSheet } from "react-native";
+import { useState } from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import DataField from "../DataField/DataField";
 import { item } from "@/contexts/InventoryDataContext/InventoryDataContext";
@@ -27,9 +27,72 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             mode === "create" ?
                 //Returned component for create
                 <>
-                    <DataField placeholder="Item Name"/>
-                    <DataField />
+                    <ScrollView>
+
+                        <View style={[styles.center,]}>
+                            <DataField
+                                textInputStyle={{ width: 300 }}
+                                header="ITEM NAME"
+                                headerStyle={{}}
+                                placeholder="Item Name"
+                                placeholderTextColor="#979797"
+                                requiredAsterisk={true}
+                            />
+                        </View>
+
+                        <View style={{flexDirection: "row", alignItems: "center", padding: 20}}>
+                            <DataField
+                                header="CATEGORY"
+                                headerStyle={{}}
+                                placeholder="Category"
+                                placeholderTextColor="#979797"
+                            />
+
+                            <DataField
+                                header="BRAND"
+                                placeholder="Brand"
+                                placeholderTextColor="#979797"
+
+                            />
+                        </View>
+
+                        <DataField
+                            header="DESCRIPTION"
+                            placeholder="Description"
+                            placeholderTextColor="#979797"
+                        />
+
+                        <DataField
+                            header="PRICE"
+                            placeholder="Price"
+
+                            placeholderTextColor="#979797"
+                        />
+
+                        <DataField
+                            header="BARCODE"
+                            placeholder="Barcode"
+
+                            placeholderTextColor="#979797"
+
+                        />
+
+                        <DataField
+                            header="Initial quantity"
+                            placeholder="0"
+                            placeholderTextColor="#979797"
+                            value="0"
+                        />
+                        <DataField
+                            header="Low stock alert trigger"
+                            placeholder="0"
+                            placeholderTextColor="#979797"
+                            value="0"
+                        />
+
+                    </ScrollView>
                 </>
+
                 :
                 //Returned component for edit
                 <>
@@ -41,5 +104,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
 const styles = StyleSheet.create(
     {
-
+        center: {
+            alignItems: "center"
+        },
     });

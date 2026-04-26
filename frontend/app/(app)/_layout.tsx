@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import LogoutButton from '@/components/LogoutButton/LogoutButton';
 import { CurrentInventoryProvider } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
+import BackButton from '@/components/BackButton/BackButton';
 export default function AppRoutesLayout() {
 
     return (<>
