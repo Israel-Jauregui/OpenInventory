@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import DataField from "../DataField/DataField";
 import { item } from "@/contexts/InventoryDataContext/InventoryDataContext";
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 
 type Props = {
     //Designates that mode prop will only take either of these values
@@ -27,13 +30,15 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             mode === "create" ?
                 //Returned component for create
                 <>
-                    <ScrollView contentContainerStyle={{ alignItems: "center" }}>
+
+
+                    <KeyboardAwareScrollView contentContainerStyle={styles.center}>
 
                         <View style={[styles.center, { height: "15%" }]}>
                             <DataField
                                 textInputStyle={{ width: 300 }}
                                 header="ITEM NAME"
-                                containerStyle={{ padding: 20 }}
+                                containerStyle={{ margin: 5 }}
                                 placeholder="Item Name"
                                 placeholderTextColor="#979797"
                                 requiredAsterisk={true}
@@ -42,6 +47,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         <View style={
                             {
+                                margin: 0,
                                 flexDirection: "row",
                                 alignItems: "center",
                                 justifyContent: "center",
@@ -53,7 +59,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             }}>
                             <DataField
                                 header="CATEGORY"
-                                headerStyle={{}}
+
                                 placeholder="Category"
                                 placeholderTextColor="#979797"
                             />
@@ -90,13 +96,15 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         />
 
+
+
                         {//Stock settings container and fields
                         }
                         <View style={
                             {
                                 backgroundColor: "#c6d7e7",
 
-                                margin: 0,
+                                margin: 15,
                                 padding: 0,
 
                                 borderColor: "#36a2fa",
@@ -135,19 +143,35 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     placeholderTextColor="#979797"
                                     value="0"
                                 />
+
+
                             </View>
 
                             {//Dagger mark description for low stock alert field
                             }
-                            <View style={{alignItems: "center", paddingTop: -5, padding: 5}}>
-                                <Text style={{width: 250, color: "#437a9e"}}>
+                            <View style={{ alignItems: "center", paddingTop: -5, padding: 5 }}>
+                                <Text style={{ width: 250, color: "#437a9e" }}>
                                     {"\u2020"}You'll receive a push notification (if enabled) when this item's quantity drops to the specified number.
                                 </Text>
                             </View>
 
                         </View>
 
-                    </ScrollView>
+
+                    </KeyboardAwareScrollView>
+
+                    {//Modal footer (change header related props in app/(app)/_layout.tsx if trying to edit header)
+                    }
+                    <View style={styles.footerContainer}>
+                        <TouchableOpacity style={styles.createItemButton}>
+                            <Text>
+                                Create Item
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+
                 </>
 
                 :
@@ -162,6 +186,25 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 const styles = StyleSheet.create(
     {
         center: {
+            justifyContent: "center",
             alignItems: "center"
         },
+
+        footerContainer: {
+
+            justifyContent: "center",
+            alignItems: "center",
+
+            width: "100%",
+            height: "12.5%",
+
+            backgroundColor: "white"
+        },
+        createItemButton: {
+
+            width: 200,
+            padding: 20,
+
+            backgroundColor: "#36a2fa",
+        }
     });
