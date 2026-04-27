@@ -2,11 +2,11 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import DataField from "../DataField/DataField";
-import { item } from "@/contexts/InventoryDataContext/InventoryDataContext";
+import { item, createItemFormData, addItemFormData } from "@/contexts/InventoryDataContext/InventoryDataContext";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { useSession } from "@/contexts/AuthContext/AuthContext"; 
+import { useSession } from "@/contexts/AuthContext/AuthContext";
 
 //MARK: Types
 type Props = {
@@ -19,46 +19,57 @@ type Props = {
 }
 
 //MARK: Component
+
+//TODO: item parameter type may or may not change (currently item) depending on what edit item endpoint expects
 export default function CreateEditItemModal({ mode, item }: Props) {
 
     //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
     const formData = new FormData();
 
-     //BEGIN HOOK INSTANTIATIONS
+    //BEGIN HOOK INSTANTIATIONS
 
-     const { fetchWithAuth } = useSession();
+    const { fetchWithAuth } = useSession();
 
-    
-     //MARK: FormData
+
+    //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
     //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
-    const [formDataState, setFormDataState] = useState<item>(
+    const [createFormDataState, setCreateFormDataState] = useState<createItemFormData>(
         {
 
             item_name: "",
             desc: "",
             upc: "",
             //TODO: Photo field is still required; may use ImagePicker component for something similar to obtaining file URL if from camera
-            photo_url: "",
+
             price: 0,
             category: "",
             brand: "",
-            quantity: 0,
-            low_stock_trigger: 0,
+            file: ""
 
         });
-   
+
+    //FormData for adding an item (expected format for /inventory/addItem)
+    const [addFormDataState, setAddFormDataState] = useState<addItemFormData>(
+        {
+            "inventory_id": 1,
+            "item_id": 2,
+            "quantity": 6,
+            "low_stock_trigger": 2
+        }
+    );
+
 
     //END HOOK INSTANTIATIONS
 
     //MARK: Component scope functions
     //BEGIN FUNCTION DEFINITIONS (For functions that require component scope)
 
-    function handleSubmit(){
+    function handleSubmit() {
 
         console.log("Submitted form data:")
         //Iterate through formDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
-        for(const [key, value] of Object.entries(formDataState)){
-            
+        for (const [key, value] of Object.entries(createFormDataState)) {
+
             console.log(key, value)
         }
 
@@ -74,7 +85,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                 //Returned component for create
                 <>
 
-                   
+
                     <KeyboardAwareScrollView contentContainerStyle={styles.center}>
 
                         <View style={[styles.center, { height: "15%" }]}>
@@ -87,7 +98,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 requiredAsterisk={true}
 
                                 onChangeText={(text) => {
-                                    setFormDataState({...formDataState, item_name: text})
+                                    setCreateFormDataState({ ...createFormDataState, item_name: text })
                                 }}
                             />
                         </View>
@@ -113,7 +124,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 placeholderTextColor="#979797"
 
                                 onChangeText={(text) => {
-                                    setFormDataState({...formDataState, category: text})
+                                    setCreateFormDataState({ ...createFormDataState, category: text })
                                 }}
                             />
 
@@ -123,7 +134,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 placeholderTextColor="#979797"
 
                                 onChangeText={(text) => {
-                                    setFormDataState({...formDataState, brand: text})
+                                    setCreateFormDataState({ ...createFormDataState, brand: text })
                                 }}
 
                             />
@@ -136,8 +147,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             placeholderTextColor="#979797"
 
                             onChangeText={(text) => {
-                                    setFormDataState({...formDataState, desc: text})
-                                }}
+                                setCreateFormDataState({ ...createFormDataState, desc: text })
+                            }}
                         />
 
                         <DataField
@@ -148,8 +159,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             placeholderTextColor="#979797"
 
                             onChangeText={(text) => {
-                                    setFormDataState({...formDataState, price: Number(text)})
-                                }}
+                                setCreateFormDataState({ ...createFormDataState, price: Number(text) })
+                            }}
                         />
 
                         <DataField
@@ -160,8 +171,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             placeholderTextColor="#979797"
 
                             onChangeText={(text) => {
-                                    setFormDataState({...formDataState, upc: text})
-                                }}
+                                setCreateFormDataState({ ...createFormDataState, upc: text })
+                            }}
 
                         />
 
@@ -204,22 +215,22 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    
+
 
                                     onChangeText={(text) => {
-                                    setFormDataState({...formDataState, quantity: Number(text)})
-                                }}
+                                        setAddFormDataState({ ...addFormDataState, quantity: Number(text) })
+                                    }}
                                 />
                                 <DataField
                                     header={`Low stock alert${"\u2020"}`}
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    
+
 
                                     onChangeText={(text) => {
-                                    setFormDataState({...formDataState, low_stock_trigger: Number(text)})
-                                }}
+                                        setAddFormDataState({ ...addFormDataState, low_stock_trigger: Number(text) })
+                                    }}
                                 />
 
 

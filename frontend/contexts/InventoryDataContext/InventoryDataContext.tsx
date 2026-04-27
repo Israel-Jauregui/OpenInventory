@@ -9,7 +9,7 @@ export type item = {
     //Changed item_id type to string from response's item_id: number since FlatList's keyExtractor expects a string
     //Also optional since some requests such as creating a completely new item obviously should not send this property
     //TODO: Possibly change other expected properties to be optional depending on expected body / FormData of other requests
-    "item_id"?: string,
+    "item_id": string,
     "item_name": string,
     "desc": string,
     "upc": string,
@@ -19,6 +19,23 @@ export type item = {
     "brand": string,
     "quantity": number,
     "low_stock_trigger": number,
+}
+
+export type createItemFormData = {
+    "item_name": string,
+    "desc": string,
+    "upc": string,
+    "price": number,
+    "category": string,
+    "brand": string,
+    "file": string | null,
+}
+
+export type addItemFormData = {
+    "inventory_id": number,
+    "item_id": number,
+    "quantity": number,
+    "low_stock_trigger": number
 }
 
 //State and dispatch contexts are separated so that only updating state for example doesn't cause rerenders for components that only need the dispatch function
@@ -107,15 +124,19 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
     }
     //TODO: Pass the following functions into value of InventoryDataContext.Provider once completed so they can be utilized via const { functionName } = useInventoryDataContext();
-    async function handleAddItem(){
+    //Each function MUST dispatch state at some point to the reducer (usually AFTER fetchWithAuth for a given endpoint is successful)
+    async function handleCreateItem() {
+
+    }
+    async function handleAddItem() {
 
     }
 
-    async function handleEditItem(){
+    async function handleEditItem() {
 
     }
 
-    async function handleDeleteItem(){
+    async function handleDeleteItem() {
 
     }
     //END FUNCTION DEFINITIONS (For functions that require component scope)
