@@ -2,7 +2,10 @@
 import { Pressable, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 
-type Props = { style?: StyleProp<ViewStyle> };
+type Props = {
+     style?: StyleProp<ViewStyle> 
+    
+    };
 
 //The style prop can be used for additional styling, overriding certain style properties, etc.
 export default function BarcodeScannerButton({ style }: Props) {

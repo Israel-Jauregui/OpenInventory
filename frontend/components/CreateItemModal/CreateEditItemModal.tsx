@@ -51,10 +51,12 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 flexDirection: "row",
                                 alignItems: "center",
                                 justifyContent: "center",
-
+                                
+                                height: "13%",
                                 padding: 20,
-
-                                width: "90%",
+                                
+                                //Can be changed back to 90% if needed
+                                width: 300,
 
                             }}>
                             <DataField
@@ -164,7 +166,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                     }
                     <View style={styles.footerContainer}>
                         <TouchableOpacity style={styles.createItemButton}>
-                            <Text>
+                            <Text style={styles.createItemButtonText}>
                                 Create Item
                             </Text>
                         </TouchableOpacity>
@@ -194,17 +196,25 @@ const styles = StyleSheet.create(
 
             justifyContent: "center",
             alignItems: "center",
-
             width: "100%",
-            height: "12.5%",
+            height: "15%",
 
             backgroundColor: "white"
         },
         createItemButton: {
-
+            marginBottom: 5,
             width: 200,
-            padding: 20,
+            padding: 15,
 
             backgroundColor: "#36a2fa",
-        }
+
+            borderRadius: 12,
+
+        },
+
+        createItemButtonText: {
+            color: "white",
+            textAlign: "center",
+            fontSize: 22,
+        },
     });
