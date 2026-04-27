@@ -95,7 +95,7 @@ export default function InventorySelect() {
   
 
     //Used for resetting currently selected inventory upon navigation from other pages
-    setCurrentInventory({ invId: "", invName: "" });
+    setCurrentInventory({ invId: "", invName: "", role: undefined });
 
     fetchWithAuth("/inventory/getinventories", {
 
@@ -104,6 +104,10 @@ export default function InventorySelect() {
         "Accept": "application/json",
       },
     }).then(async (response) => {
+      if (!response?.ok) {
+        setInventories([]);
+        return;
+      }
       const responseJSON = await response?.json();
       setInventories(responseJSON);
     }).finally(()=>{setIsFetching(false);});
@@ -111,7 +115,7 @@ export default function InventorySelect() {
   }
 
 
-  const handleSelect = (inventory: { invId: string; invName: string }) => {
+  const handleSelect = (inventory: { invId: string; invName: string; role?: "admin" | "member" }) => {
 
 
     //Store selected inventory in global state / context (global for authenticated screens)
@@ -144,13 +148,13 @@ export default function InventorySelect() {
         //FIXME: Temporary responseJSON log
         console.log(responseJSON);
         //Add the new inventory to state
-        setInventories(prev => [...prev, { invId: responseJSON.invId, invName: newInventoryName }]);
+        setInventories(prev => [...prev, { invId: responseJSON.inventory_id, invName: newInventoryName, role: "admin" }]);
 
         //Needed so that modal is removed before routing to new inventory
         setModalVisible(false);
 
         //Automatically routes the user to the new inventory upon successful creation
-        handleSelect({ invId: responseJSON.inventory_id, invName: newInventoryName });
+        handleSelect({ invId: responseJSON.inventory_id, invName: newInventoryName, role: "admin" });
 
       })
       /*

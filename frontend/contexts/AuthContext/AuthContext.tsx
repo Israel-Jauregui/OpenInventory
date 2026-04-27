@@ -14,7 +14,7 @@ const AuthContext = createContext<{
     handleLoginAttempt: (username: string, password: string) => Promise<void | Response>,
     handleSignup: (username: string, password: string, wants_notif: boolean) => Promise<void | Response>,
     handleLogout: () => Promise<void>,
-    fetchWithAuth: (endpoint: RequestInfo, options: RequestInit) => Promise<Response | undefined>,
+    fetchWithAuth: (endpoint: string, options: RequestInit) => Promise<Response | undefined>,
     token?: string | ((value: string | null) => void) | null,
     user?: string | null,
 
@@ -214,7 +214,7 @@ export function SessionProvider({ children }: PropsWithChildren) {
      Definition may need to be moved somewhere else depending on when token state updates.
      Should also call setToken(null) upon 401 and maybe simultaneously upon token expiry since 401 may result when token is still being retrieved from storage.
      */
-    async function fetchWithAuth(endpoint: RequestInfo, options: RequestInit): Promise<Response | undefined> {
+    async function fetchWithAuth(endpoint: string, options: RequestInit): Promise<Response | undefined> {
 
         //Adds the Authorization header with the current token to every request. headers property becomes undefined if original passed options did not have it defined originally, which prevents an error from being thrown.
         const optionsWithAuthorization = { ...options, headers: { ...options.headers, "Authorization": `Bearer ${token}` } };
@@ -224,25 +224,20 @@ export function SessionProvider({ children }: PropsWithChildren) {
         try {
             const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}${endpoint}`, optionsWithAuthorization);
 
-            if (response.ok) {
-                //FIXME: Temporary console log
-                console.log(`fetchWithAuth for ${endpoint} status code: ${response.status}`)
-                //Just the response is returned so that custom handling for each responseJSON or other format can be implemented. Requires .then to be utilized since all asyncs will return a Promise requiring resolution
-                return response;
-            }
-            else if (response.status === 401) {
+            if (response.status === 401) {
 
                 //Logs out if expired
                 checkTokenExpiry(token);
 
             }
-            else {
-                throw new Error(`Request at endpoint ${endpoint} failed. Status code: ${response.status}`)
-            }
+
+            //Always return response so call sites can handle status-specific UX (403/400/etc)
+            return response;
         } catch (error) {
             console.error(error);
 
             //TODO: Consider adding boolean parameter to toggle alert(error) so that error is more immediately evident on mobile
+            return undefined;
         }
 
 

@@ -12,6 +12,8 @@ type InviteCandidate = {
 export default function InviteUsersScreen() {
   const { fetchWithAuth } = useSession();
   const { currentInventory } = useCurrentInventoryContext();
+  const isInventoryAdmin = currentInventory.role === "admin";
+  const isInventoryMember = currentInventory.role === "member";
 
   const [candidates, setCandidates] = useState<InviteCandidate[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -21,6 +23,14 @@ export default function InviteUsersScreen() {
   const loadCandidates = useCallback(async () => {
     if (!currentInventory.invId) {
       setCandidates([]);
+      return;
+    }
+
+    if (!isInventoryAdmin) {
+      setCandidates([]);
+      if (isInventoryMember) {
+        setError("You are a member in this inventory. Only admins can invite users.");
+      }
       return;
     }
 
@@ -52,10 +62,10 @@ export default function InviteUsersScreen() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [currentInventory.invId, fetchWithAuth]);
+  }, [currentInventory.invId, fetchWithAuth, isInventoryAdmin, isInventoryMember]);
 
   async function inviteUser(user: InviteCandidate) {
-    if (!currentInventory.invId) {
+    if (!currentInventory.invId || !isInventoryAdmin) {
       return;
     }
 

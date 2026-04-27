@@ -118,6 +118,11 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
                     }
                 }
             ).then(async (response) => {
+                if (!response?.ok) {
+                    dispatch({ type: "initialFetch", inventoryItems: [] });
+                    return;
+                }
+
                 const responseJSON = await response?.json();
 
                 console.log(responseJSON);

@@ -5,7 +5,7 @@ import { use, createContext, PropsWithChildren, useState, SetStateAction } from 
 
 
 //Type definition for a given inventory
-export type inventory = { invId: string, invName: string };
+export type inventory = { invId: string, invName: string, role?: "admin" | "member" };
 
 const CurrentInventoryContext = createContext<{
     //Type definitions for default values (actual default context values are in parentheses)
@@ -13,7 +13,7 @@ const CurrentInventoryContext = createContext<{
     setCurrentInventory: React.Dispatch<SetStateAction<inventory>>
 }>({
     //Default context values (overridden when both currentInventory state and state setter are passed)
-    currentInventory: {invId: "", invName: ""},
+    currentInventory: {invId: "", invName: "", role: undefined},
     setCurrentInventory: () => undefined
 }
 );
@@ -35,7 +35,7 @@ export function useCurrentInventoryContext() {
 //Provider for current inventory
 export function CurrentInventoryProvider({ children }: PropsWithChildren) {
 
-    const [currentInventory, setCurrentInventory] = useState<inventory>({ invId: "", invName: "" });
+    const [currentInventory, setCurrentInventory] = useState<inventory>({ invId: "", invName: "", role: undefined });
 
     return (
         <>

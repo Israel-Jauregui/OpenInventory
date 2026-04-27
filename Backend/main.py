@@ -48,6 +48,7 @@ class InviteUserRequest(BaseModel):
 class InventoryResponse(BaseModel):
     invId: int
     invName: str
+    role: str
 
 
 class ItemResponse(BaseModel):
@@ -354,7 +355,7 @@ def get_inventories(db: Session = Depends(get_db), current_user: models.User = D
     for inv in invList:
         inventory = (db.query(models.Inventory).filter(models.Inventory.inventory_id == inv.inventory_id ).first())
         inventoryName = inventory.inventory_name
-        res = InventoryResponse(invId=inv.inventory_id, invName=inventoryName)
+        res = InventoryResponse(invId=inv.inventory_id, invName=inventoryName, role=inv.role)
         invResponse.append(res)
     
     return invResponse
@@ -558,8 +559,5 @@ def get_inventory_items(inventory_id : int, db: Session = Depends(get_db), curre
             item = (db.query(models.Item).filter(models.Item.item_id == items.item_id).first())
             itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=item.photo_url, price=item.price, category=item.category, brand=item.brand, quantity=items.quantity, low_stock_trigger=items.low_stock_trigger)
             inventoryContents.append(itemToAdd)
-    else:
-        raise HTTPException(status_code=400,
-            detail="No entries found for inventory!")
         
     return inventoryContents

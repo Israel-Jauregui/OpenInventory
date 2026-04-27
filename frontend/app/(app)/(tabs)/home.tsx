@@ -42,6 +42,8 @@ export default function Home() {
     const navigation = useNavigation();
 
     const { currentInventory } = useCurrentInventoryContext();
+    const isInventoryAdmin = currentInventory.role === "admin";
+    const isInventoryMember = currentInventory.role === "member";
     //END HOOK INSTANTIATIONS
 
     //FIXME: Can be added back if needed
@@ -80,11 +82,15 @@ export default function Home() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                        style={styles.button}
+                        style={[styles.button, !isInventoryAdmin && styles.buttonDisabled]}
+                        disabled={!isInventoryAdmin}
                         onPress={()=>{router.navigate("/inventory/manage-users")}}
                         >
                             <Image style={{ height: 75, width: 75 }} source={require("@/assets/images/manageUsersIcon.png")} />
-                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Manage Users</Text>
+                            <Text style={[styles.buttonText, { marginTop: 10 }, !isInventoryAdmin && styles.buttonTextDisabled]}>Manage Users</Text>
+                            {isInventoryMember ? (
+                                <Text style={styles.adminOnlyNote}>Admin only</Text>
+                            ) : null}
 
                         </TouchableOpacity>
                     </View>
@@ -123,6 +129,11 @@ export default function Home() {
                     </View>
                 </View>
             </ScrollView>
+            {isInventoryMember ? (
+                <Text style={styles.memberNotice}>
+                    You are a member in this inventory. Only admins can manage users.
+                </Text>
+            ) : null}
         </>
 
     );
@@ -199,9 +210,31 @@ const styles = StyleSheet.create({
         borderWidth: 1,
 
     },
+    buttonDisabled: {
+        backgroundColor: '#f1f1f1',
+        borderColor: '#d3d3d3',
+    },
     buttonText: {
         color: '#39a2f8',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    buttonTextDisabled: {
+        color: '#8e8e8e',
+    },
+    adminOnlyNote: {
+        marginTop: 6,
+        fontSize: 12,
+        color: '#7d7d7d',
+        fontWeight: '600',
+    },
+    memberNotice: {
+        marginTop: 5,
+        marginBottom: 12,
+        textAlign: 'center',
+        color: '#5c5c5c',
+        fontSize: 14,
+        fontWeight: '500',
+        paddingHorizontal: 20,
     },
 })

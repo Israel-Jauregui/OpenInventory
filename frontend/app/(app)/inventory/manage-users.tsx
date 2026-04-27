@@ -16,6 +16,8 @@ export default function ManageUsersScreen() {
   const router = useRouter();
   const { fetchWithAuth } = useSession();
   const { currentInventory } = useCurrentInventoryContext();
+  const isInventoryAdmin = currentInventory.role === "admin";
+  const isInventoryMember = currentInventory.role === "member";
 
   const [members, setMembers] = useState<InventoryMember[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -24,6 +26,14 @@ export default function ManageUsersScreen() {
   const loadUsers = useCallback(async () => {
     if (!currentInventory.invId) {
       setMembers([]);
+      return;
+    }
+
+    if (!isInventoryAdmin) {
+      setMembers([]);
+      if (isInventoryMember) {
+        setError("You are a member in this inventory. Only admins can manage users.");
+      }
       return;
     }
 
@@ -55,7 +65,7 @@ export default function ManageUsersScreen() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [currentInventory.invId, fetchWithAuth]);
+  }, [currentInventory.invId, fetchWithAuth, isInventoryAdmin, isInventoryMember]);
 
   useEffect(() => {
     loadUsers();
@@ -66,7 +76,8 @@ export default function ManageUsersScreen() {
       <View style={styles.headerRow}>
         <Text style={styles.heading}>Users in {currentInventory.invName}</Text>
         <TouchableOpacity
-          style={styles.inviteButton}
+          style={[styles.inviteButton, !isInventoryAdmin && styles.inviteButtonDisabled]}
+          disabled={!isInventoryAdmin}
           onPress={() => {
             router.push("/inventory/invite-users");
           }}
@@ -143,6 +154,10 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     paddingVertical: 10,
     paddingHorizontal: 12,
+  },
+  inviteButtonDisabled: {
+    backgroundColor: "#b6dffd",
+    borderColor: "#cae9ff",
   },
   inviteIcon: {
     width: 20,
