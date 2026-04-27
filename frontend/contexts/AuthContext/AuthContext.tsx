@@ -1,5 +1,5 @@
 //AuthContext.tsx: Context provider that indicates whether the user is authenticated and performs signIn/Out operations. Very heavily influenced by examples on https://docs.expo.dev/router/advanced/authentication/
-import { use, createContext, PropsWithChildren } from 'react';
+import { use, createContext, PropsWithChildren, useEffect } from 'react';
 import { useStorageState } from '@/hooks/useStorageState/useStorageState';
 import { useRouter } from 'expo-router'
 import { useState } from 'react';
@@ -66,7 +66,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
     const [token, setToken] = useStorageState("token");
 
     //Initial token expiry check (fetch wrapper will check in response to receiving a 401)
-    checkTokenExpiry(token);
+    useEffect(() => {
+        checkTokenExpiry(token);
+    }, [token]);
 
     //MARK: Context
     //Grabs and returns provided AuthContext from SessionProvider. Required for components that want to use anything that is specified in AuthContext's value property

@@ -144,6 +144,10 @@ export default function InventorySelect() {
           "Accept": "application/json",
         },
       }).then(async (response) => {
+        if (!response?.ok) {
+          return;
+        }
+
         const responseJSON = await response?.json();
         //FIXME: Temporary responseJSON log
         console.log(responseJSON);

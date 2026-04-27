@@ -129,11 +129,6 @@ export default function Home() {
                     </View>
                 </View>
             </ScrollView>
-            {isInventoryMember ? (
-                <Text style={styles.memberNotice}>
-                    You are a member in this inventory. Only admins can manage users.
-                </Text>
-            ) : null}
         </>
 
     );
@@ -227,14 +222,5 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#7d7d7d',
         fontWeight: '600',
-    },
-    memberNotice: {
-        marginTop: 5,
-        marginBottom: 12,
-        textAlign: 'center',
-        color: '#5c5c5c',
-        fontSize: 14,
-        fontWeight: '500',
-        paddingHorizontal: 20,
     },
 })

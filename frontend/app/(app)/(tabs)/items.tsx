@@ -25,8 +25,7 @@ export default function ItemsView() {
 
     const { currentInventory } = useCurrentInventoryContext();
 
-    //FIXME: Will need to be destructured if more values are added to InventoryDataContext's value prop
-    const inventoryItems = useInventoryDataContext();
+    const { inventoryItems } = useInventoryDataContext();
 
     const renderItem: ListRenderItem<item> = ({item}: {item: item}) => {
         return (<>
