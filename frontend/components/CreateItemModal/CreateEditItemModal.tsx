@@ -6,6 +6,7 @@ import { item } from "@/contexts/InventoryDataContext/InventoryDataContext";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
+import { useSession } from "@/contexts/AuthContext/AuthContext"; 
 
 type Props = {
     //Designates that mode prop will only take either of these values
@@ -17,12 +18,34 @@ type Props = {
 }
 export default function CreateEditItemModal({ mode, item }: Props) {
 
-    //Used since /items/create expects a multipart/form-data body
+    //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
     const formData = new FormData();
 
-    //BEGIN HOOK INSTANTIATIONS
+     //BEGIN HOOK INSTANTIATIONS
+
+     const { fetchWithAuth } = useSession();
+
+    //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
+    const [formDataState, setFormDataState] = useState<item>(
+        {
+            item_id: "",
+            item_name: "",
+            desc: "",
+            upc: "",
+            //TODO: Photo field is still required; may use ImagePicker component for something similar to obtaining file URL if from camera
+            photo_url: "",
+            price: 0,
+            category: "",
+            brand: "",
+            quantity: 0,
+            low_stock_trigger: 0,
+
+        });
+   
 
     //END HOOK INSTANTIATIONS
+
+    //BEGIN 
 
     return (<>
         {
@@ -31,7 +54,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                 //Returned component for create
                 <>
 
-
+                   
                     <KeyboardAwareScrollView contentContainerStyle={styles.center}>
 
                         <View style={[styles.center, { height: "15%" }]}>
@@ -42,6 +65,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 placeholder="Item Name"
                                 placeholderTextColor="#979797"
                                 requiredAsterisk={true}
+
+                                onChangeText={(text) => {
+                                    setFormDataState({...formDataState, item_name: text})
+                                }}
                             />
                         </View>
 
@@ -51,12 +78,12 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 flexDirection: "row",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                
+
                                 height: "13%",
                                 padding: 20,
-                                
+
                                 //Can be changed back to 90% if needed
-                                width: 300,
+                                width: 350,
 
                             }}>
                             <DataField
@@ -64,12 +91,20 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                                 placeholder="Category"
                                 placeholderTextColor="#979797"
+
+                                onChangeText={(text) => {
+                                    setFormDataState({...formDataState, category: text})
+                                }}
                             />
 
                             <DataField
                                 header="BRAND"
                                 placeholder="Brand"
                                 placeholderTextColor="#979797"
+
+                                onChangeText={(text) => {
+                                    setFormDataState({...formDataState, brand: text})
+                                }}
 
                             />
                         </View>
@@ -79,6 +114,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             header="DESCRIPTION"
                             placeholder="Description"
                             placeholderTextColor="#979797"
+
+                            onChangeText={(text) => {
+                                    setFormDataState({...formDataState, desc: text})
+                                }}
                         />
 
                         <DataField
@@ -87,6 +126,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             placeholder="Price"
 
                             placeholderTextColor="#979797"
+
+                            onChangeText={(text) => {
+                                    setFormDataState({...formDataState, price: Number(text)})
+                                }}
                         />
 
                         <DataField
@@ -95,6 +138,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             placeholder="Scan or type barcode"
 
                             placeholderTextColor="#979797"
+
+                            onChangeText={(text) => {
+                                    setFormDataState({...formDataState, upc: text})
+                                }}
 
                         />
 
@@ -137,6 +184,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     placeholder="0"
                                     placeholderTextColor="#979797"
                                     value="0"
+
+                                    onChangeText={(text) => {
+                                    setFormDataState({...formDataState, quantity: Number(text)})
+                                }}
                                 />
                                 <DataField
                                     header={`Low stock alert${"\u2020"}`}
@@ -144,6 +195,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     placeholder="0"
                                     placeholderTextColor="#979797"
                                     value="0"
+
+                                    onChangeText={(text) => {
+                                    setFormDataState({...formDataState, low_stock_trigger: Number(text)})
+                                }}
                                 />
 
 
@@ -165,7 +220,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                     {//Modal footer (change header related props in app/(app)/_layout.tsx if trying to edit header)
                     }
                     <View style={styles.footerContainer}>
-                        <TouchableOpacity style={styles.createItemButton}>
+                        <TouchableOpacity
+                            style={styles.createItemButton}
+                            onPress={() => { console.log(formData) }}
+                        >
                             <Text style={styles.createItemButtonText}>
                                 Create Item
                             </Text>

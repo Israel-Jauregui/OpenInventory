@@ -104,6 +104,18 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         }
 
     }
+    //TODO: Pass the following functions into value of InventoryDataContext.Provider once completed so they can be utilized via const { functionName } = useInventoryDataContext();
+    async function handleAddItem(){
+
+    }
+
+    async function handleEditItem(){
+
+    }
+
+    async function handleDeleteItem(){
+
+    }
     //END FUNCTION DEFINITIONS (For functions that require component scope)
 
     //MARK: Component return
