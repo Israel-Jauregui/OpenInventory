@@ -10,10 +10,13 @@ import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 type Props = {
     item: item;
     onPress?: () => void;
+    onEditPress?: () => void;
+    onDeletePress?: () => void;
+    canManage?: boolean;
 };
 
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
-export default function ItemEntry({ item, onPress }: Props) {
+export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, canManage = true }: Props) {
 
     //MARK: Returned component
     return (<>
@@ -53,12 +56,26 @@ export default function ItemEntry({ item, onPress }: Props) {
                 </TouchableOpacity>
 
                 {//Edit item data button
-                }<TouchableOpacity style={styles.button}>
+                }<TouchableOpacity
+                    style={[styles.button, !canManage && styles.buttonDisabled]}
+                    disabled={!canManage}
+                    onPress={(event) => {
+                        event.stopPropagation();
+                        onEditPress?.();
+                    }}
+                >
                     <Image style={{ height: 40, width: 40 }} source={require("../../assets/images/editIcon.png")} />
                 </TouchableOpacity>
 
                 {//Delete item master data
-                }<TouchableOpacity style={styles.button}>
+                }<TouchableOpacity
+                    style={[styles.button, !canManage && styles.buttonDisabled]}
+                    disabled={!canManage}
+                    onPress={(event) => {
+                        event.stopPropagation();
+                        onDeletePress?.();
+                    }}
+                >
                     <Image style={{ height: 25, width: 25, borderColor: "red " }} source={require("../../assets/images/deleteIcon.png")} />
                 </TouchableOpacity>
             </View>
@@ -168,5 +185,8 @@ const styles = StyleSheet.create(
             height: 40,
 
             backgroundColor: "#b9b9b9"
-        }
+        },
+        buttonDisabled: {
+            opacity: 0.45,
+        },
     });

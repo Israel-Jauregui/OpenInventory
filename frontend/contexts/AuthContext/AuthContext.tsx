@@ -4,6 +4,8 @@ import { useStorageState } from '@/hooks/useStorageState/useStorageState';
 import { useRouter } from 'expo-router'
 import { useState } from 'react';
 import qs from 'qs';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 import { jwtDecode } from 'jwt-decode';
 
@@ -68,6 +70,25 @@ export function SessionProvider({ children }: PropsWithChildren) {
     //Initial token expiry check (fetch wrapper will check in response to receiving a 401)
     useEffect(() => {
         checkTokenExpiry(token);
+    }, [token]);
+
+    useEffect(() => {
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldPlaySound: true,
+                shouldSetBadge: false,
+                shouldShowBanner: true,
+                shouldShowList: true,
+            }),
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+
+        registerAndSyncPushToken();
     }, [token]);
 
     //MARK: Context
@@ -243,6 +264,45 @@ export function SessionProvider({ children }: PropsWithChildren) {
         }
 
 
+    }
+
+    async function registerAndSyncPushToken() {
+        try {
+            const existingPermission = await Notifications.getPermissionsAsync();
+            let finalStatus = existingPermission.status;
+
+            if (finalStatus !== "granted") {
+                const requestedPermission = await Notifications.requestPermissionsAsync();
+                finalStatus = requestedPermission.status;
+            }
+
+            if (finalStatus !== "granted") {
+                return;
+            }
+
+            const projectId =
+                Constants.expoConfig?.extra?.eas?.projectId ??
+                Constants.easConfig?.projectId;
+
+            const tokenResponse = await Notifications.getExpoPushTokenAsync(
+                projectId ? { projectId } : undefined
+            );
+
+            if (!tokenResponse.data) {
+                return;
+            }
+
+            await fetchWithAuth("/notifications/push-token", {
+                method: "POST",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ expo_push_token: tokenResponse.data }),
+            });
+        } catch (error) {
+            console.log("Push token registration failed:", error);
+        }
     }
 
 

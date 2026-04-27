@@ -11,6 +11,7 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
     wants_notif = Column(Boolean, default=True)
+    expo_push_token = Column(String, nullable=True)
 
     # Relationship: A user can be part of multiple inventories
     inventories = relationship("InventoryUser", back_populates="user")

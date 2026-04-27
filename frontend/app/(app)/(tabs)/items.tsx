@@ -1,6 +1,6 @@
 import { FlatList, ListRenderItem, View, Text, Pressable, StyleSheet } from 'react-native';
-import { useMemo, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useMemo, useState, useEffect } from 'react';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 import { useInventoryDataContext, item } from '@/contexts/InventoryDataContext/InventoryDataContext';
@@ -22,12 +22,20 @@ import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
 */
 export default function ItemsView() {
     const router = useRouter();
+    const params = useLocalSearchParams<{ q?: string }>();
 
     const { currentInventory } = useCurrentInventoryContext();
+    const isInventoryAdmin = currentInventory.role === "admin";
 
     const { inventoryItems } = useInventoryDataContext();
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [sortDescending, setSortDescending] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (typeof params.q === "string") {
+            setSearchQuery(params.q);
+        }
+    }, [params.q]);
 
     const filteredAndSortedItems = useMemo(() => {
         const query = searchQuery.trim().toLowerCase();
@@ -53,10 +61,23 @@ export default function ItemsView() {
         return (<>
             <ItemEntry
                 item={item}
+                canManage={isInventoryAdmin}
                 onPress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]",
                         params: { itemId: item.item_id, inInventory: "1", barcode: item.upc, quantity: String(item.quantity), lowStockTrigger: String(item.low_stock_trigger) }
+                    });
+                }}
+                onEditPress={() => {
+                    router.push({
+                        pathname: "/inventory/item/[itemId]/edit",
+                        params: { itemId: item.item_id },
+                    });
+                }}
+                onDeletePress={() => {
+                    router.push({
+                        pathname: "/inventory/item/[itemId]/delete",
+                        params: { itemId: item.item_id },
                     });
                 }}
             />

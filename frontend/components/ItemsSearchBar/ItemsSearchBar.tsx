@@ -6,10 +6,11 @@ type Props = {
     value?: string;
     onChangeText?: (text: string) => void;
     onBarcodePress?: () => void;
+    onSubmitEditing?: () => void;
     placeholder?: string;
 };
 
-export default function ItemsSearchBar({ value, onChangeText, onBarcodePress, placeholder }: Props) {
+export default function ItemsSearchBar({ value, onChangeText, onBarcodePress, onSubmitEditing, placeholder }: Props) {
     return (<>
         <View style={styles.searchBarContainer}>
             <TextInput
@@ -18,6 +19,8 @@ export default function ItemsSearchBar({ value, onChangeText, onBarcodePress, pl
                 placeholderTextColor="grey"
                 value={value}
                 onChangeText={onChangeText}
+                onSubmitEditing={onSubmitEditing}
+                returnKeyType="search"
             ></TextInput>
 
             {//Input barcode via scan

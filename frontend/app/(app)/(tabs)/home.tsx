@@ -34,6 +34,7 @@ const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per ro
 export default function Home() {
     //BEGIN HOOK INSTANTIATIONS MARK: Hook instantiations
     const [createItemVisible, setCreateItemVisible] = useState<boolean>(false)
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
@@ -64,7 +65,17 @@ export default function Home() {
             }<InventoryHeader inventoryName={`${currentInventory.invName} (TEMPORARY) ID: ${currentInventory.invId}`} />
 
             {//Contains both the search bar and the barcode scanner button
-            }<ItemsSearchBar onBarcodePress={() => { router.push("/scanner"); }} />
+            }<ItemsSearchBar
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={() => {
+                    router.push({
+                        pathname: "/items",
+                        params: { q: searchQuery.trim() },
+                    });
+                }}
+                onBarcodePress={() => { router.push("/scanner"); }}
+            />
 
             {//Home view buttons TODO: Consider turning into components and pass relevant props such as name
             }<ScrollView>
@@ -120,10 +131,18 @@ export default function Home() {
                     </View>
 
                     <View style={styles.row}>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity
+                        style={[styles.button, !isInventoryAdmin && styles.buttonDisabled]}
+                        disabled={!isInventoryAdmin}
+                        onPress={() => { router.push({ pathname: "/scanner", params: { action: "delete" } }); }}
+                        >
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Delete Item</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity
+                        style={[styles.button, !isInventoryAdmin && styles.buttonDisabled]}
+                        disabled={!isInventoryAdmin}
+                        onPress={() => { router.push({ pathname: "/scanner", params: { action: "edit" } }); }}
+                        >
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Edit Item</Text>
                         </TouchableOpacity>
                     </View>

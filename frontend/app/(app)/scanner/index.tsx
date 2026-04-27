@@ -1,5 +1,5 @@
 import { Button, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
@@ -11,6 +11,7 @@ import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/C
 export default function ScannerView() {
 
     const router = useRouter();
+    const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" }>();
     const { fetchWithAuth } = useSession();
     const { currentInventory } = useCurrentInventoryContext();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -31,10 +32,14 @@ export default function ScannerView() {
             });
 
             if (response?.status === 404) {
-                router.replace({
-                    pathname: "/inventory/item/create",
-                    params: { mode: "create", barcode }
-                });
+                if (action === "edit" || action === "delete") {
+                    Alert.alert("Unknown barcode", "This barcode does not exist in the database.");
+                } else {
+                    router.replace({
+                        pathname: "/inventory/item/create",
+                        params: { mode: "create", barcode }
+                    });
+                }
                 return;
             }
 
@@ -44,6 +49,28 @@ export default function ScannerView() {
             }
 
             const responseJSON = await response.json();
+
+            if ((action === "edit" || action === "delete") && !responseJSON.in_inventory) {
+                Alert.alert("Not in inventory", "This barcode exists, but the item is not in the current inventory.");
+                return;
+            }
+
+            if (action === "edit") {
+                router.replace({
+                    pathname: "/inventory/item/[itemId]/edit",
+                    params: { itemId: String(responseJSON.item.item_id) },
+                });
+                return;
+            }
+
+            if (action === "delete") {
+                router.replace({
+                    pathname: "/inventory/item/[itemId]/delete",
+                    params: { itemId: String(responseJSON.item.item_id) },
+                });
+                return;
+            }
+
             router.replace({
                 pathname: "/inventory/item/[itemId]",
                 params: {

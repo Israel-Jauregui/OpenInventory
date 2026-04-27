@@ -46,6 +46,13 @@
           "cameraPermission": "Allow OpenInventory to access your camera to scan items.",
           "barcodeScannerEnabled" : true
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#36a2fa"
+        }
       ]
     ],
     

@@ -12,6 +12,7 @@ import os
 from typing import Optional
 import shutil
 import uuid
+import httpx
 from fastapi import File, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
 
@@ -88,6 +89,20 @@ class InventoryUserResponse(BaseModel):
 class InviteCandidateResponse(BaseModel):
     user_id: int
     username: str
+
+class NotificationTokenRequest(BaseModel):
+    expo_push_token: str
+
+class EditInventoryItemRequest(BaseModel):
+    item_name: str
+    desc: str = ""
+    upc: str
+    photo_url: str = ""
+    price: float = 0.0
+    category: str = ""
+    brand: str = ""
+    quantity: int
+    low_stock_trigger: int
     
 class UserCreate(BaseModel):
     username: str
@@ -100,6 +115,7 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 43200 # Set to 30 days so you don't get logged out while testing
 INVENTORY_ROLE_ADMIN = "admin"
 INVENTORY_ROLE_MEMBER = "member"
+EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -199,9 +215,55 @@ def ensure_inventory_user_schema():
             )
 
 
+def ensure_notification_schema():
+    with engine.begin() as connection:
+        connection.execute(
+            text("ALTER TABLE users ADD COLUMN IF NOT EXISTS expo_push_token VARCHAR")
+        )
+
+
+def send_low_stock_push_notifications(inventory_id: int, item_name: str, quantity: int, threshold: int, db: Session):
+    recipients = (
+        db.query(models.User)
+        .join(models.InventoryUser, models.InventoryUser.user_id == models.User.user_id)
+        .filter(
+            models.InventoryUser.inventory_id == inventory_id,
+            models.User.wants_notif == True,
+            models.User.expo_push_token.isnot(None),
+            models.User.expo_push_token != ""
+        )
+        .all()
+    )
+
+    if not recipients:
+        return
+
+    messages = [
+        {
+            "to": user.expo_push_token,
+            "title": "Low stock alert",
+            "body": f"{item_name} is low ({quantity} left, trigger {threshold}).",
+            "data": {
+                "inventory_id": inventory_id,
+                "item_name": item_name,
+                "quantity": quantity,
+                "low_stock_trigger": threshold
+            }
+        }
+        for user in recipients
+    ]
+
+    try:
+        httpx.post(EXPO_PUSH_URL, json=messages, timeout=10.0)
+    except Exception:
+        # Push delivery should never block inventory updates.
+        return
+
+
 @app.on_event("startup")
 def bootstrap_inventory_membership():
     ensure_inventory_user_schema()
+    ensure_notification_schema()
 
 
 @app.post("/items/create", status_code=status.HTTP_201_CREATED)
@@ -325,6 +387,21 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     
     return {"access_token": encoded_jwt, "token_type": "bearer"}
+
+
+@app.post("/notifications/push-token")
+def register_push_token(
+    token_request: NotificationTokenRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    cleaned_token = token_request.expo_push_token.strip()
+    if not cleaned_token:
+        raise HTTPException(status_code=400, detail="Push token is required")
+
+    current_user.expo_push_token = cleaned_token
+    db.commit()
+    return {"message": "Push token registered"}
 
 
 @app.get("/items/search")
@@ -543,6 +620,100 @@ def add_item_to_inventory(addItem: AddItemToInv, db: Session = Depends(get_db), 
     db.commit()
     return {"message": "Item added to inventory!"}
 
+
+@app.put("/inventory/{inventory_id}/items/{item_id}")
+def edit_inventory_item(
+    inventory_id: int,
+    item_id: int,
+    req: EditInventoryItemRequest,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    require_inventory_admin(inventory_id=inventory_id, current_user=current_user, db=db)
+
+    inventory_entry = (
+        db.query(models.InventoryEntry)
+        .filter(
+            models.InventoryEntry.inventory_id == inventory_id,
+            models.InventoryEntry.item_id == item_id
+        )
+        .first()
+    )
+
+    if not inventory_entry:
+        raise HTTPException(status_code=404, detail="Item not found in this inventory.")
+
+    catalog_item = db.query(models.Item).filter(models.Item.item_id == item_id).first()
+    if not catalog_item:
+        raise HTTPException(status_code=404, detail="Catalog item not found.")
+
+    if req.quantity < 0:
+        raise HTTPException(status_code=400, detail="Quantity cannot be below zero!")
+    if req.low_stock_trigger < 0:
+        raise HTTPException(status_code=400, detail="Low stock trigger cannot be below zero!")
+
+    upc_conflict = (
+        db.query(models.Item)
+        .filter(models.Item.upc == req.upc, models.Item.item_id != item_id)
+        .first()
+    )
+    if upc_conflict:
+        raise HTTPException(status_code=400, detail="Another item already uses this barcode.")
+
+    previous_quantity = inventory_entry.quantity
+    previous_threshold = inventory_entry.low_stock_trigger
+
+    catalog_item.item_name = req.item_name.strip()
+    catalog_item.desc = req.desc
+    catalog_item.upc = req.upc.strip()
+    catalog_item.photo_url = req.photo_url
+    catalog_item.price = req.price
+    catalog_item.category = req.category
+    catalog_item.brand = req.brand
+
+    inventory_entry.quantity = req.quantity
+    inventory_entry.low_stock_trigger = req.low_stock_trigger
+
+    db.commit()
+
+    crossed_low_stock = previous_quantity > previous_threshold and inventory_entry.quantity <= inventory_entry.low_stock_trigger
+    if crossed_low_stock:
+        send_low_stock_push_notifications(
+            inventory_id=inventory_id,
+            item_name=catalog_item.item_name,
+            quantity=inventory_entry.quantity,
+            threshold=inventory_entry.low_stock_trigger,
+            db=db,
+        )
+
+    return {"message": "Item updated successfully"}
+
+
+@app.delete("/inventory/{inventory_id}/items/{item_id}")
+def delete_inventory_item(
+    inventory_id: int,
+    item_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
+):
+    require_inventory_admin(inventory_id=inventory_id, current_user=current_user, db=db)
+
+    inventory_entry = (
+        db.query(models.InventoryEntry)
+        .filter(
+            models.InventoryEntry.inventory_id == inventory_id,
+            models.InventoryEntry.item_id == item_id
+        )
+        .first()
+    )
+
+    if not inventory_entry:
+        raise HTTPException(status_code=404, detail="Item not found in this inventory.")
+
+    db.delete(inventory_entry)
+    db.commit()
+    return {"message": "Item removed from inventory"}
+
 @app.post("/inventory/updatecount")
 def update_count(req: UpdateCountRequest, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     require_inventory_admin(inventory_id=req.inventory_id, current_user=current_user, db=db)
@@ -552,14 +723,27 @@ def update_count(req: UpdateCountRequest, db: Session = Depends(get_db), current
     if not item:
         raise HTTPException(status_code=404, detail="Item not found in this inventory.")
     
+    previous_quantity = item.quantity
     item.quantity = item.quantity + req.quantityDelta
-    
+
     if item.quantity < 0:
         raise HTTPException(status_code=400,
             detail="Quantity cannot be below zero!")
-        
+
     db.commit()
-    
+
+    crossed_low_stock = previous_quantity > item.low_stock_trigger and item.quantity <= item.low_stock_trigger
+    if crossed_low_stock:
+        catalog_item = db.query(models.Item).filter(models.Item.item_id == item.item_id).first()
+        item_name = catalog_item.item_name if catalog_item else "Item"
+        send_low_stock_push_notifications(
+            inventory_id=req.inventory_id,
+            item_name=item_name,
+            quantity=item.quantity,
+            threshold=item.low_stock_trigger,
+            db=db,
+        )
+
     return {"message" : "Item quantity updated!"}
 
 
