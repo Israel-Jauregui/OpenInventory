@@ -45,9 +45,13 @@ export type addItemFormData = {
 const InventoryDataContext = createContext<{
     inventoryItems: item[],
     handleCreateItem: (createFormData: FormData) => Promise<void | Response>,
+    handleAddItem: (addItemData: addItemFormData) => Promise<void | Response>,
+    refreshInventoryItems: () => Promise<void>,
 }>({
     inventoryItems: [],
     handleCreateItem: () => Promise.resolve(undefined),
+    handleAddItem: () => Promise.resolve(undefined),
+    refreshInventoryItems: () => Promise.resolve(),
 
 });
 
@@ -159,8 +163,20 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
             return response;
         }
     }
-    async function handleAddItem() {
+    async function handleAddItemToInventory(addItemData: addItemFormData) {
+        const response = await fetchWithAuth("/inventory/additem", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(addItemData)
+        });
 
+        if (response?.ok) {
+            await getInventoryItems();
+            return response;
+        }
     }
 
     async function handleEditItem() {
@@ -175,7 +191,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //MARK: Component return
     return (<>
 
-        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem }}>
+        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem, handleAddItem: handleAddItemToInventory, refreshInventoryItems: getInventoryItems }}>
             <InventoryDataDispatchContext.Provider value={dispatch}>
                 {children}
             </InventoryDataDispatchContext.Provider>

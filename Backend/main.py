@@ -63,6 +63,22 @@ class ItemResponse(BaseModel):
     quantity: int
     low_stock_trigger: int
 
+class CatalogItemResponse(BaseModel):
+    item_id: int
+    item_name: str
+    desc: str
+    upc: str
+    photo_url: str
+    price: float
+    category: str
+    brand: str
+
+class InventoryBarcodeLookupResponse(BaseModel):
+    in_inventory: bool
+    item: CatalogItemResponse
+    quantity: Optional[int] = None
+    low_stock_trigger: Optional[int] = None
+
 class InventoryUserResponse(BaseModel):
     user_id: int
     username: str
@@ -564,3 +580,42 @@ def get_inventory_items(inventory_id : int, db: Session = Depends(get_db), curre
             inventoryContents.append(itemToAdd)
         
     return inventoryContents
+
+
+@app.get("/inventory/{inventory_id}/items/by-barcode/{barcode}", response_model=InventoryBarcodeLookupResponse)
+def get_inventory_item_by_barcode(
+    inventory_id: int,
+    barcode: str,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    require_inventory_member(inventory_id=inventory_id, current_user=current_user, db=db)
+
+    catalog_item = db.query(models.Item).filter(models.Item.upc == barcode).first()
+    if not catalog_item:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Barcode not found in OpenInventory catalog.")
+
+    inventory_entry = (
+        db.query(models.InventoryEntry)
+        .filter(
+            models.InventoryEntry.inventory_id == inventory_id,
+            models.InventoryEntry.item_id == catalog_item.item_id
+        )
+        .first()
+    )
+
+    return InventoryBarcodeLookupResponse(
+        in_inventory=inventory_entry is not None,
+        item=CatalogItemResponse(
+            item_id=catalog_item.item_id,
+            item_name=catalog_item.item_name,
+            desc=catalog_item.desc or "",
+            upc=catalog_item.upc or "",
+            photo_url=catalog_item.photo_url or "",
+            price=catalog_item.price or 0.0,
+            category=catalog_item.category or "",
+            brand=catalog_item.brand or "",
+        ),
+        quantity=inventory_entry.quantity if inventory_entry else None,
+        low_stock_trigger=inventory_entry.low_stock_trigger if inventory_entry else None,
+    )

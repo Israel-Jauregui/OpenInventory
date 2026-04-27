@@ -1,17 +1,23 @@
-import { View, Image, Pressable, TextInput, StyleSheet } from 'react-native'
-import { useRouter } from 'expo-router'
+import { View, TextInput, StyleSheet } from 'react-native'
 
 import BarcodeScannerButton from '../BarcodeScannerButton/BarcodeScannerButton';
 
-export default function ItemsSearchBar() {
-    const router = useRouter();
+type Props = {
+    value?: string;
+    onChangeText?: (text: string) => void;
+    onBarcodePress?: () => void;
+    placeholder?: string;
+};
 
+export default function ItemsSearchBar({ value, onChangeText, onBarcodePress, placeholder }: Props) {
     return (<>
         <View style={styles.searchBarContainer}>
             <TextInput
                 style={styles.searchBar}
-                placeholder="Search for items here..."
+                placeholder={placeholder ?? "Search for items here..."}
                 placeholderTextColor="grey"
+                value={value}
+                onChangeText={onChangeText}
             ></TextInput>
 
             {//Input barcode via scan
@@ -22,7 +28,9 @@ export default function ItemsSearchBar() {
                         right: 55,
                         height: 50,
                         width: 50,
-                    }} />
+                    }}
+                onPress={onBarcodePress}
+            />
         </View>
     </>
     );

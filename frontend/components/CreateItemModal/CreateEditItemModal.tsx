@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import DataField from "../DataField/DataField";
 import { item, createItemFormData, addItemFormData } from "@/contexts/InventoryDataContext/InventoryDataContext";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import { useSession } from "@/contexts/AuthContext/AuthContext";
 import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
+import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
 
 //MARK: Types
 type Props = {
@@ -26,11 +26,13 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
     //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
     const createFormData = new FormData();
+    const router = useRouter();
+    const { barcode } = useLocalSearchParams<{ barcode?: string }>();
 
     //BEGIN HOOK INSTANTIATIONS
 
-    const { fetchWithAuth } = useSession();
-    const { handleCreateItem } = useInventoryDataContext();
+    const { handleCreateItem, handleAddItem, refreshInventoryItems } = useInventoryDataContext();
+    const { currentInventory } = useCurrentInventoryContext();
 
     //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
     //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
@@ -39,7 +41,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
             item_name: "",
             desc: "",
-            upc: "",
+            upc: barcode ?? "",
             //TODO: Photo field is still required; may use ImagePicker component for something similar to obtaining file URL if from camera
 
             price: 0,
@@ -53,10 +55,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const [addFormDataState, setAddFormDataState] = useState<addItemFormData>(
         {
             //TODO: May have to change initial values
-            "inventory_id": -1,
+            "inventory_id": Number(currentInventory.invId) || -1,
             "item_id": -1,
-            "quantity": 0,
-            "low_stock_trigger": 0
+            "quantity": 1,
+            "low_stock_trigger": 1
         }
     );
 
@@ -68,8 +70,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
     //TODO: Add handling for missing item_name and invalid photo file; may have to create a validation function since multiple handlers may have similar submit logic
     //TODO: Change behavior depending on mode prop (create, edit, and possibly display will be available props)
-    function handleSubmit() {
+    async function handleSubmit() {
 
+        if (!currentInventory.invId) {
+            return;
+        }
 
         //Iterate through formDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
         for (const [key, value] of Object.entries(createFormDataState)) {
@@ -78,20 +83,38 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             createFormData.set(key, String(value))
         }
 
-        //FIXME: TEMPORARY CONSOLE LOG OF createFormData
-        for (const pair of createFormData.entries()) {
-            console.log(pair[0], pair[1]);
+        //Request / response handling is found in InventoryDataContext.tsx for listed handleXYZ functions
+        const createResponse = await handleCreateItem(createFormData);
+        if (!createResponse?.ok) {
+            return;
         }
 
-        //Request / response handling is found in InventoryDataContext.tsx for listed handleXYZ functions
-        handleCreateItem(createFormData).then(async (response) => {
+        const createResponseJSON = await createResponse.json();
+        if (!(createResponseJSON.item_id || createResponseJSON.item_id === 0)) {
+            return;
+        }
 
-            const responseJSON = await response?.json();
-            
-            //Second case is present since 0 is falsy ("0" is still truthy since it is a string)
-            if(responseJSON.item_id || responseJSON.item_id === 0){
-                //TODO: handleAddItem if and only if stock settings are specified
-            }
+        const addResponse = await handleAddItem({
+            inventory_id: Number(currentInventory.invId),
+            item_id: Number(createResponseJSON.item_id),
+            quantity: addFormDataState.quantity <= 0 ? 1 : addFormDataState.quantity,
+            low_stock_trigger: addFormDataState.low_stock_trigger < 0 ? 0 : addFormDataState.low_stock_trigger,
+        });
+
+        if (!addResponse?.ok) {
+            return;
+        }
+
+        await refreshInventoryItems();
+        router.replace({
+            pathname: "/inventory/item/[itemId]",
+            params: {
+                itemId: String(createResponseJSON.item_id),
+                inInventory: "1",
+                barcode: createFormDataState.upc,
+                quantity: String(addFormDataState.quantity <= 0 ? 1 : addFormDataState.quantity),
+                lowStockTrigger: String(addFormDataState.low_stock_trigger < 0 ? 0 : addFormDataState.low_stock_trigger),
+            },
         });
 
 

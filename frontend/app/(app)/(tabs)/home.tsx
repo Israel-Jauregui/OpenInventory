@@ -64,7 +64,7 @@ export default function Home() {
             }<InventoryHeader inventoryName={`${currentInventory.invName} (TEMPORARY) ID: ${currentInventory.invId}`} />
 
             {//Contains both the search bar and the barcode scanner button
-            }<ItemsSearchBar />
+            }<ItemsSearchBar onBarcodePress={() => { router.push("/scanner"); }} />
 
             {//Home view buttons TODO: Consider turning into components and pass relevant props such as name
             }<ScrollView>

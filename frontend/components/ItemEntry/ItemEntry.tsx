@@ -7,15 +7,20 @@ import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
 
 
+type Props = {
+    item: item;
+    onPress?: () => void;
+};
+
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
-export default function ItemEntry({ item }: { item: item }) {
+export default function ItemEntry({ item, onPress }: Props) {
 
     //MARK: Returned component
     return (<>
 
         {/*BEGIN rowContainer*/}
         {//Main row container
-        }<View style={styles.rowContainer}>
+        }<TouchableOpacity style={styles.rowContainer} onPress={onPress} activeOpacity={0.85}>
 
             {//Image container
             }<View style={styles.imageContainer}>
@@ -59,7 +64,7 @@ export default function ItemEntry({ item }: { item: item }) {
             </View>
 
             {/*END rowContainer*/}
-        </View>
+        </TouchableOpacity>
 
     </>);
 }

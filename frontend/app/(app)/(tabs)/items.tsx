@@ -1,7 +1,6 @@
-
-import { ScrollView, FlatList, ListRenderItem, ListRenderItemInfo } from 'react-native';
-
-import { useEffect, useContext } from 'react';
+import { FlatList, ListRenderItem, View, Text, Pressable, StyleSheet } from 'react-native';
+import { useMemo, useState } from 'react';
+import { useRouter } from 'expo-router';
 
 import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
 import { useInventoryDataContext, item } from '@/contexts/InventoryDataContext/InventoryDataContext';
@@ -22,28 +21,100 @@ import ItemsSearchBar from '@/components/ItemsSearchBar/ItemsSearchBar';
     https://blog.isquaredsoftware.com/2021/01/context-redux-differences/
 */
 export default function ItemsView() {
+    const router = useRouter();
 
     const { currentInventory } = useCurrentInventoryContext();
 
     const { inventoryItems } = useInventoryDataContext();
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [sortDescending, setSortDescending] = useState<boolean>(true);
+
+    const filteredAndSortedItems = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+        const filtered = !query
+            ? inventoryItems
+            : inventoryItems.filter((inventoryItem) => {
+                return (
+                    inventoryItem.item_name.toLowerCase().includes(query) ||
+                    inventoryItem.upc.toLowerCase().includes(query) ||
+                    inventoryItem.brand.toLowerCase().includes(query) ||
+                    inventoryItem.category.toLowerCase().includes(query)
+                );
+            });
+
+        const sorted = [...filtered].sort((a, b) => {
+            return sortDescending ? b.quantity - a.quantity : a.quantity - b.quantity;
+        });
+
+        return sorted;
+    }, [inventoryItems, searchQuery, sortDescending]);
 
     const renderItem: ListRenderItem<item> = ({item}: {item: item}) => {
         return (<>
-            <ItemEntry item={item} />
+            <ItemEntry
+                item={item}
+                onPress={() => {
+                    router.push({
+                        pathname: "/inventory/item/[itemId]",
+                        params: { itemId: item.item_id, inInventory: "1", barcode: item.upc, quantity: String(item.quantity), lowStockTrigger: String(item.low_stock_trigger) }
+                    });
+                }}
+            />
         </>)
     };
 
-    //TODO: Consider changing FlatList to a SectionList
     return (<>
         <InventoryHeader inventoryName={currentInventory.invName} />
-        <ItemsSearchBar />
+        <ItemsSearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onBarcodePress={() => { router.push("/scanner"); }}
+        />
+        <View style={styles.controlsRow}>
+            <Pressable
+                style={styles.sortButton}
+                onPress={() => { setSortDescending(!sortDescending); }}
+            >
+                <Text style={styles.sortButtonText}>
+                    Quantity {sortDescending ? "High -> Low" : "Low -> High"}
+                </Text>
+            </Pressable>
+        </View>
 
         <FlatList
-            data={inventoryItems}
+            data={filteredAndSortedItems}
             renderItem={renderItem}
             keyExtractor={(itemData: item) => itemData.item_id}
+            ListEmptyComponent={
+                <Text style={styles.emptyText}>No items match this search.</Text>
+            }
         />
 
 
     </>);
 }
+
+const styles = StyleSheet.create({
+    controlsRow: {
+        width: "100%",
+        alignItems: "center",
+        marginBottom: 8,
+    },
+    sortButton: {
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 14,
+        backgroundColor: "#d9d9d9",
+    },
+    sortButtonText: {
+        fontSize: 16,
+        color: "#1d1b20",
+        fontWeight: "600",
+    },
+    emptyText: {
+        textAlign: "center",
+        color: "#6b6b6b",
+        marginTop: 24,
+        fontSize: 16,
+    },
+});

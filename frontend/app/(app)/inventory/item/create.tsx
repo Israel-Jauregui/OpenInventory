@@ -8,7 +8,7 @@ export default function CreateItemModal() {
    
     return(<>
 
-            <CreateEditItemModal mode={mode}/>
+            <CreateEditItemModal mode={mode ?? "create"}/>
 
     </>);
 }

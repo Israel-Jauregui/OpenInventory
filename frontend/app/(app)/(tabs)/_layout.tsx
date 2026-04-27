@@ -1,7 +1,6 @@
 import { Tabs, useRouter } from 'expo-router';
 import { Pressable, Text } from "react-native";
 
-import BackButton from '@/components/BackButton/BackButton';
 import LogoutButton from '@/components/LogoutButton/LogoutButton';
 
 //TODO: Create and pass context for relevant inventory data
@@ -44,7 +43,12 @@ function TabLayout() {
                             headerTitle: 'Home',
                             title: "Home",
                             headerLeft: () => (
-                                <BackButton />
+                                <Pressable
+                                    onPress={() => { router.push("/inventory/inventory-select"); }}
+                                    style={{ marginLeft: 12 }}
+                                >
+                                    <Text style={{ fontSize: 16, color: "#007AFF", fontWeight: "500" }}>Inventories</Text>
+                                </Pressable>
                             ),
                             headerRight: () => (
                                 <LogoutButton />
@@ -57,7 +61,12 @@ function TabLayout() {
                             headerTitle: 'Items',
                             title: "Items",
                             headerLeft: () => (
-                                <BackButton />
+                                <Pressable
+                                    onPress={() => { router.push("/inventory/inventory-select"); }}
+                                    style={{ marginLeft: 12 }}
+                                >
+                                    <Text style={{ fontSize: 16, color: "#007AFF", fontWeight: "500" }}>Inventories</Text>
+                                </Pressable>
                             ),
                             headerRight: () => (
                                 <LogoutButton />
@@ -71,7 +80,12 @@ function TabLayout() {
                             headerTitle: 'Alerts',
                             title: "Alerts",
                             headerLeft: () => (
-                                <BackButton />
+                                <Pressable
+                                    onPress={() => { router.push("/inventory/inventory-select"); }}
+                                    style={{ marginLeft: 12 }}
+                                >
+                                    <Text style={{ fontSize: 16, color: "#007AFF", fontWeight: "500" }}>Inventories</Text>
+                                </Pressable>
                             ),
                             headerRight: () => (
                                 <LogoutButton />

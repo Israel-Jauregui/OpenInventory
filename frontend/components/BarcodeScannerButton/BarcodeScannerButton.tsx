@@ -2,10 +2,10 @@
 import { Pressable, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 
-type Props = { style?: StyleProp<ViewStyle> };
+type Props = { style?: StyleProp<ViewStyle>, onPress?: () => void };
 
 //The style prop can be used for additional styling, overriding certain style properties, etc.
-export default function BarcodeScannerButton({ style }: Props) {
+export default function BarcodeScannerButton({ style, onPress }: Props) {
 
     const router = useRouter();
 
@@ -13,7 +13,13 @@ export default function BarcodeScannerButton({ style }: Props) {
         {//Button that navigates to the scanner. Style prop is also passed to override things such as position for different fields.
         }<Pressable
             style={[styles.barcodeScan, style]}
-            onPress={() => { router.navigate('../scanner'); }}
+            onPress={() => {
+                if (onPress) {
+                    onPress();
+                    return;
+                }
+                router.navigate('/scanner');
+            }}
         >
             <Image
                 style={{ height: 40, width: 40 }} source={require("@/assets/images/barcodeScanIcon.png")}
