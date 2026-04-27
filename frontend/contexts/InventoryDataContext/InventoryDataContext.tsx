@@ -28,20 +28,28 @@ export type createItemFormData = {
     "price": number,
     "category": string,
     "brand": string,
-    "file": string | null,
+    "file": string,
 }
 
 export type addItemFormData = {
-    "inventory_id": number,
-    "item_id": number,
+    "inventory_id": number | null,
+    "item_id": number | null,
     "quantity": number,
     "low_stock_trigger": number
 }
 
 //State and dispatch contexts are separated so that only updating state for example doesn't cause rerenders for components that only need the dispatch function
 
-//Represents the actual inventory data
-const InventoryDataContext = createContext<item[]>([]);
+//Represents the actual inventory data and appropriate functons for handling inventory-related actions
+//TODO: Continue adding handler function types and initial values
+const InventoryDataContext = createContext<{
+    inventoryItems: item[],
+    handleCreateItem: (createFormData: FormData) => Promise<void | Response>,
+}>({
+    inventoryItems: [],
+    handleCreateItem: () => Promise.resolve(undefined),
+
+});
 
 //Type can be changed if needed
 const InventoryDataDispatchContext = createContext<ActionDispatch<any>>(() => null);
@@ -125,8 +133,26 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     }
     //TODO: Pass the following functions into value of InventoryDataContext.Provider once completed so they can be utilized via const { functionName } = useInventoryDataContext();
     //Each function MUST dispatch state at some point to the reducer (usually AFTER fetchWithAuth for a given endpoint is successful)
-    async function handleCreateItem() {
+    async function handleCreateItem(createFormData: FormData) {
+       
 
+        console.log("Creating new item master data")
+        //Send a request with createFormData to /items/create to create a global item format
+        //TODO: ADD CASES FOR ERROR HANDLING SUCH AS DUPLICATE BARCODE OR MISSING ITEM_NAME
+
+        //Uses await instead of immediately resolving with .then() since (for example) handleSubmit in CreateEditItemModal.tsx needs the responseJSON in time
+        const response = await fetchWithAuth("/items/create", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "multipart/form-data"
+            },
+            body: createFormData
+        })
+
+        if (response?.status === 201){
+            return response;
+        }
     }
     async function handleAddItem() {
 
@@ -144,7 +170,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //MARK: Component return
     return (<>
 
-        <InventoryDataContext.Provider value={inventoryItems}>
+        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem }}>
             <InventoryDataDispatchContext.Provider value={dispatch}>
                 {children}
             </InventoryDataDispatchContext.Provider>
@@ -155,6 +181,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //MARK: Reducer and action types
     //Type definition for the dispatched action 
     //TODO: Add additional type for every new dispatcher action case that is created
+    //TODO: createItem dispatch may be needed and would likely alter state of something such as list of items in items table of database to add to a given inventory
     //Example of additional type is {type: "deleteItem", item_id: number} for action.type case "deleteItem" that deletes an item with item_id
     type Action =
         | { type: "initialFetch", inventoryItems: item[] }

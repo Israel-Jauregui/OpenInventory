@@ -7,6 +7,7 @@ import { item, createItemFormData, addItemFormData } from "@/contexts/InventoryD
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { useSession } from "@/contexts/AuthContext/AuthContext";
+import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
 
 //MARK: Types
 type Props = {
@@ -24,12 +25,12 @@ type Props = {
 export default function CreateEditItemModal({ mode, item }: Props) {
 
     //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
-    const formData = new FormData();
+    const createFormData = new FormData();
 
     //BEGIN HOOK INSTANTIATIONS
 
     const { fetchWithAuth } = useSession();
-
+    const { handleCreateItem } = useInventoryDataContext();
 
     //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
     //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
@@ -51,10 +52,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     //FormData for adding an item (expected format for /inventory/addItem)
     const [addFormDataState, setAddFormDataState] = useState<addItemFormData>(
         {
-            "inventory_id": 1,
-            "item_id": 2,
-            "quantity": 6,
-            "low_stock_trigger": 2
+            //TODO: May have to change initial values
+            "inventory_id": -1,
+            "item_id": -1,
+            "quantity": 0,
+            "low_stock_trigger": 0
         }
     );
 
@@ -64,14 +66,35 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     //MARK: Component scope functions
     //BEGIN FUNCTION DEFINITIONS (For functions that require component scope)
 
+    //TODO: Add handling for missing item_name and invalid photo file; may have to create a validation function since multiple handlers may have similar submit logic
+    //TODO: Change behavior depending on mode prop (create, edit, and possibly display will be available props)
     function handleSubmit() {
 
-        console.log("Submitted form data:")
+
         //Iterate through formDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
         for (const [key, value] of Object.entries(createFormDataState)) {
 
-            console.log(key, value)
+            //value is converted to a string since FormData.set() will not accept numbers; API should still process due to Python's dynamic typing
+            createFormData.set(key, String(value))
         }
+
+        //FIXME: TEMPORARY CONSOLE LOG OF createFormData
+        for (const pair of createFormData.entries()) {
+            console.log(pair[0], pair[1]);
+        }
+
+        //Request / response handling is found in InventoryDataContext.tsx for listed handleXYZ functions
+        handleCreateItem(createFormData).then(async (response) => {
+
+            const responseJSON = await response?.json();
+            
+            //Second case is present since 0 is falsy ("0" is still truthy since it is a string)
+            if(responseJSON.item_id || responseJSON.item_id === 0){
+                //TODO: handleAddItem if and only if stock settings are specified
+            }
+        });
+
+
 
     }
     //END FUNCTION DEFINITIONS (For functions that require component scope)

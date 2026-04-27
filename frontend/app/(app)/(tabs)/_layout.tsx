@@ -15,10 +15,8 @@ function TabLayout() {
 
     return (
         <>
-            {//CurrentInventoryProvider wraps all tabs for now just in case (for example) alerts requires current inventory data to make a request
-            }
+           
 
-            <InventoryDataProvider>
                 
                 <Tabs backBehavior="history">
                     {/*
@@ -85,7 +83,7 @@ function TabLayout() {
 
 
                 </Tabs>
-            </InventoryDataProvider>
+     
 
         </>
     );

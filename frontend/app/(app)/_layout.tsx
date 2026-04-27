@@ -1,12 +1,14 @@
 import { Stack } from 'expo-router';
 import LogoutButton from '@/components/LogoutButton/LogoutButton';
 import { CurrentInventoryProvider } from '@/contexts/CurrentInventoryContext/CurrentInventoryContext';
+import { InventoryDataProvider } from '@/contexts/InventoryDataContext/InventoryDataContext';
 import BackButton from '@/components/BackButton/BackButton';
 export default function AppRoutesLayout() {
 
     return (<>
 
         <CurrentInventoryProvider>
+            <InventoryDataProvider>
             <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen
                     name="inventory/inventory-select"
@@ -22,6 +24,7 @@ export default function AppRoutesLayout() {
                 <Stack.Screen name="inventory/item/[itemId]/edit" options={{presentation: "modal", headerShown: true, headerTitle: "Edit Item"}}/>
                 <Stack.Screen name="scanner/index" />
             </Stack>
+            </InventoryDataProvider>
         </CurrentInventoryProvider>
     </>);
 }
