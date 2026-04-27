@@ -7,7 +7,9 @@ import { useCurrentInventoryContext } from '../CurrentInventoryContext/CurrentIn
 //Type definition for an item that follows Item class / model in API
 export type item = {
     //Changed item_id type to string from response's item_id: number since FlatList's keyExtractor expects a string
-    "item_id": string,
+    //Also optional since some requests such as creating a completely new item obviously should not send this property
+    //TODO: Possibly change other expected properties to be optional depending on expected body / FormData of other requests
+    "item_id"?: string,
     "item_name": string,
     "desc": string,
     "upc": string,

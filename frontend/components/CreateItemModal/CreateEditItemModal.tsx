@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { useSession } from "@/contexts/AuthContext/AuthContext"; 
 
+//MARK: Types
 type Props = {
     //Designates that mode prop will only take either of these values
     mode: "create" | "edit",
@@ -16,6 +17,8 @@ type Props = {
     item?: item
 
 }
+
+//MARK: Component
 export default function CreateEditItemModal({ mode, item }: Props) {
 
     //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
@@ -25,10 +28,12 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
      const { fetchWithAuth } = useSession();
 
+    
+     //MARK: FormData
     //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
     const [formDataState, setFormDataState] = useState<item>(
         {
-            item_id: "",
+
             item_name: "",
             desc: "",
             upc: "",
@@ -45,8 +50,23 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
     //END HOOK INSTANTIATIONS
 
-    //BEGIN 
+    //MARK: Component scope functions
+    //BEGIN FUNCTION DEFINITIONS (For functions that require component scope)
 
+    function handleSubmit(){
+
+        console.log("Submitted form data:")
+        //Iterate through formDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
+        for(const [key, value] of Object.entries(formDataState)){
+            
+            console.log(key, value)
+        }
+
+    }
+    //END FUNCTION DEFINITIONS (For functions that require component scope)
+
+
+    //MARK: Component return
     return (<>
         {
             //TODO: May just need to have conditional for things such as which handle function is used rather than the ENTIRE component
@@ -149,6 +169,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         {//Stock settings container and fields
                         }
+                        <Text>TODO: Either remove Stock Settings and add to Add Item modal, or (if values are specified) call /inventory/additem in handleSubmit() using the item_id returned by /items/create</Text>
                         <View style={
                             {
                                 backgroundColor: "#c6d7e7",
@@ -183,7 +204,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    value="0"
+                                    
 
                                     onChangeText={(text) => {
                                     setFormDataState({...formDataState, quantity: Number(text)})
@@ -194,7 +215,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    value="0"
+                                    
 
                                     onChangeText={(text) => {
                                     setFormDataState({...formDataState, low_stock_trigger: Number(text)})
@@ -217,12 +238,12 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                     </KeyboardAwareScrollView>
 
-                    {//Modal footer (change header related props in app/(app)/_layout.tsx if trying to edit header)
+                    {//Modal footer / create button (change header related props in app/(app)/_layout.tsx if trying to edit header)
                     }
                     <View style={styles.footerContainer}>
                         <TouchableOpacity
                             style={styles.createItemButton}
-                            onPress={() => { console.log(formData) }}
+                            onPress={handleSubmit}
                         >
                             <Text style={styles.createItemButtonText}>
                                 Create Item
