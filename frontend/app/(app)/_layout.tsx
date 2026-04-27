@@ -20,6 +20,8 @@ export default function AppRoutesLayout() {
                 <Stack.Screen name="(tabs)" />
                 {//Remove below Stacks if necessary aside from scanner
                 }
+                <Stack.Screen name="inventory/manage-users" options={{headerShown: true, headerTitle: "Manage Users"}} />
+                <Stack.Screen name="inventory/invite-users" options={{headerShown: true, headerTitle: "Invite Users"}} />
                 <Stack.Screen name="inventory/item/create" options={{presentation: "modal", headerShown: true, headerTitle: "Create Item"}}/>
                 <Stack.Screen name="inventory/item/[itemId]/edit" options={{presentation: "modal", headerShown: true, headerTitle: "Edit Item"}}/>
                 <Stack.Screen name="scanner/index" />

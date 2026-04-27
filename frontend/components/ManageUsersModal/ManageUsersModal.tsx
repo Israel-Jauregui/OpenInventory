@@ -31,8 +31,13 @@ export default function ManageUsersModal({ visible, setManageUsersVisible, inven
     //FIXME: TEMPORARY JWT BEARER; REQUEST NEW ONE / REPLACE UPON EXPIRATION UNTIL AUTHCONTEXT AND EXPO-SECURE-STORAGE IS IMPLEMENTED
 
     async function fetchUsers() {
+        if (!inventoryId) {
+            setUsers([]);
+            return;
+        }
+
         setLoading(true);
-        fetchWithAuth("inventory/getusers", {
+        fetchWithAuth(`/inventory/getusers?invId=${inventoryId}`, {
             method: "GET",
             headers: {
                 "Accept": "application/json",

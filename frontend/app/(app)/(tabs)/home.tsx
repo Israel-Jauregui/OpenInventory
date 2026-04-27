@@ -34,7 +34,6 @@ const buttonSize = isLargeScreen ? 200 : width / 2.5; // fits two buttons per ro
 export default function Home() {
     //BEGIN HOOK INSTANTIATIONS MARK: Hook instantiations
     const [createItemVisible, setCreateItemVisible] = useState<boolean>(false)
-    const [manageUsersVisible, setManageUsersVisible] = useState<boolean>(false);
 
 
     //Used for routing after clicking barcode scanner, home inventory buttons, etc.
@@ -80,7 +79,10 @@ export default function Home() {
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity
+                        style={styles.button}
+                        onPress={()=>{router.navigate("/inventory/manage-users")}}
+                        >
                             <Image style={{ height: 75, width: 75 }} source={require("@/assets/images/manageUsersIcon.png")} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Manage Users</Text>
 
