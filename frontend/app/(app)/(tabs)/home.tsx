@@ -10,7 +10,7 @@ import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implement
 //FIXME: TEMPORARY IMPORT
 import HomeInventoryButton from "../../../components/HomeInventoryButton/HomeInventoryButton";
 
-import CreateItemModal from "@/components/CreateItemModal/CreateItemModal";
+
 import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
 import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
 
@@ -53,14 +53,6 @@ export default function Home() {
     //When importing components that were previously written here, make sure to adjust / remove styling here since they will have their own stylesheets
     return (
         <>
-            
-            {/*BEGIN MODALS*/
-            }
-            <CreateItemModal 
-            visible={createItemVisible} 
-            setCreateItemVisible={setCreateItemVisible}/>
-            {/*END MODALS*/
-            }
             {/*Inventory type dropdown */
             }<InventoryHeader inventoryName={`${currentInventory.invName} (TEMPORARY) ID: ${currentInventory.invId}`} />
 
