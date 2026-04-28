@@ -15,6 +15,7 @@ import uuid
 import httpx
 from fastapi import File, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -23,6 +24,14 @@ app = FastAPI()
 os.makedirs("static/images", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8081/"],
+    allow_methods=[""],
+    allow_headers=[""],
+    allow_credentials=True,
+)
 
 load_dotenv()
 
