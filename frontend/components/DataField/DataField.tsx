@@ -43,7 +43,7 @@ const styles = StyleSheet.create(
     {
         header: {
             marginLeft: 10,
-
+            marginTop: 12,
             color: "#707479",
             fontSize: 18,
             fontWeight: "500"

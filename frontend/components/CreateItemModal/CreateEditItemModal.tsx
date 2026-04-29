@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
+import CameraButton from "../CameraButton/CameraButton";
 
 //MARK: Types
 type Props = {
@@ -35,21 +36,16 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const { currentInventory } = useCurrentInventoryContext();
 
     //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
-    //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
-    const [createFormDataState, setCreateFormDataState] = useState<createItemFormData>(
-        {
-
-            item_name: "",
-            desc: "",
-            upc: barcode ?? "",
-            //TODO: Photo field is still required; may use ImagePicker component for something similar to obtaining file URL if from camera
-
-            price: 0,
-            category: "",
-            brand: "",
-            file: ""
-
-        });
+    
+    const [createFormDataState, setCreateFormDataState] = useState<createItemFormData>({
+        item_name: mode === "edit" ? item?.item_name ?? "" : "",
+        desc: mode === "edit" ? item?.desc ?? "" : "",
+        upc: mode === "edit" ? item?.upc ?? "" : barcode ?? "",
+        price: mode === "edit" ? item?.price ?? 0 : 0,
+        category: mode === "edit" ? item?.category ?? "" : "",
+        brand: mode === "edit" ? item?.brand ?? "" : "",
+        file: "",
+    });
 
     //FormData for adding an item (expected format for /inventory/addItem)
     const [addFormDataState, setAddFormDataState] = useState<addItemFormData>(
@@ -62,6 +58,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
         }
     );
 
+
+
+    function TakeItemPhoto(){
+        router.push("/(app)/camera")
+    }
 
     //END HOOK INSTANTIATIONS
 
@@ -122,12 +123,14 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     }
     //END FUNCTION DEFINITIONS (For functions that require component scope)
 
+    console.log("ITEM PROP:", item);
+    console.log("STATE:", createFormDataState);
 
     //MARK: Component return
     return (<>
         {
             //TODO: May just need to have conditional for things such as which handle function is used rather than the ENTIRE component
-            mode === "create" ?
+            
                 //Returned component for create
                 <>
 
@@ -142,12 +145,17 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 placeholder="Item Name"
                                 placeholderTextColor="#979797"
                                 requiredAsterisk={true}
-
+                                value={createFormDataState.item_name}
                                 onChangeText={(text) => {
                                     setCreateFormDataState({ ...createFormDataState, item_name: text })
                                 }}
                             />
                         </View>
+                            
+                        <View>
+                            <CameraButton Pressed={TakeItemPhoto} header="TAKE/UPLOAD PHOTO"></CameraButton>
+                        </View>
+                        
 
                         <View style={
                             {
@@ -168,7 +176,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                                 placeholder="Category"
                                 placeholderTextColor="#979797"
-
+                                value={createFormDataState.category}
                                 onChangeText={(text) => {
                                     setCreateFormDataState({ ...createFormDataState, category: text })
                                 }}
@@ -178,6 +186,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 header="BRAND"
                                 placeholder="Brand"
                                 placeholderTextColor="#979797"
+                                value={createFormDataState.brand}
 
                                 onChangeText={(text) => {
                                     setCreateFormDataState({ ...createFormDataState, brand: text })
@@ -191,7 +200,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             header="DESCRIPTION"
                             placeholder="Description"
                             placeholderTextColor="#979797"
-
+                            value={createFormDataState.desc}
+                            
                             onChangeText={(text) => {
                                 setCreateFormDataState({ ...createFormDataState, desc: text })
                             }}
@@ -201,6 +211,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             textInputStyle={{ width: 300 }}
                             header="PRICE"
                             placeholder="Price"
+                            value={String(createFormDataState.price)}
 
                             placeholderTextColor="#979797"
 
@@ -213,9 +224,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             textInputStyle={{ width: 300 }}
                             header="BARCODE"
                             placeholder="Scan or type barcode"
-
+                            
                             placeholderTextColor="#979797"
-
+                            value={createFormDataState.upc}
+                            
                             onChangeText={(text) => {
                                 setCreateFormDataState({ ...createFormDataState, upc: text })
                             }}
@@ -226,7 +238,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         {//Stock settings container and fields
                         }
-                        <Text>TODO: Either remove Stock Settings and add to Add Item modal, or (if values are specified) call /inventory/additem in handleSubmit() using the item_id returned by /items/create</Text>
+                        {/* <Text>TODO: Either remove Stock Settings and add to Add Item modal, or (if values are specified) call /inventory/additem in handleSubmit() using the item_id returned by /items/create</Text> */}
                         <View style={
                             {
                                 backgroundColor: "#c6d7e7",
@@ -303,7 +315,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             onPress={handleSubmit}
                         >
                             <Text style={styles.createItemButtonText}>
-                                Create Item
+                                Save Item
                             </Text>
                         </TouchableOpacity>
                     </View>
@@ -311,14 +323,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
 
                 </>
-
-                :
-                //Returned component for edit
-                <>
-                </>
         }
 
     </>);
+
+    
 }
 
 const styles = StyleSheet.create(

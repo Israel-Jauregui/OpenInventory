@@ -1,8 +1,8 @@
 import { Button, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState } from 'react';
-
+import { useRef } from 'react';
+import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
 import BarcodeScanInput from '@/components/BarcodeScanInput/BarcodeScanInput';
 import { useSession } from '@/contexts/AuthContext/AuthContext';
@@ -14,22 +14,27 @@ export default function ScannerView() {
     const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" }>();
     const { fetchWithAuth } = useSession();
     const { currentInventory } = useCurrentInventoryContext();
-    const [isProcessing, setIsProcessing] = useState(false);
+
+    // ✅ useRef instead of useState
+    const isProcessingRef = useRef(false);
 
     async function handleScannedBarcode(barcode: string) {
-        if (isProcessing || !currentInventory.invId) {
+        if (isProcessingRef.current || !currentInventory.invId) {
             return;
         }
 
-        setIsProcessing(true);
+        isProcessingRef.current = true;
 
         try {
-            const response = await fetchWithAuth(`/inventory/${currentInventory.invId}/items/by-barcode/${barcode}`, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json"
+            const response = await fetchWithAuth(
+                `/inventory/${currentInventory.invId}/items/by-barcode/${barcode}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    }
                 }
-            });
+            );
 
             if (response?.status === 404) {
                 if (action === "edit" || action === "delete") {
@@ -58,7 +63,10 @@ export default function ScannerView() {
             if (action === "edit") {
                 router.replace({
                     pathname: "/inventory/item/[itemId]/edit",
-                    params: { itemId: String(responseJSON.item.item_id) },
+                    params: {
+                        itemId: String(responseJSON.item.item_id),
+                        item: JSON.stringify(responseJSON.item)
+                    },
                 });
                 return;
             }
@@ -66,7 +74,9 @@ export default function ScannerView() {
             if (action === "delete") {
                 router.replace({
                     pathname: "/inventory/item/[itemId]/delete",
-                    params: { itemId: String(responseJSON.item.item_id) },
+                    params: {
+                        itemId: String(responseJSON.item.item_id),
+                    },
                 });
                 return;
             }
@@ -81,22 +91,22 @@ export default function ScannerView() {
                     lowStockTrigger: responseJSON.low_stock_trigger ? String(responseJSON.low_stock_trigger) : "",
                 }
             });
+
         } finally {
+            // ✅ delay reset to prevent rapid double scans
             setTimeout(() => {
-                setIsProcessing(false);
+                isProcessingRef.current = false;
             }, 900);
         }
     }
 
     return (
         <>
-
             <SafeAreaView>
                 <Button title="Back" onPress={router.back} />
             </SafeAreaView>
+
             <BarcodeScanInput onScanned={handleScannedBarcode} />
-
         </>
-
     );
 }
