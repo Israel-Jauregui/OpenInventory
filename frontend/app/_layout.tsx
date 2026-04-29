@@ -1,7 +1,13 @@
 import { Stack } from "expo-router";
 
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider} from "react-native-safe-area-context";
 import { SessionProvider, useSession } from "@/contexts/AuthContext/AuthContext";
+import { StyleSheet} from "react-native";
+
+import CustomStatusBar from "@/components/customStatusBar/customStatusBar";
+
+
+
 
 
 //_layout.tsx:  Parent layout of the app. Used for wrapping the entire app with relevant context providers, themes, etc. (any components that must be applied globally)
@@ -10,6 +16,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <SessionProvider>
+        <CustomStatusBar />
         <RootNavigator />
       </SessionProvider>
     </SafeAreaProvider>
@@ -36,4 +43,19 @@ function RootNavigator() {
     </ Stack>
 
   </>)
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ECF0F1',
+  },
+  buttonsContainer: {
+    padding: 10,
+  },
+  textStyle: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+});
