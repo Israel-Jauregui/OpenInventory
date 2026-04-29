@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { cloneElement, useState } from 'react';
 import { Pressable, Text, StyleProp, ViewStyle, TextStyle, StyleSheet } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 
@@ -24,7 +24,6 @@ export default function BackButton({ style, textStyle }: Props) {
                 style={[styles.container, style]}>
                 <Text
                     style={[styles.text, textStyle]}>
-
                     {"Back"}
                 </Text>
             </Pressable>
@@ -37,13 +36,13 @@ export default function BackButton({ style, textStyle }: Props) {
 const styles = StyleSheet.create(
     {
         container: {
-            marginLeft: 10,
             alignItems: "center",
-            justifyContent: "center"
+            justifyContent: "center",
+            height: 40
         },
         text: {
             fontSize: 18,
-            marginLeft: 10,
-            color: '#007AFF'
+            color: '#007AFF',
+            padding: 8,
         },
     });
