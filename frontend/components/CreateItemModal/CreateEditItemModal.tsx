@@ -59,6 +59,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     );
 
 
+
+    function TakeItemPhoto(){
+        router.push("/(app)/camera")
+    }
+
     //END HOOK INSTANTIATIONS
 
     //MARK: Component scope functions
@@ -148,7 +153,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                         </View>
                             
                         <View>
-                            <CameraButton header="TAKE/UPLOAD PHOTO"></CameraButton>
+                            <CameraButton Pressed={TakeItemPhoto} header="TAKE/UPLOAD PHOTO"></CameraButton>
                         </View>
                         
 

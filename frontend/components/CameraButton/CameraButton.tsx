@@ -4,13 +4,14 @@ import Svg, { Path } from "react-native-svg";
 
 type Props = {
     header : String,
+    Pressed : () => void
 }
 
-export default function CameraButton({header}: Props) {
+export default function CameraButton({header, Pressed}: Props) {
   return (
     <>
         <Text style={styles.header}>{header}</Text>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={Pressed}>
         <Svg
           height="96px"
           viewBox="0 -960 960 960"
