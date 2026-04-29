@@ -21,7 +21,7 @@ export default function LoginLayout() {
                     headerLeft: () => {
                         return(
                         <>
-                            <BackButton style={{marginLeft: 0, padding: 5}} textStyle={{marginLeft: 0}} />
+                            <BackButton />
                         </>);
                     },
                     animation: 'slide_from_right',
