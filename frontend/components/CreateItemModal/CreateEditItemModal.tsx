@@ -8,6 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
+import CameraButton from "../CameraButton/CameraButton";
 
 //MARK: Types
 type Props = {
@@ -35,7 +36,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const { currentInventory } = useCurrentInventoryContext();
 
     //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
-    //TODO: If on edit mode, initial values should be respective property values of passed item object of type item
+    
     const [createFormDataState, setCreateFormDataState] = useState<createItemFormData>({
         item_name: mode === "edit" ? item?.item_name ?? "" : "",
         desc: mode === "edit" ? item?.desc ?? "" : "",
@@ -145,6 +146,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 }}
                             />
                         </View>
+                            
+                        <View>
+                            <CameraButton header="TAKE/UPLOAD PHOTO"></CameraButton>
+                        </View>
+                        
 
                         <View style={
                             {
@@ -227,7 +233,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
                         {//Stock settings container and fields
                         }
-                        <Text>TODO: Either remove Stock Settings and add to Add Item modal, or (if values are specified) call /inventory/additem in handleSubmit() using the item_id returned by /items/create</Text>
+                        {/* <Text>TODO: Either remove Stock Settings and add to Add Item modal, or (if values are specified) call /inventory/additem in handleSubmit() using the item_id returned by /items/create</Text> */}
                         <View style={
                             {
                                 backgroundColor: "#c6d7e7",
