@@ -29,7 +29,7 @@ export default function AlertsView() {
                     );
                 }}
                 ListEmptyComponent={
-                    <Text style={styles.emptyText}>No low-stock items right now.</Text>
+                    <Text style={styles.emptyText}>Everythings stocked!{"\n"}No low-stock items right now.</Text>
                 }
             />
         </View>
@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         color: "#1d1b20",
         marginBottom: 10,
+        textAlign: "center",
     },
     alertRow: {
         backgroundColor: "white",

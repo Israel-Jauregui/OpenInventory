@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
 
         borderRadius: 20,
 
-
         width: "80%",
     },
 
@@ -222,9 +221,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',       // center text horizontally
         marginHorizontal: 10,
         borderRadius: 12,
-        borderColor: '#6fbeff',
-        borderWidth: 1,
-
+        borderColor: '#43aaff',
+        borderWidth: 2,
+        borderBottomWidth: 3,
+        borderTopWidth: 3,
+        //borderRightWidth: 3,
+        //borderLeftWidth: 3,
     },
     buttonDisabled: {
         backgroundColor: '#f1f1f1',
