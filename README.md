@@ -8,32 +8,33 @@
     - [App Store Link](https://apps.apple.com/us/app/expo-go/id982107779)
     - [Installing NPM and NodeJS](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-- 1. Clone the repository:
+ 1. **Clone the repository:**
 
     ```
     git clone https://github.com/Israel-Jauregui/OpenInventory
     ```
 
 
-- 2. CD to OpenInventory/frontend
+ 2. **CD to OpenInventory/frontend**
 
     ```
     cd OpenInventory/frontend
     ```
 
-- 3. Install packages using npm install
+ 3. **Install packages using npm install**
 
     ```
     npm install
     ```
 
-- 4. Start the frontend server
+ 4. **Start the frontend server**
+
     >**NOTE:** If scanning the QR code after running npx expo start makes Expo GO hang on "Opening Project", make sure that your computer and mobile device are on the same network or run npx expo start --tunnel. npx expo start --tunnel may require multiple attempts if you get a "Cannot read properties of undefined (reading 'body')" error.
     ```
     npx expo start
     ```
 
-- 5. Launch the frontend on a mobile device using Expo GO
+ 5. **Launch the frontend on a mobile device using Expo GO**
     - 1. Ensure that your computer running the frontend server and your mobile device are on the same network if not using npx expo start --tunnel
     - 2. Open your device's Camera app
     - 3. Scan the QR code shown in your computer's terminal
