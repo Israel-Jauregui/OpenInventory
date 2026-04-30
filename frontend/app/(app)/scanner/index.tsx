@@ -34,7 +34,12 @@ export default function ScannerView() {
                         "Accept": "application/json"
                     }
                 }
+
+
             );
+
+
+
 
             if (response?.status === 404) {
                 if (action === "edit" || action === "delete") {
@@ -54,6 +59,7 @@ export default function ScannerView() {
             }
 
             const responseJSON = await response.json();
+            console.log("Scanner JSON", responseJSON)
 
             if ((action === "edit" || action === "delete") && !responseJSON.in_inventory) {
                 Alert.alert("Not in inventory", "This barcode exists, but the item is not in the current inventory.");
@@ -65,7 +71,7 @@ export default function ScannerView() {
                     pathname: "/inventory/item/[itemId]/edit",
                     params: {
                         itemId: String(responseJSON.item.item_id),
-                        item: JSON.stringify(responseJSON.item)
+                        item: JSON.stringify({...responseJSON.item, low_stock_trigger: responseJSON.low_stock_trigger, quantity: responseJSON.quantity })
                     },
                 });
                 return;

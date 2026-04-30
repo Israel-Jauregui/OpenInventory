@@ -21,6 +21,7 @@ export type item = {
     "low_stock_trigger": number,
 }
 
+
 export type createItemFormData = {
     "item_name": string,
     "desc": string,
@@ -38,6 +39,10 @@ export type addItemFormData = {
     "low_stock_trigger": number
 }
 
+//Same type as item with exception of item_id since its other properties match those expected in FormData of /inventory/{inventory_id}/items/{item_id}
+export type editItemFormData = Omit<item, "item_id">;
+
+
 //State and dispatch contexts are separated so that only updating state for example doesn't cause rerenders for components that only need the dispatch function
 
 //Represents the actual inventory data and appropriate functons for handling inventory-related actions
@@ -46,11 +51,13 @@ const InventoryDataContext = createContext<{
     inventoryItems: item[],
     handleCreateItem: (createFormData: FormData) => Promise<void | Response>,
     handleAddItem: (addItemData: addItemFormData) => Promise<void | Response>,
+    handleEditItem: (editItemFormData: editItemFormData, item_id: string) => Promise<void | Response>,
     refreshInventoryItems: () => Promise<void>,
 }>({
     inventoryItems: [],
     handleCreateItem: () => Promise.resolve(undefined),
     handleAddItem: () => Promise.resolve(undefined),
+    handleEditItem: () => Promise.resolve(undefined),
     refreshInventoryItems: () => Promise.resolve(),
 
 });
@@ -86,6 +93,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
     const { fetchWithAuth } = useSession();
 
+    //MARK: Inventory id
     //currentInventory.invId will be utilized for several endpoints such as /inventory/{inventory_id}/items
     const { currentInventory } = useCurrentInventoryContext();
 
@@ -140,10 +148,13 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         }
 
     }
+    
     //TODO: Pass the following functions into value of InventoryDataContext.Provider once completed so they can be utilized via const { functionName } = useInventoryDataContext();
-    //Each function MUST dispatch state at some point to the reducer (usually AFTER fetchWithAuth for a given endpoint is successful)
+    //FIXME: OPTIONAL Each function MUST dispatch state at some point to the reducer (usually AFTER fetchWithAuth for a given endpoint is successful)
+
+    //MARK: Create handler
     async function handleCreateItem(createFormData: FormData) {
-       
+
 
         console.log("Creating new item master data")
         //Send a request with createFormData to /items/create to create a global item format
@@ -158,11 +169,11 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
             },
             body: createFormData
         })
-
-        if (response?.status === 201){
+        if (response?.status === 201) {
             return response;
         }
     }
+    //MARK: Add handler
     async function handleAddItemToInventory(addItemData: addItemFormData) {
         const response = await fetchWithAuth("/inventory/additem", {
             method: "POST",
@@ -179,8 +190,27 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         }
     }
 
-    async function handleEditItem() {
+    //MARK: Edit handler
+    //handleEditItem expects an item_id parameter because editItemFormData should NOT contain item_id as the endpoint does not expect that property
+    async function handleEditItem(editItemFormData: editItemFormData, item_id: string) {
+        console.log(`Editing item`);
+        console.log("Edit item form data: ", editItemFormData)
+        if (editItemFormData) {
+            const response = await fetchWithAuth(`/inventory/${currentInventory.invId}/items/${item_id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(editItemFormData)
+            })
 
+            if (response?.status === 200) {
+                return response
+            }
+        }
+        else{
+            throw new Error("editItemFormData must be defined. Check to make sure that passed mode to CreateEditItemModal is \"edit\" ");
+        }
     }
 
     async function handleDeleteItem() {
@@ -191,7 +221,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //MARK: Component return
     return (<>
 
-        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem, handleAddItem: handleAddItemToInventory, refreshInventoryItems: getInventoryItems }}>
+        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem, handleAddItem: handleAddItemToInventory, refreshInventoryItems: getInventoryItems, handleEditItem }}>
             <InventoryDataDispatchContext.Provider value={dispatch}>
                 {children}
             </InventoryDataDispatchContext.Provider>

@@ -27,6 +27,7 @@ export default function AppRoutesLayout() {
                 <Stack.Screen name="inventory/item/[itemId]/edit" options={{presentation: "modal", headerShown: true, headerTitle: "Edit Item"}}/>
                 <Stack.Screen name="inventory/item/[itemId]/delete" options={{presentation: "modal", headerShown: true, headerTitle: "Delete Item"}}/>
                 <Stack.Screen name="scanner/index" />
+                <Stack.Screen  name="camera/index" options={{ headerLeft: ()=>{return (<><BackButton /></>)}, headerShown: true, headerTitle: "Take Picture", presentation:"fullScreenModal"}}/>
             </Stack>
             </InventoryDataProvider>
         </CurrentInventoryProvider>

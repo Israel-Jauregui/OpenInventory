@@ -71,13 +71,13 @@ export default function ItemsView() {
                 onEditPress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]/edit",
-                        params: { itemId: item.item_id },
+                        params: { itemId: item.item_id, item: JSON.stringify(item)  },
                     });
                 }}
                 onDeletePress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]/delete",
-                        params: { itemId: item.item_id },
+                        params: { itemId: item.item_id},
                     });
                 }}
             />
@@ -106,6 +106,8 @@ export default function ItemsView() {
             data={filteredAndSortedItems}
             renderItem={renderItem}
             keyExtractor={(itemData: item) => itemData.item_id}
+
+            ItemSeparatorComponent={()=>{return(<><View style={{height: 8}}/></>)}}
             ListEmptyComponent={
                 <Text style={styles.emptyText}>No items match this search.</Text>
             }

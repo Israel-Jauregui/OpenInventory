@@ -29,7 +29,7 @@ export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, c
             }<View style={styles.imageContainer}>
                 <Image
                     style={styles.rowImage}
-                    source={{ uri: item.photo_url }}
+                    source={{ uri: item.photo_url !== "" ? item.photo_url : undefined }}
                 />
             </View>
 
