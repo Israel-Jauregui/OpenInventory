@@ -6,11 +6,17 @@ import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 //FIXME: TEMPORARY IMPORT
 import { Dropdown } from 'react-native-element-dropdown' //TODO: To be implemented
 
+
 //BEGIN Custom component imports
 //FIXME: TEMPORARY IMPORT
 import HomeInventoryButton from "../../../components/HomeInventoryButton/HomeInventoryButton";
-
-
+//home icons
+import AddItemIcon from "@/assets/images/AddItemIcon.svg";
+import ViewInventoryIcon from "@/assets/images/viewInventoryIcon.svg";
+import ManageUsersIcon from "@/assets/images/ManageUsersIcon.svg";
+import DeleteItemIcon from "@/assets/images/deleteItemIcon.svg";
+import EditItemIcon from "@/assets/images/editItemIcon.svg";
+import ChangeQuantityIcon from "@/assets/images/changeQuantityIcon.svg";
 import InventoryHeader from "@/components/InventoryHeader/InventoryHeader";
 import ItemsSearchBar from "@/components/ItemsSearchBar/ItemsSearchBar";
 
@@ -54,7 +60,7 @@ export default function Home() {
     return (
         <>
             {/*Inventory type dropdown */
-            }<InventoryHeader inventoryName={`${currentInventory.invName} (TEMPORARY) ID: ${currentInventory.invId}`} />
+            }<InventoryHeader inventoryName={`${currentInventory.invName} ID: ${currentInventory.invId}`} />
 
             {//Contains both the search bar and the barcode scanner button
             }<ItemsSearchBar
@@ -81,6 +87,7 @@ export default function Home() {
                         style={styles.button}
                         onPress={()=>{router.navigate("/items")}}
                         >
+                            <ViewInventoryIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
                         </TouchableOpacity>
 
@@ -89,7 +96,7 @@ export default function Home() {
                         disabled={!isInventoryAdmin}
                         onPress={()=>{router.navigate("/inventory/manage-users")}}
                         >
-                            <Image style={{ height: 75, width: 75 }} source={require("@/assets/images/manageUsersIcon.png")} />
+                            <ManageUsersIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }, !isInventoryAdmin && styles.buttonTextDisabled]}>Manage Users</Text>
                             {isInventoryMember ? (
                                 <Text style={styles.adminOnlyNote}>Admin only</Text>
@@ -111,12 +118,13 @@ export default function Home() {
                             ()=>{router.navigate({pathname: "/inventory/item/create", params: {mode: "create"}})}
                         }
                         >
-                            <Image style={{ marginTop: 40, height: 75, width: 75 }} source={require("@/assets/images/plusIcon.png")} />
+                            <AddItemIcon width={75} height={75} style={{ marginTop: 40 }} />
                             <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
 
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.button}>
-                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Needs attention</Text>
+                            <ChangeQuantityIcon width={75} height={75}  />
+                            <Text style={[styles.buttonText, { marginTop: 10 }]}>Change Quanity</Text>
                         </TouchableOpacity>
 
 
@@ -128,6 +136,7 @@ export default function Home() {
                         disabled={!isInventoryAdmin}
                         onPress={() => { router.push({ pathname: "/scanner", params: { action: "delete" } }); }}
                         >
+                            <DeleteItemIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Delete Item</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -135,6 +144,7 @@ export default function Home() {
                         disabled={!isInventoryAdmin}
                         onPress={() => { router.push({ pathname: "/scanner", params: { action: "edit" } }); }}
                         >
+                            <EditItemIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Edit Item</Text>
                         </TouchableOpacity>
                     </View>
@@ -221,7 +231,7 @@ const styles = StyleSheet.create({
         borderColor: '#d3d3d3',
     },
     buttonText: {
-        color: '#39a2f8',
+        color: '#2e2e2e',
         fontWeight: 'bold',
         fontSize: 16,
     },
