@@ -106,6 +106,8 @@ export default function ItemsView() {
             data={filteredAndSortedItems}
             renderItem={renderItem}
             keyExtractor={(itemData: item) => itemData.item_id}
+
+            ItemSeparatorComponent={()=>{return(<><View style={{height: 8}}/></>)}}
             ListEmptyComponent={
                 <Text style={styles.emptyText}>No items match this search.</Text>
             }
