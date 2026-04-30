@@ -5,18 +5,21 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { item } from '@/contexts/InventoryDataContext/InventoryDataContext';
 
-
+import ChangeQuanityIcon from "../../assets/images/changeQuantityIcon.svg";
+import EditItemIcon from "../../assets/images/editItemIcon.svg";
+import DeleteItemIcon from "../../assets/images/deleteItemIcon.svg";
 
 type Props = {
     item: item;
     onPress?: () => void;
+    onQuantityPress?: () => void;
     onEditPress?: () => void;
     onDeletePress?: () => void;
     canManage?: boolean;
 };
 
 //TODO: Add props that correspond to displayed data. Background color could also be passed so that it alters between each subsequent row.
-export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, canManage = true }: Props) {
+export default function ItemEntry({ item, onPress, onQuantityPress, onEditPress, onDeletePress, canManage = true }: Props) {
 
     //MARK: Returned component
     return (<>
@@ -51,8 +54,15 @@ export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, c
             {/*Container for buttons that modify or display item data TODO: Consider moving to component*/
             }<View style={styles.buttonsContainer}>
                 {//Item description / view button
-                }<TouchableOpacity style={styles.button}>
-                    <Image style={{ height: 25, width: 25 }} source={require("../../assets/images/itemDescIcon.png")} />
+                }<TouchableOpacity 
+                    style={[styles.button, !canManage && styles.buttonDisabled]}
+                    disabled={!canManage}
+                    onPress={(event) => {
+                        event.stopPropagation();
+                        onQuantityPress?.();
+                    }}
+                    >
+                    <ChangeQuanityIcon width={25} height={25} />
                 </TouchableOpacity>
 
                 {//Edit item data button
@@ -64,7 +74,7 @@ export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, c
                         onEditPress?.();
                     }}
                 >
-                    <Image style={{ height: 40, width: 40 }} source={require("../../assets/images/editIcon.png")} />
+                    <EditItemIcon width={25} height={25} />
                 </TouchableOpacity>
 
                 {//Delete item master data
@@ -76,7 +86,7 @@ export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, c
                         onDeletePress?.();
                     }}
                 >
-                    <Image style={{ height: 25, width: 25, borderColor: "red " }} source={require("../../assets/images/deleteIcon.png")} />
+                    <DeleteItemIcon width={25} height={25} />
                 </TouchableOpacity>
             </View>
 

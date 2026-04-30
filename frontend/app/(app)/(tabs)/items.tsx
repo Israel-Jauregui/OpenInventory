@@ -68,6 +68,13 @@ export default function ItemsView() {
                         params: { itemId: item.item_id, inInventory: "1", barcode: item.upc, quantity: String(item.quantity), lowStockTrigger: String(item.low_stock_trigger) }
                     });
                 }}
+                //TODO: MAKE BUTTON FUNTIONAL IN item/[itemId]/quantity.tsx
+                onQuantityPress={() => {
+                    router.push({
+                        pathname: "/inventory/item/[itemId]/quantity",
+                        params: { itemId: item.item_id, quantity: String(item.quantity) },
+                    });
+                }}
                 onEditPress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]/edit",
