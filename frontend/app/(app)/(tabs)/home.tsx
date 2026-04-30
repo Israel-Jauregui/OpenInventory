@@ -220,13 +220,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',   // center text vertically
         alignItems: 'center',       // center text horizontally
         marginHorizontal: 10,
+        
         borderRadius: 12,
         borderColor: '#43aaff',
         borderWidth: 2,
         borderBottomWidth: 3,
         borderTopWidth: 3,
-        //borderRightWidth: 3,
-        //borderLeftWidth: 3,
     },
     buttonDisabled: {
         backgroundColor: '#f1f1f1',

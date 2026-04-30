@@ -17,7 +17,12 @@ function TabLayout() {
 
     return (
         <>
-                <Tabs backBehavior="history">
+        
+                <Tabs backBehavior="history"
+                    screenOptions={{
+                    tabBarActiveTintColor: "#2b9fff",   // darker active icon
+                    tabBarInactiveTintColor: "#181818", // darker inactive icon
+                    }}>
 
                     <Tabs.Screen
                         name="home"
