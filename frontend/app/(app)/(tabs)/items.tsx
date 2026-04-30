@@ -71,13 +71,13 @@ export default function ItemsView() {
                 onEditPress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]/edit",
-                        params: { itemId: item.item_id },
+                        params: { itemId: item.item_id, item: JSON.stringify(item)  },
                     });
                 }}
                 onDeletePress={() => {
                     router.push({
                         pathname: "/inventory/item/[itemId]/delete",
-                        params: { itemId: item.item_id },
+                        params: { itemId: item.item_id},
                     });
                 }}
             />
