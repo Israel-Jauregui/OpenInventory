@@ -48,6 +48,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
         }
     }
     
+    
     const editItemProperties = getEditItemProperties() as editItemFormData;
     console.log(editItemProperties)
 
@@ -104,7 +105,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             //TODO: May have to change initial values
             "inventory_id": Number(currentInventory.invId) || -1,
             "item_id": -1,
-            "quantity": 1,
+            "quantity": 0,
             "low_stock_trigger": 1
         }
     );
@@ -131,11 +132,13 @@ export default function CreateEditItemModal({ mode, item }: Props) {
         }
 
         if (mode === "create") {
+            
             //Iterate through createEditFormDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
             for (const [key, value] of Object.entries(createEditFormDataState)) {
-
+              
                 //value is converted to a string since FormData.set() will not accept numbers; API should still process due to Python's dynamic typing
                 createFormData.set(key, String(value))
+               
             }
 
             //Request / response handling is found in InventoryDataContext.tsx for listed handleXYZ functions
@@ -145,6 +148,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             }
 
             const createResponseJSON = await createResponse.json();
+            
             if (!(createResponseJSON.item_id || createResponseJSON.item_id === 0)) {
                 return;
             }
@@ -152,8 +156,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             const addResponse = await handleAddItem({
                 inventory_id: Number(currentInventory.invId),
                 item_id: Number(createResponseJSON.item_id),
-                quantity: addFormDataState.quantity <= 0 ? 1 : addFormDataState.quantity,
-                low_stock_trigger: addFormDataState.low_stock_trigger < 0 ? 0 : addFormDataState.low_stock_trigger,
+                quantity: addFormDataState.quantity < 0 ? Number(null) : addFormDataState.quantity,
+                low_stock_trigger: addFormDataState.low_stock_trigger < 0 ? Number(null) : addFormDataState.low_stock_trigger,
             });
 
             if (!addResponse?.ok) {
@@ -167,8 +171,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                     itemId: String(createResponseJSON.item_id),
                     inInventory: "1",
                     barcode: createEditFormDataState.upc,
-                    quantity: String(addFormDataState.quantity <= 0 ? 1 : addFormDataState.quantity),
-                    lowStockTrigger: String(addFormDataState.low_stock_trigger < 0 ? 0 : addFormDataState.low_stock_trigger),
+                    quantity: String(addFormDataState.quantity < 0 ? Number(null) : addFormDataState.quantity),
+                    lowStockTrigger: String(addFormDataState.low_stock_trigger < 0 ? Number(null) : addFormDataState.low_stock_trigger),
                 },
             });
         }
@@ -194,10 +198,10 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
     console.log("ITEM PROP:", item);
     console.log("STATE:", createEditFormDataState);
-
     //MARK: Component return
     return (<>
         {
+            
             //TODO: May just need to have conditional for things such as which handle function is used rather than the ENTIRE component
 
             //Returned component for create
@@ -296,7 +300,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                         placeholder="Scan or type barcode"
 
                         placeholderTextColor="#979797"
-                        value={createEditFormDataState.upc}
+                        defaultValue={createEditFormDataState.upc ?? undefined}
 
                         onChangeText={(text) => {
                             setCreateEditFormDataState({ ...createEditFormDataState, upc: text })
@@ -343,7 +347,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 headerStyle={{ color: "#246fa1" }}
                                 placeholder="0"
                                 placeholderTextColor="#979797"
-                                defaultValue={String(editItemProperties.quantity)}
+                                defaultValue={editItemProperties ? String(editItemProperties.quantity) : String(0)}
                                 onChangeText={(text) => {
                                     mode === "edit" ? 
                                     setCreateEditFormDataState({...createEditFormDataState, quantity: Number(text)})
@@ -357,7 +361,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 placeholder="0"
                                 placeholderTextColor="#979797"
 
-                                defaultValue={String(editItemProperties.low_stock_trigger)}
+                                defaultValue={editItemProperties ? String(editItemProperties.low_stock_trigger) : String(0)}
                                 onChangeText={(text) => {
                                     mode === "edit" ? 
                                     setCreateEditFormDataState({...createEditFormDataState, low_stock_trigger: Number(text)})

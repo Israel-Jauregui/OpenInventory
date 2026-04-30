@@ -169,7 +169,6 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
             },
             body: createFormData
         })
-
         if (response?.status === 201) {
             return response;
         }
