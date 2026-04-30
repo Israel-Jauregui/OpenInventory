@@ -85,7 +85,7 @@ export default function Home() {
                         }
                         <TouchableOpacity 
                         style={styles.button}
-                        onPress={()=>{router.navigate("/items")}}
+                        onPress={()=>{router.push("/items")}}
                         >
                             <ViewInventoryIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Inventory</Text>
@@ -94,7 +94,8 @@ export default function Home() {
                         <TouchableOpacity
                         style={[styles.button, !isInventoryAdmin && styles.buttonDisabled]}
                         disabled={!isInventoryAdmin}
-                        onPress={()=>{router.navigate("/inventory/manage-users")}}
+                        //router.push for back button to work in manage users screen
+                        onPress={()=>{router.push("/inventory/manage-users")}}
                         >
                             <ManageUsersIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }, !isInventoryAdmin && styles.buttonTextDisabled]}>Manage Users</Text>
@@ -115,7 +116,7 @@ export default function Home() {
                             navigation.setOptions({headerTitle: "Create Item"});}
                             */
                             //TODO: Pass relevant params (may also need router.push instead)
-                            ()=>{router.navigate({pathname: "/inventory/item/create", params: {mode: "create"}})}
+                            ()=>{router.push({pathname: "/inventory/item/create", params: {mode: "create"}})}
                         }
                         >
                             <AddItemIcon width={75} height={75} style={{ marginTop: 40 }} />

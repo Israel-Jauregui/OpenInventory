@@ -17,7 +17,7 @@ function TabLayout() {
 
     return (
         <>
-        
+
                 <Tabs backBehavior="history"
                     screenOptions={{
                     tabBarActiveTintColor: "#2b9fff",   // darker active icon

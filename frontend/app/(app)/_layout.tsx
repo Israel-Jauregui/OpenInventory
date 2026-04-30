@@ -23,7 +23,7 @@ export default function AppRoutesLayout() {
                 <Stack.Screen name="inventory/manage-users" options={{headerShown: true, headerTitle: "Manage Users", headerBackTitle: "Home"}} />
                 <Stack.Screen name="inventory/invite-users" options={{headerShown: true, headerTitle: "Invite Users"}} />
                 <Stack.Screen name="inventory/item/create" options={{presentation: "modal", headerShown: true, headerTitle: "Create Item"}}/>
-                <Stack.Screen name="inventory/item/[itemId]/index" options={{ headerShown: true, headerTitle: "Item Details" }} />
+                <Stack.Screen name="inventory/item/[itemId]/index" options={{ headerShown: true, headerTitle: "Item Details", headerBackTitle: "Back" }} />
                 <Stack.Screen name="inventory/item/[itemId]/edit" options={{presentation: "modal", headerShown: true, headerTitle: "Edit Item"}}/>
                 <Stack.Screen name="inventory/item/[itemId]/delete" options={{presentation: "modal", headerShown: true, headerTitle: "Delete Item"}}/>
                 <Stack.Screen name="scanner/index" />

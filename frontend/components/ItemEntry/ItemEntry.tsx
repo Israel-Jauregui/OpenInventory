@@ -40,12 +40,12 @@ export default function ItemEntry({ item, onPress, onEditPress, onDeletePress, c
                 
             */
             }<View style={styles.labelsContainer}>
-                <Text style={styles.itemName}>{item.item_name}</Text>
-                <Text style={styles.labelText}>Quantity: <Text style={{ fontWeight: "normal" }}>{item.quantity}</Text></Text>
-                <Text style={styles.labelText}>Category: <Text style={{ fontWeight: "normal" }}>{item.category}</Text></Text>
-                <Text style={styles.labelText}>Brand: <Text style={{ fontWeight: "normal" }}>{item.brand}</Text></Text>
-                <Text style={styles.labelText}>Price: <Text style={{ fontWeight: "normal" }}>{item.price}</Text></Text>
-                <Text style={styles.labelText}>UPC: <Text style={{ fontWeight: "normal" }}>{item.upc}</Text></Text>
+                <Text style={styles.itemName} numberOfLines={1} ellipsizeMode="tail">{item.item_name}</Text>
+                <Text style={styles.labelText}numberOfLines={1} ellipsizeMode="tail">Quantity: <Text style={{ fontWeight: "normal" }}>{item.quantity}</Text></Text>
+                <Text style={styles.labelText}numberOfLines={1} ellipsizeMode="tail">Category: <Text style={{ fontWeight: "normal" }}>{item.category}</Text></Text>
+                <Text style={styles.labelText}numberOfLines={1} ellipsizeMode="tail">Brand: <Text style={{ fontWeight: "normal" }}>{item.brand}</Text></Text>
+                <Text style={styles.labelText}numberOfLines={1} ellipsizeMode="tail">Price: <Text style={{ fontWeight: "normal" }}>{item.price}</Text></Text>
+                <Text style={styles.labelText}numberOfLines={1} ellipsizeMode="tail">UPC: <Text style={{ fontWeight: "normal" }}>{item.upc}</Text></Text>
             </View>
 
             {/*Container for buttons that modify or display item data TODO: Consider moving to component*/
@@ -108,17 +108,19 @@ const styles = StyleSheet.create(
 
             marginLeft: 20,
 
-            height: 120,
-            width: 120,
+            height: 110,
+            width: 110,
 
-            backgroundColor: "#3f6b8e",
+            backgroundColor: "rgb(178, 187, 194)",
 
             borderRadius: 10,
         },
 
         rowImage: {
-            height: 100,
-            width: 100,
+            height: 110,
+            width: 110,
+            borderRadius: 10,
+            borderWidth: 1,
             //FIXME: TEMPORARY COLORING FOR JUDGING DIMENSIONS
             //backgroundColor: "blue"
         },
