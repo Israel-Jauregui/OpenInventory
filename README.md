@@ -4,9 +4,9 @@
 
 ## Getting Started
 
->**IMPORTANT**: Expo GO from the App Store / Google Play is required to run the frontend. 
+>**IMPORTANT**: Expo GO from the App Store / Google Play and up-to-date versions of npm + NodeJS are required to run the frontend. 
     - [App Store Link](https://apps.apple.com/us/app/expo-go/id982107779)
-
+    - [Installing NPM and NodeJS](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
 - 1. Clone the repository:
 
@@ -28,7 +28,7 @@
     ```
 
 - 4. Start the frontend server
-    >**NOTE** If scanning the QR code when running npx expo start makes Expo GO hang on "Opening Project", make sure that your computer and mobile device are on the same network or run npx expo start --tunnel.
+    >**NOTE:** If scanning the QR code after running npx expo start makes Expo GO hang on "Opening Project", make sure that your computer and mobile device are on the same network or run npx expo start --tunnel. npx expo start --tunnel may require multiple attempts if you get a "Cannot read properties of undefined (reading 'body')" error.
     ```
     npx expo start
     ```
