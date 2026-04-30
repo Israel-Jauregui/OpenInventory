@@ -1,14 +1,21 @@
-import { useEffect } from "react";
+import { useEffect, RefObject, SetStateAction, Dispatch } from "react";
 import { View , Text, StyleSheet, TouchableOpacity} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions, CameraPictureOptions} from "expo-camera";
 import Svg, { Path } from "react-native-svg";
+import { router } from "expo-router";
 
+type Props = {
+  TakePhoto : () => void;
+  setReady: Dispatch<SetStateAction<boolean>>;
+  camRef : RefObject<CameraView | null>
+}
 
+export default function Camera({TakePhoto, setReady, camRef} : Props){
 
-export default function Camera(){
+  const [permission, requestPermission] = useCameraPermissions();
 
-    const [permission, requestPermission] = useCameraPermissions();
+  
 
     useEffect(() => {
         if(permission && !permission.granted ){
@@ -17,7 +24,7 @@ export default function Camera(){
       )
     
     if(!permission?.granted){
-        return <View><Text>HIIIIIIIIIIIIIIIIIIIIIIIIIIII</Text></View>
+        return <View><Text>Camera permission not granted!</Text></View>
     }
 
     return(
@@ -26,8 +33,10 @@ export default function Camera(){
                 <CameraView
                           style={styles.camera}
                           facing="back"
+                          ref = {camRef}
+                          onCameraReady={() => setReady(true)}
                         />
-                <TouchableOpacity style={styles.cameraButton}>
+                <TouchableOpacity style={styles.cameraButton} onPress={TakePhoto}>
                     <Svg
                               height="64px"
                               viewBox="0 -960 960 960"
