@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
     View,
     Text,
@@ -63,27 +63,37 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     } = useInventoryDataContext();
     const { currentInventory } = useCurrentInventoryContext();
     const [showToast, setShowToast] = useState(false);
+    const [didInitializeEditState, setDidInitializeEditState] = useState(false);
 
-    //Returns item_id separated from item object because the PUT endpoint does not expect a property of item_id
-    const getEditItemProperties = () => {
-        if (mode === "edit" && item) {
-            const { item_id, ...editItemProperties } = item;
-            console.log(
-                "Converted item object to editItemProperties with object",
-                editItemProperties,
-            );
-            setImage(item.photo_url)
-            return editItemProperties;
+    const editItemProperties = useMemo(() => {
+        if (mode !== "edit" || !item) {
+            return null;
         }
-    };
 
-    const editItemProperties = getEditItemProperties() as editItemFormData;
-    //Add file property since it is not present in type item which is what editItemFormData inherits, and is what the edit endpoint expects
-    if (mode === "edit") {
+        return {
+            item_name: item.item_name,
+            desc: item.desc,
+            upc: item.upc,
+            photo_url: item.photo_url,
+            price: item.price,
+            category: item.category,
+            brand: item.brand,
+            quantity: item.quantity,
+            low_stock_trigger: item.low_stock_trigger,
+            file: "",
+        };
+    }, [item, mode]);
 
-        editItemProperties.file = ""
-    }
-    console.log("editItemProperties ", editItemProperties)
+    useEffect(() => {
+        if (mode !== "create" || !barcode) {
+            return;
+        }
+
+        setCreateEditFormDataState((prev) => ({
+            ...prev,
+            upc: barcode,
+        }));
+    }, [barcode, mode]);
 
 
     //MARK: FormData for creating an item (item_id, quantity, and low_stock_trigger are passed to addFormDataState since /items/additem expects a JSON body)
@@ -91,7 +101,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const [createEditFormDataState, setCreateEditFormDataState] = useState<
         createItemFormData | editItemFormData
     >(() => {
-        if (mode === "edit" && item) {
+        if (mode === "edit" && editItemProperties) {
             return editItemProperties;
         } else {
             return {
@@ -105,6 +115,24 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             };
         }
     });
+
+    useEffect(() => {
+        if (mode !== "edit" || !editItemProperties || didInitializeEditState) {
+            return;
+        }
+
+        setCreateEditFormDataState(editItemProperties);
+        setImage(item?.photo_url ?? null);
+        setDidInitializeEditState(true);
+    }, [didInitializeEditState, editItemProperties, item?.photo_url, mode]);
+
+    useEffect(() => {
+        if (mode !== "edit") {
+            return;
+        }
+
+        setDidInitializeEditState(false);
+    }, [item?.item_id, mode]);
 
     //FormData for adding an item (expected format for /inventory/addItem)
     const [addFormDataState, setAddFormDataState] = useState<addItemFormData>({
@@ -396,20 +424,36 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                             }}
                         />
 
-                        <DataField
-                            textInputStyle={{ width: 300 }}
-                            header="BARCODE"
-                            placeholder="Scan or type barcode"
-                            placeholderTextColor="#979797"
-                            requiredAsterisk={true}
-                            defaultValue={createEditFormDataState.upc ?? undefined}
-                            onChangeText={(text) => {
-                                setCreateEditFormDataState({
-                                    ...createEditFormDataState,
-                                    upc: text,
-                                });
-                            }}
-                        />
+                        <View style={styles.barcodeRow}>
+                            <DataField
+                                textInputStyle={{ width: mode === "create" ? 220 : 300 }}
+                                containerStyle={{ flex: 0 }}
+                                header="BARCODE"
+                                placeholder="Scan or type barcode"
+                                placeholderTextColor="#979797"
+                                requiredAsterisk={true}
+                                value={createEditFormDataState.upc}
+                                onChangeText={(text) => {
+                                    setCreateEditFormDataState({
+                                        ...createEditFormDataState,
+                                        upc: text,
+                                    });
+                                }}
+                            />
+                            {mode === "create" ? (
+                                <TouchableOpacity
+                                    style={styles.scanButton}
+                                    onPress={() => {
+                                        router.push({
+                                            pathname: "/scanner",
+                                            params: { action: "createBarcodeFill" },
+                                        });
+                                    }}
+                                >
+                                    <Text style={styles.scanButtonText}>Scan</Text>
+                                </TouchableOpacity>
+                            ) : null}
+                        </View>
 
                         {
                             //Stock settings container and fields
@@ -461,11 +505,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    defaultValue={
-                                        editItemProperties
-                                            ? String(editItemProperties.quantity)
-                                            : String(0)
-                                    }
+                                    value={mode === "edit" ? String(createEditFormDataState.quantity) : undefined}
                                     onChangeText={(text) => {
                                         mode === "edit"
                                             ? setCreateEditFormDataState({
@@ -483,11 +523,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    defaultValue={
-                                        editItemProperties
-                                            ? String(editItemProperties.low_stock_trigger)
-                                            : String(0)
-                                    }
+                                    value={mode === "edit" ? String(createEditFormDataState.low_stock_trigger) : undefined}
                                     onChangeText={(text) => {
                                         mode === "edit"
                                             ? setCreateEditFormDataState({
@@ -561,5 +597,26 @@ const styles = StyleSheet.create({
         color: "white",
         textAlign: "center",
         fontSize: 22,
+    },
+    barcodeRow: {
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "flex-end",
+        flexDirection: "row",
+        gap: 8,
+    },
+    scanButton: {
+        marginTop: 34,
+        height: 50,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        backgroundColor: "#36a2fa",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    scanButtonText: {
+        color: "#ffffff",
+        fontSize: 16,
+        fontWeight: "700",
     },
 });
