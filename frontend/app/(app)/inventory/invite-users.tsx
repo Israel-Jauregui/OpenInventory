@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, TextInput } from "react-native";
 
 import { useSession } from "@/contexts/AuthContext/AuthContext";
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
@@ -19,6 +19,15 @@ export default function InviteUsersScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [invitingUserId, setInvitingUserId] = useState<number | null>(null);
   const [error, setError] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const filteredCandidates = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) {
+      return candidates;
+    }
+    return candidates.filter((candidate) => candidate.username.toLowerCase().includes(query));
+  }, [candidates, searchQuery]);
 
   const loadCandidates = useCallback(async () => {
     if (!currentInventory.invId) {
@@ -105,6 +114,15 @@ export default function InviteUsersScreen() {
     <View style={styles.container}>
       <Text style={styles.heading}>Invite Users to {currentInventory.invName}</Text>
       <Text style={styles.subheading}>Users not already assigned to this inventory</Text>
+      <TextInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search users"
+        placeholderTextColor="#8c8c8c"
+        autoCapitalize="none"
+        autoCorrect={false}
+        style={styles.searchInput}
+      />
 
       {!!error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -112,7 +130,7 @@ export default function InviteUsersScreen() {
         <ActivityIndicator size="large" style={{ marginTop: 25 }} />
       ) : (
         <FlatList
-          data={candidates}
+          data={filteredCandidates}
           keyExtractor={(item) => String(item.user_id)}
           refreshing={isLoading}
           onRefresh={loadCandidates}
@@ -138,7 +156,9 @@ export default function InviteUsersScreen() {
           )}
           ListEmptyComponent={
             <Text style={styles.helperText}>
-              No available users to invite right now.
+              {searchQuery.trim().length > 0
+                ? "No users match your search."
+                : "No available users to invite right now."}
             </Text>
           }
         />
@@ -167,6 +187,18 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     color: "#5b5b5b",
     fontSize: 15,
+  },
+  searchInput: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#d8e4ef",
+    borderRadius: 12,
+    backgroundColor: "#ffffff",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    color: "#1d1b20",
+    marginBottom: 12,
   },
   userCard: {
     width: "100%",

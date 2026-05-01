@@ -106,6 +106,7 @@ export default function QuantityScreen() {
     if (!updateQuantityResponse?.ok) {
       const responseJSON = await updateQuantityResponse?.json().catch(() => null);
       Alert.alert("Unable to update quantity", responseJSON?.detail ?? "Please try again.");
+      setIsSaving(false);
       return;
     }
 

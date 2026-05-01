@@ -36,6 +36,12 @@ export default function Camera({TakePhoto, setReady, camRef} : Props){
                           ref = {camRef}
                           onCameraReady={() => setReady(true)}
                         />
+                <View pointerEvents="none" style={styles.overlayTop}>
+                  <Text style={styles.overlayTitle}>Scan a barcode</Text>
+                </View>
+                <View pointerEvents="none" style={styles.overlayBottom}>
+                  <Text style={styles.overlayHint}>Center the barcode inside the frame</Text>
+                </View>
                 <TouchableOpacity style={styles.cameraButton} onPress={TakePhoto}>
                     <Svg
                               height="64px"
@@ -73,4 +79,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 4,
     borderColor: "#9c9c9c",
-}})
+},
+overlayTop: {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  paddingTop: 28,
+  paddingBottom: 14,
+  paddingHorizontal: 16,
+  backgroundColor: "rgba(13, 27, 42, 0.42)",
+  alignItems: "center",
+},
+overlayBottom: {
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
+  paddingTop: 12,
+  paddingBottom: 170,
+  paddingHorizontal: 16,
+  backgroundColor: "rgba(13, 27, 42, 0.42)",
+  alignItems: "center",
+},
+overlayTitle: {
+  fontSize: 22,
+  color: "#ffffff",
+  fontWeight: "700",
+},
+overlayHint: {
+  fontSize: 15,
+  color: "#e5edf6",
+  fontWeight: "500",
+},
+})
