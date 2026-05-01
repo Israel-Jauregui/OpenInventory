@@ -64,6 +64,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const { currentInventory } = useCurrentInventoryContext();
     const [showToast, setShowToast] = useState(false);
     const [didInitializeEditState, setDidInitializeEditState] = useState(false);
+    const hasImage = typeof image === "string" && image.trim().length > 0;
 
     const editItemProperties = useMemo(() => {
         if (mode !== "edit" || !item) {
@@ -337,14 +338,27 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                         </View>
 
                         <View>
-                            {image ? (
-                                <TouchableOpacity
-                                    onPress={TakeItemPhoto}
-                                >
+                            {mode === "edit" ? (
+                                <TouchableOpacity style={styles.editImageContainer} onPress={TakeItemPhoto}>
+                                    {hasImage ? (
+                                        <Image
+                                            source={{ uri: image }}
+                                            style={styles.editImage}
+                                        />
+                                    ) : (
+                                        <View style={styles.emptyImageContainer}>
+                                            <Text style={styles.emptyImageText}>Tap to add photo</Text>
+                                        </View>
+                                    )}
+                                    <View style={styles.editImageHintPill}>
+                                        <Text style={styles.editImageHintText}>{hasImage ? "Tap to change photo" : "No photo yet"}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ) : image ? (
+                                <TouchableOpacity onPress={TakeItemPhoto}>
                                     <Image
                                         source={{ uri: image }}
-                                        style={{ width: 200, height: 200, borderRadius: 12 }}
-
+                                        style={styles.editImage}
                                     />
                                 </TouchableOpacity>
                             ) : (
@@ -501,11 +515,12 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 }}
                             >
                                 <DataField
-                                    header="Initial quantity"
+                                    header={mode === "edit" ? "Quantity" : "Initial quantity"}
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
                                     value={mode === "edit" ? String(createEditFormDataState.quantity) : undefined}
+                                    keyboardType="number-pad"
                                     onChangeText={(text) => {
                                         mode === "edit"
                                             ? setCreateEditFormDataState({
@@ -524,6 +539,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     placeholder="0"
                                     placeholderTextColor="#979797"
                                     value={mode === "edit" ? String(createEditFormDataState.low_stock_trigger) : undefined}
+                                    keyboardType="number-pad"
                                     onChangeText={(text) => {
                                         mode === "edit"
                                             ? setCreateEditFormDataState({
@@ -617,6 +633,51 @@ const styles = StyleSheet.create({
     scanButtonText: {
         color: "#ffffff",
         fontSize: 16,
+        fontWeight: "700",
+    },
+    emptyImageContainer: {
+        width: 200,
+        height: 200,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderStyle: "dashed",
+        borderColor: "#36a2fa",
+        backgroundColor: "#eef7ff",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 16,
+    },
+    emptyImageText: {
+        color: "#246fa1",
+        fontSize: 16,
+        fontWeight: "700",
+        textAlign: "center",
+    },
+    editImageContainer: {
+        width: 200,
+        height: 230,
+        alignItems: "center",
+    },
+    editImage: {
+        width: 200,
+        height: 200,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "#9dcdf4",
+        backgroundColor: "#e8f3fe",
+    },
+    editImageHintPill: {
+        marginTop: 8,
+        backgroundColor: "#e8f3fe",
+        borderColor: "#9dcdf4",
+        borderWidth: 1,
+        borderRadius: 999,
+        paddingVertical: 4,
+        paddingHorizontal: 10,
+    },
+    editImageHintText: {
+        color: "#246fa1",
+        fontSize: 12,
         fontWeight: "700",
     },
 });

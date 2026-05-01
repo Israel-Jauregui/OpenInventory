@@ -148,7 +148,7 @@ export default function QuantityScreen() {
 
               <TextInput
                 style={styles.input}
-                keyboardType="numeric"
+                keyboardType="number-pad"
                 value={String(delta)}
                 onChangeText={handleInputChange}
                 selectTextOnFocus
