@@ -91,7 +91,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
       return {
         item_name: "",
         desc: "",
-        upc: "",
+        upc: barcode ?? "",
         price: 0,
         category: "",
         brand: "",
