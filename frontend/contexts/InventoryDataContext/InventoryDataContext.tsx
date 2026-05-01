@@ -43,6 +43,13 @@ export type addItemFormData = {
 export type editItemFormData = Omit<item, "item_id"> & { file: string };
 
 
+export type editQuantityFormData = {
+    "inventory_id": number
+    "item_id": number
+    "quantityDelta": number
+}
+
+
 //State and dispatch contexts are separated so that only updating state for example doesn't cause rerenders for components that only need the dispatch function
 
 //Represents the actual inventory data and appropriate functons for handling inventory-related actions
@@ -52,11 +59,13 @@ const InventoryDataContext = createContext<{
     handleCreateItem: (createFormData: FormData) => Promise<void | Response>,
     handleAddItem: (addItemData: addItemFormData) => Promise<void | Response>,
     handleEditItem: (editItemFormData: FormData, item_id: string) => Promise<void | Response>,
+    handleEditItemQuantity: (editQuantityFormData: editQuantityFormData) => Promise<void | Response>,
     refreshInventoryItems: () => Promise<void>,
 }>({
     inventoryItems: [],
     handleCreateItem: () => Promise.resolve(undefined),
     handleAddItem: () => Promise.resolve(undefined),
+    handleEditItemQuantity: () => Promise.resolve(undefined),
     handleEditItem: () => Promise.resolve(undefined),
     refreshInventoryItems: () => Promise.resolve(),
 
@@ -148,7 +157,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
         }
 
     }
-    
+
     //TODO: Pass the following functions into value of InventoryDataContext.Provider once completed so they can be utilized via const { functionName } = useInventoryDataContext();
     //FIXME: OPTIONAL Each function MUST dispatch state at some point to the reducer (usually AFTER fetchWithAuth for a given endpoint is successful)
 
@@ -191,7 +200,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
     //MARK: Edit handler
     //handleEditItem expects an item_id parameter because editItemFormData should NOT contain item_id as the endpoint does not expect that property
-    async function handleEditItem(editItemFormData: FormData , item_id: string) {
+    async function handleEditItem(editItemFormData: FormData, item_id: string) {
         console.log(`Editing item`);
         console.log("Edit item form data: ", editItemFormData)
         if (editItemFormData) {
@@ -207,10 +216,34 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
                 return response
             }
         }
-        else{
+        else {
             throw new Error("editItemFormData must be defined. Check to make sure that passed mode to CreateEditItemModal is \"edit\" ");
         }
     }
+
+    //MARK: Update quantity handler
+    async function handleEditItemQuantity(editQuantityFormData: editQuantityFormData){
+        if(editQuantityFormData){
+
+            const response = await fetchWithAuth("/inventory/updatecount", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(editQuantityFormData)
+            })
+
+            if(response?.status === 200){
+                return response;
+            }
+
+        }
+        else{
+             throw new Error("editQuantityFormData must be defined. Check to make sure that passed mode to CreateEditItemModal is \"edit\" ");
+        }
+
+    }
+
 
     async function handleDeleteItem() {
 
@@ -220,7 +253,7 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
     //MARK: Component return
     return (<>
 
-        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem, handleAddItem: handleAddItemToInventory, refreshInventoryItems: getInventoryItems, handleEditItem }}>
+        <InventoryDataContext.Provider value={{ inventoryItems, handleCreateItem, handleAddItem: handleAddItemToInventory, refreshInventoryItems: getInventoryItems, handleEditItem, handleEditItemQuantity }}>
             <InventoryDataDispatchContext.Provider value={dispatch}>
                 {children}
             </InventoryDataDispatchContext.Provider>
