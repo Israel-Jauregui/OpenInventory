@@ -39,8 +39,8 @@ export type addItemFormData = {
     "low_stock_trigger": number
 }
 
-//Same type as item with exception of item_id since its other properties match those expected in FormData of /inventory/{inventory_id}/items/{item_id}
-export type editItemFormData = Omit<item, "item_id">;
+//Same type as item with exception of item_id and addition of file since its other properties match those expected in FormData of /inventory/{inventory_id}/items/{item_id}
+export type editItemFormData = Omit<item, "item_id"> & { file: string };
 
 
 //State and dispatch contexts are separated so that only updating state for example doesn't cause rerenders for components that only need the dispatch function
@@ -51,7 +51,7 @@ const InventoryDataContext = createContext<{
     inventoryItems: item[],
     handleCreateItem: (createFormData: FormData) => Promise<void | Response>,
     handleAddItem: (addItemData: addItemFormData) => Promise<void | Response>,
-    handleEditItem: (editItemFormData: editItemFormData, item_id: string) => Promise<void | Response>,
+    handleEditItem: (editItemFormData: FormData, item_id: string) => Promise<void | Response>,
     refreshInventoryItems: () => Promise<void>,
 }>({
     inventoryItems: [],
@@ -191,16 +191,16 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
 
     //MARK: Edit handler
     //handleEditItem expects an item_id parameter because editItemFormData should NOT contain item_id as the endpoint does not expect that property
-    async function handleEditItem(editItemFormData: editItemFormData, item_id: string) {
+    async function handleEditItem(editItemFormData: FormData , item_id: string) {
         console.log(`Editing item`);
         console.log("Edit item form data: ", editItemFormData)
         if (editItemFormData) {
             const response = await fetchWithAuth(`/inventory/${currentInventory.invId}/items/${item_id}`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "multipart/form-data"
                 },
-                body: JSON.stringify(editItemFormData)
+                body: editItemFormData
             })
 
             if (response?.status === 200) {
