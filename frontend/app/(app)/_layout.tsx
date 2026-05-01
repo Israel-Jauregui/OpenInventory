@@ -14,6 +14,7 @@ export default function AppRoutesLayout() {
                     name="inventory/inventory-select"
                     options={{
                         headerShown: true,
+                        headerBackVisible: false,
                         headerTitle: '',
                         headerRight: () => { return (<><LogoutButton style={{marginRight: 0, padding: 5}}/></>); },
                     }} />
