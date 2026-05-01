@@ -15,6 +15,7 @@ export default function AppRoutesLayout() {
                     options={{
                         headerShown: true,
                         headerTitle: '',
+                        headerBackVisible: false,
                         headerRight: () => { return (<><LogoutButton style={{marginRight: 0, padding: 5}}/></>); },
                     }} />
                 <Stack.Screen name="(tabs)" />
