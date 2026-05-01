@@ -284,8 +284,15 @@ export function SessionProvider({ children }: PropsWithChildren) {
                 Constants.expoConfig?.extra?.eas?.projectId ??
                 Constants.easConfig?.projectId;
 
+            if (!projectId) {
+                console.log(
+                    'Push token registration skipped: missing EAS projectId. Set expo.extra.eas.projectId in app config.'
+                );
+                return;
+            }
+
             const tokenResponse = await Notifications.getExpoPushTokenAsync(
-                projectId ? { projectId } : undefined
+                { projectId }
             );
 
             if (!tokenResponse.data) {
