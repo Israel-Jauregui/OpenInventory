@@ -165,7 +165,6 @@ export function InventoryDataProvider({ children }: PropsWithChildren) {
             method: "POST",
             headers: {
                 "Accept": "application/json",
-                "Content-Type": "multipart/form-data"
             },
             body: createFormData
         })

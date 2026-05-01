@@ -5,11 +5,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  KeyboardAvoidingView,
+  Image,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import DataField from "../DataField/DataField";
-import { CameraView} from "expo-camera";
+import { CameraCapturedPicture, CameraView } from "expo-camera";
 import {
   item,
   createItemFormData,
@@ -23,7 +23,7 @@ import Camera from "@/app/(app)/camera";
 import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
 import CameraButton from "../CameraButton/CameraButton";
-import SuccessToast from "../ItemSavedToast/ItemSavedTost";
+import SuccessToast from "../ItemSavedToast/ItemSavedToast";
 //MARK: Types
 type Props = {
   //Designates that mode prop will only take either of these values
@@ -44,11 +44,14 @@ export default function CreateEditItemModal({ mode, item }: Props) {
   const router = useRouter();
   const { barcode } = useLocalSearchParams<{ barcode?: string }>();
   const createdItemIdRef = useRef<number | null>(null);
-  const successMessages = { "create" : "Item successfully created!", "edit" : "Item edits saved!"};
-  const [cameraShowing, SetShowCamera] = useState(false)
+  const successMessages = {
+    create: "Item successfully created!",
+    edit: "Item edits saved!",
+  };
+  const [cameraShowing, SetShowCamera] = useState(false);
   const [isReady, setIsReady] = useState<boolean>(false);
-  const cameraRef = useRef<CameraView | null>(null); 
-
+  const [image, SetImage] = useState<string | null>(null);
+  const cameraRef = useRef<CameraView | null>(null);
 
   //BEGIN HOOK INSTANTIATIONS
 
@@ -69,6 +72,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
         "Converted item object to editItemProperties with object",
         editItemProperties,
       );
+      SetImage(item.photo_url)
       return editItemProperties;
     }
   };
@@ -95,7 +99,6 @@ export default function CreateEditItemModal({ mode, item }: Props) {
       };
     }
   });
-  
 
   //FormData for adding an item (expected format for /inventory/addItem)
   const [addFormDataState, setAddFormDataState] = useState<addItemFormData>({
@@ -106,48 +109,49 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     low_stock_trigger: 1,
   });
 
+  //MARK: Camera Stuff
+
   function TakeItemPhoto() {
-    SetShowCamera(true)
-}
+    SetShowCamera(true);
+  }
 
-  async function TakePhoto(){
-        
-    if(!cameraRef.current)return;
+  async function TakePhoto() {
+    if (!cameraRef.current) return;
 
-    if(isReady){
-        const picture = await cameraRef.current.takePictureAsync()
-        console.log(picture.uri)
-      }
+    if (isReady) {
+      const picture = await cameraRef.current.takePictureAsync();
+      console.log(picture.uri);
+      SetImage(picture.uri);
+      SetShowCamera(false);
     }
+  }
 
   function ToastFinished() {
-    if(mode === "create"){
-        setShowToast(false);
+    if (mode === "create") {
+      setShowToast(false);
 
-        router.replace({
-            pathname: "/inventory/item/[itemId]",
-            params: {
-            itemId: String(createdItemIdRef.current),
-            inInventory: "1",
-            barcode: createEditFormDataState.upc,
-            quantity: String(
-                addFormDataState.quantity < 0
-                ? Number(null)
-                : addFormDataState.quantity,
-            ),
-            lowStockTrigger: String(
-                addFormDataState.low_stock_trigger < 0
-                ? Number(null)
-                : addFormDataState.low_stock_trigger,
+      router.replace({
+        pathname: "/inventory/item/[itemId]",
+        params: {
+          itemId: String(createdItemIdRef.current),
+          inInventory: "1",
+          barcode: createEditFormDataState.upc,
+          quantity: String(
+            addFormDataState.quantity < 0
+              ? Number(null)
+              : addFormDataState.quantity,
+          ),
+          lowStockTrigger: String(
+            addFormDataState.low_stock_trigger < 0
+              ? Number(null)
+              : addFormDataState.low_stock_trigger,
           ),
         },
       });
+    } else {
+      setShowToast(false);
+      router.back();
     }
-    else{
-        setShowToast(false);
-        router.back();
-    }
-    
   }
   //END HOOK INSTANTIATIONS
 
@@ -165,8 +169,18 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     if (mode === "create") {
       //Iterate through createEditFormDataState while setting corresponding key / value pair in FormData which is the format that the respective endpoint expects
       for (const [key, value] of Object.entries(createEditFormDataState)) {
+        if (key !== "file") {
+          createFormData.set(key, String(value));
+        }
         //value is converted to a string since FormData.set() will not accept numbers; API should still process due to Python's dynamic typing
-        createFormData.set(key, String(value));
+      }
+
+      if (image) {
+        createFormData.append("file", {
+          uri: image,
+          name: "item-photo.jpg",
+          type: "image/jpeg",
+        } as any);
       }
 
       //Request / response handling is found in InventoryDataContext.tsx for listed handleXYZ functions
@@ -201,10 +215,6 @@ export default function CreateEditItemModal({ mode, item }: Props) {
       await refreshInventoryItems();
       createdItemIdRef.current = createResponseJSON.item_id;
       setShowToast(true);
-
-     
-
-
     }
     //quantity is one of the two properties that are found in type editItemFormData, but not type createItemFormData
     //Item must be defined in order to call handleEditItem because the isolated item_id is required
@@ -230,14 +240,24 @@ export default function CreateEditItemModal({ mode, item }: Props) {
   //MARK: Component return
   return (
     <>
-      { cameraShowing ? <Camera setReady={setIsReady} TakePhoto={TakePhoto} camRef={cameraRef} /> : 
+      {cameraShowing ? (
+        <Camera
+          setReady={setIsReady}
+          TakePhoto={TakePhoto}
+          camRef={cameraRef}
+        />
+      ) : (
         //TODO: May just need to have conditional for things such as which handle function is used rather than the ENTIRE component
 
         //Returned component for create
         <>
           <KeyboardAwareScrollView contentContainerStyle={styles.center}>
             <SuccessToast
-              message={mode === "create" ? successMessages.create : successMessages.edit}
+              message={
+                mode === "create"
+                  ? successMessages.create
+                  : successMessages.edit
+              }
               visible={showToast}
               onFinish={ToastFinished}
             />
@@ -261,10 +281,17 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             </View>
 
             <View>
-              <CameraButton
-                Pressed={TakeItemPhoto}
-                header="TAKE/UPLOAD PHOTO"
-              ></CameraButton>
+              {image ? (
+                <Image
+                  source={{ uri: image }}
+                  style={{ width: 200, height: 200, borderRadius: 12 }}
+                />
+              ) : (
+                <CameraButton
+                  Pressed={TakeItemPhoto}
+                  header="TAKE/UPLOAD PHOTO"
+                />
+              )}
             </View>
 
             <View
@@ -468,7 +495,7 @@ export default function CreateEditItemModal({ mode, item }: Props) {
             </TouchableOpacity>
           </View>
         </>
-      }
+      )}
     </>
   );
 }
