@@ -15,7 +15,6 @@ import uuid
 import httpx
 from fastapi import File, UploadFile, Form
 from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
 
 
 models.Base.metadata.create_all(bind=engine)
@@ -24,14 +23,6 @@ app = FastAPI()
 os.makedirs("static/images", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:8081/"],
-    allow_methods=[""],
-    allow_headers=["*"],
-    allow_credentials=True,
-)
 
 load_dotenv()
 
@@ -102,17 +93,6 @@ class InviteCandidateResponse(BaseModel):
 class NotificationTokenRequest(BaseModel):
     expo_push_token: str
 
-class EditInventoryItemRequest(BaseModel):
-    item_name: str
-    desc: str = ""
-    upc: str
-    photo_url: str = ""
-    price: float = 0.0
-    category: str = ""
-    brand: str = ""
-    quantity: int
-    low_stock_trigger: int
-    
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -125,7 +105,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 43200 # Set to 30 days so you don't get logged out
 INVENTORY_ROLE_ADMIN = "admin"
 INVENTORY_ROLE_MEMBER = "member"
 EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
-BASE_URL = "http://165.227.213.87:8000"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -310,7 +289,7 @@ def create_global_item(
             shutil.copyfileobj(file.file, file_object)
 
         # This is the path we save to the database
-        photo_path = f"{BASE_URL}/static/images/{unique_filename}"
+        photo_path = f"/static/images/{unique_filename}"
 
     # 3. Map to SQLAlchemy and save to Postgres
     new_item = models.Item(
@@ -635,7 +614,16 @@ def add_item_to_inventory(addItem: AddItemToInv, db: Session = Depends(get_db), 
 def edit_inventory_item(
     inventory_id: int,
     item_id: int,
-    req: EditInventoryItemRequest,
+    item_name: str = Form(...),
+    upc: str = Form(...),
+    quantity: int = Form(...),
+    low_stock_trigger: int = Form(...),
+    desc: str = Form(""),
+    photo_url: str = Form(""),
+    price: float = Form(0.0),
+    category: str = Form(""),
+    brand: str = Form(""),
+    file: UploadFile = File(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
@@ -657,14 +645,14 @@ def edit_inventory_item(
     if not catalog_item:
         raise HTTPException(status_code=404, detail="Catalog item not found.")
 
-    if req.quantity < 0:
+    if quantity < 0:
         raise HTTPException(status_code=400, detail="Quantity cannot be below zero!")
-    if req.low_stock_trigger < 0:
+    if low_stock_trigger < 0:
         raise HTTPException(status_code=400, detail="Low stock trigger cannot be below zero!")
 
     upc_conflict = (
         db.query(models.Item)
-        .filter(models.Item.upc == req.upc, models.Item.item_id != item_id)
+        .filter(models.Item.upc == upc, models.Item.item_id != item_id)
         .first()
     )
     if upc_conflict:
@@ -673,16 +661,25 @@ def edit_inventory_item(
     previous_quantity = inventory_entry.quantity
     previous_threshold = inventory_entry.low_stock_trigger
 
-    catalog_item.item_name = req.item_name.strip()
-    catalog_item.desc = req.desc
-    catalog_item.upc = req.upc.strip()
-    catalog_item.photo_url = req.photo_url
-    catalog_item.price = req.price
-    catalog_item.category = req.category
-    catalog_item.brand = req.brand
+    catalog_item.item_name = item_name.strip()
+    catalog_item.desc = desc
+    catalog_item.upc = upc.strip()
+    catalog_item.price = price
+    catalog_item.category = category
+    catalog_item.brand = brand
 
-    inventory_entry.quantity = req.quantity
-    inventory_entry.low_stock_trigger = req.low_stock_trigger
+    if file:
+        file_extension = file.filename.split(".")[-1] if file.filename and "." in file.filename else "bin"
+        unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_location = f"static/images/{unique_filename}"
+        with open(file_location, "wb+") as file_object:
+            shutil.copyfileobj(file.file, file_object)
+        catalog_item.photo_url = f"/static/images/{unique_filename}"
+    else:
+        catalog_item.photo_url = photo_url
+
+    inventory_entry.quantity = quantity
+    inventory_entry.low_stock_trigger = low_stock_trigger
 
     db.commit()
 
