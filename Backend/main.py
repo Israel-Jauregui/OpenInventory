@@ -125,6 +125,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 43200 # Set to 30 days so you don't get logged out
 INVENTORY_ROLE_ADMIN = "admin"
 INVENTORY_ROLE_MEMBER = "member"
 EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
+BASE_URL = "http://165.227.213.87:8000"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -309,7 +310,7 @@ def create_global_item(
             shutil.copyfileobj(file.file, file_object)
 
         # This is the path we save to the database
-        photo_path = f"/static/images/{unique_filename}"
+        photo_path = f"{BASE_URL}/static/images/{unique_filename}"
 
     # 3. Map to SQLAlchemy and save to Postgres
     new_item = models.Item(
