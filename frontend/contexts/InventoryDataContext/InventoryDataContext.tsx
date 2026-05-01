@@ -44,9 +44,9 @@ export type editItemFormData = Omit<item, "item_id"> & { file: string };
 
 
 export type editQuantityFormData = {
-    "inventory_id": number
-    "item_id": number
-    "quantityDelta": number
+    "inventory_id": string
+    "item_id": string
+    "quantityDelta": string
 }
 
 

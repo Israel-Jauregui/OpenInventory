@@ -124,7 +124,9 @@ export default function Home() {
 
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.button}>
-                            <ChangeQuantityIcon width={75} height={75}  />
+                            <ChangeQuantityIcon width={75} height={75} 
+                            onPress={()=>{ router.push({pathname: "/scanner", params: {action: "updateQuantity"}})}}
+                             />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Change Quanity</Text>
                         </TouchableOpacity>
 

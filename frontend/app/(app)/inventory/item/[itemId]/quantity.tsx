@@ -13,27 +13,38 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { useCurrentInventoryContext } from "@/contexts/CurrentInventoryContext/CurrentInventoryContext";
-import { useInventoryDataContext } from "@/contexts/InventoryDataContext/InventoryDataContext";
+import { useInventoryDataContext, editQuantityFormData } from "@/contexts/InventoryDataContext/InventoryDataContext";
 import { useSession } from "@/contexts/AuthContext/AuthContext";
 
 export default function QuantityScreen() {
   const router = useRouter();
-  const { itemId } = useLocalSearchParams<{ itemId: string }>();
+  const { itemId, quantity, item_name } = useLocalSearchParams<{ itemId: string, quantity: string, item_name: string }>();
   const numericItemId = useMemo(() => Number(itemId), [itemId]);
 
   const { fetchWithAuth } = useSession();
   const { currentInventory } = useCurrentInventoryContext();
-  const { inventoryItems, refreshInventoryItems } = useInventoryDataContext();
+  const { handleEditItemQuantity, refreshInventoryItems } = useInventoryDataContext();
 
-  const targetItem = inventoryItems.find((i) => Number(i.item_id) === numericItemId);
-  const currentQuantity = targetItem?.quantity ?? 0;
+
+  const currentQuantity = Number(quantity) ?? 0;
+
+  //MARK: Initial form data
+  const editQuantityFormData: editQuantityFormData =
+  {
+    inventory_id: currentInventory.invId,
+    item_id: itemId,
+    quantityDelta: "0"
+  };
+
+
+
 
   const [delta, setDelta] = useState<number>(0);
   const [isSaving, setIsSaving] = useState(false);
   const holdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const holdIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const newQuantity = currentQuantity + delta;
+  const newQuantity = Number(currentQuantity) + delta;
 
   function adjustDelta(amount: number) {
     setDelta((prev) => prev + amount);
@@ -74,6 +85,7 @@ export default function QuantityScreen() {
     setDelta(isNaN(parsed) ? 0 : parsed);
   }
 
+  //TODO: Call handleEditItemQuantity here
   async function handleSave() {
     if (!currentInventory.invId || !numericItemId || delta === 0) return;
 
@@ -82,36 +94,27 @@ export default function QuantityScreen() {
       return;
     }
 
+
+
+    editQuantityFormData.quantityDelta = String(delta);
+    console.log(editQuantityFormData)
+
     setIsSaving(true);
-    const response = await fetchWithAuth("/inventory/updatecount", {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        inventory_id: Number(currentInventory.invId),
-        item_id: numericItemId,
-        quantityDelta: delta,
-      }),
-    });
-    setIsSaving(false);
 
-    if (response?.status === 403) {
-      Alert.alert("Permission denied", "Only admins can adjust quantity.");
-      return;
-    }
+    const updateQuantityResponse = await handleEditItemQuantity(editQuantityFormData);
 
-    if (!response?.ok) {
-      const responseJSON = await response?.json().catch(() => null);
+    if (!updateQuantityResponse?.ok) {
+      const responseJSON = await updateQuantityResponse?.json().catch(() => null);
       Alert.alert("Unable to update quantity", responseJSON?.detail ?? "Please try again.");
       return;
     }
 
+    setIsSaving(false);
+
     await refreshInventoryItems();
     router.back();
+   
   }
-
   const deltaLabel =
     delta === 0
       ? null
@@ -127,8 +130,8 @@ export default function QuantityScreen() {
         >
           <View style={styles.card}>
             <Text style={styles.header}>Adjust Quantity</Text>
-            {targetItem ? (
-              <Text style={styles.itemName}>{targetItem.item_name}</Text>
+            {quantity ? (
+              <Text style={styles.itemName}>{item_name}</Text>
             ) : null}
             <Text style={styles.currentQty}>Current quantity: {currentQuantity}</Text>
 
