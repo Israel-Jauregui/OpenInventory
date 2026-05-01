@@ -11,7 +11,7 @@ import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/C
 export default function ScannerView() {
 
     const router = useRouter();
-    const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" }>();
+    const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" | "updateQuantity" }>();
     const { fetchWithAuth } = useSession();
     const { currentInventory } = useCurrentInventoryContext();
 
@@ -64,6 +64,17 @@ export default function ScannerView() {
             if ((action === "edit" || action === "delete") && !responseJSON.in_inventory) {
                 Alert.alert("Not in inventory", "This barcode exists, but the item is not in the current inventory.");
                 return;
+            }
+           
+          
+      
+            if (action === "updateQuantity"){
+               router.replace({
+                    pathname: "/inventory/item/[itemId]/quantity",
+                    params: { itemId: responseJSON.item.item_id, quantity: String(responseJSON.quantity), item_name: String(responseJSON.item.item_name)},
+
+               });
+               return;
             }
 
             if (action === "edit") {
