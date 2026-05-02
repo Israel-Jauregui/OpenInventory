@@ -38,7 +38,7 @@
 - **Notification Support**
 - **Navigation Bar**
 - **Authentication**
-## Getting Started
+## Getting Started - Running App
 
 >**IMPORTANT**: Expo GO from the App Store / Google Play and up-to-date versions of npm + NodeJS are required to run the frontend. 
     - [App Store Link](https://apps.apple.com/us/app/expo-go/id982107779)
@@ -74,7 +74,18 @@
     - 1. Ensure that your computer running the frontend server and your mobile device are on the same network if not using npx expo start --tunnel
     - 2. Open your device's Camera app
     - 3. Scan the QR code shown in your computer's terminal
+## Getting Started - Using App
+1. On the login screen, log in using your credentials or press "Need an account?" to create one, then login with those credentials.
 
+2. Select or create an inventory.
+
+3. Start creating item master data by clicking "Create Item Master Data" on the Home Tab or manipulate existing items on either the Home or Items tabs.
+
+4. Tap on individual items on the Items tab to view more information such as the item's description.
+
+- Home buttons that involve altering data such as "Change Quantity" will present you with a camera view to scan  a barcode.
+- The Items tab will present you with all of your items in your currently selected inventory.
+- Item data can be changed via either the buttons on the Home tab or the buttons on each item in the Items tab.
 ## Getting Started - Running Release
 > OpenInventory has been released only for Android Devices, IOS devices can only currently access OpenInventory via Expo GO. 
 
