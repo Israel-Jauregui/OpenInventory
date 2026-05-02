@@ -105,6 +105,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 43200 # Set to 30 days so you don't get logged out
 INVENTORY_ROLE_ADMIN = "admin"
 INVENTORY_ROLE_MEMBER = "member"
 EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send"
+BASE_URL = "http://165.227.213.87:8000"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -767,7 +768,7 @@ def get_inventory_items(inventory_id : int, db: Session = Depends(get_db), curre
             if not item:
                 # Skip dangling inventory entries that reference deleted/invalid item rows
                 continue
-            itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=item.photo_url, price=item.price, category=item.category, brand=item.brand, quantity=items.quantity, low_stock_trigger=items.low_stock_trigger)
+            itemToAdd = ItemResponse(item_id=item.item_id, item_name=item.item_name, desc=item.desc, upc=item.upc, photo_url=f"{BASE_URL}{item.photo_url}" if item.photo_url else "", price=item.price, category=item.category, brand=item.brand, quantity=items.quantity, low_stock_trigger=items.low_stock_trigger)
             inventoryContents.append(itemToAdd)
         
     return inventoryContents
@@ -802,7 +803,7 @@ def get_inventory_item_by_barcode(
             item_name=catalog_item.item_name,
             desc=catalog_item.desc or "",
             upc=catalog_item.upc or "",
-            photo_url=catalog_item.photo_url or "",
+            photo_url=f"{BASE_URL}{catalog_item.photo_url}" if catalog_item.photo_url else "",
             price=catalog_item.price or 0.0,
             category=catalog_item.category or "",
             brand=catalog_item.brand or "",
