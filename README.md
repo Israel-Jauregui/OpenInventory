@@ -74,3 +74,19 @@
     - 1. Ensure that your computer running the frontend server and your mobile device are on the same network if not using npx expo start --tunnel
     - 2. Open your device's Camera app
     - 3. Scan the QR code shown in your computer's terminal
+
+## Getting Started - Running Release
+> OpenInventory has been released only for Android Devices, IOS devices can only currently access OpenInventory via Expo GO. 
+
+### From Release 
+
+1. **Download the Latest Release**: 
+   - Navigate to releases page from the OpenInventory GitHub repository
+
+2. **Extract Contents/Install APK**: 
+   - Install Application via Downloaded APK
+
+3. **Launch OpenInventory via App Launcher**: 
+   - Select OpenInventory from homescreen to launch app
+
+
