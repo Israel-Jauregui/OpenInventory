@@ -4,12 +4,12 @@ import {
     Text,
     TouchableOpacity,
     StyleSheet,
-    ScrollView,
     Image,
+    Alert,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import DataField from "../DataField/DataField";
-import { CameraCapturedPicture, CameraView } from "expo-camera";
+import { CameraView } from "expo-camera";
 import {
     item,
     createItemFormData,
@@ -37,8 +37,6 @@ type Props = {
 
 //TODO: item parameter type may or may not change (currently item) depending on what edit item endpoint expects
 export default function CreateEditItemModal({ mode, item }: Props) {
-    console.log("MODE", mode);
-
     //Used since /items/create expects a multipart/form-data body. Upon submit, keys / values will be filled by iterating through formDataState.
     const formData = new FormData();
     const router = useRouter();
@@ -64,6 +62,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     const { currentInventory } = useCurrentInventoryContext();
     const [showToast, setShowToast] = useState(false);
     const [didInitializeEditState, setDidInitializeEditState] = useState(false);
+    const [editQuantityInput, setEditQuantityInput] = useState<string>("");
+    const [editLowStockInput, setEditLowStockInput] = useState<string>("");
     const hasImage = typeof image === "string" && image.trim().length > 0;
 
     const editItemProperties = useMemo(() => {
@@ -124,6 +124,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
         setCreateEditFormDataState(editItemProperties);
         setImage(item?.photo_url ?? null);
+        setEditQuantityInput(String(editItemProperties.quantity));
+        setEditLowStockInput(String(editItemProperties.low_stock_trigger));
         setDidInitializeEditState(true);
     }, [didInitializeEditState, editItemProperties, item?.photo_url, mode]);
 
@@ -155,7 +157,6 @@ export default function CreateEditItemModal({ mode, item }: Props) {
 
         if (isReady) {
             const picture = await cameraRef.current.takePictureAsync();
-            console.log(picture.uri);
             setImage(picture.uri);
             setShowCamera(false);
         }
@@ -254,14 +255,31 @@ export default function CreateEditItemModal({ mode, item }: Props) {
         //quantity is one of the two properties that are found in type editItemFormData, but not type createItemFormData
         //Item must be defined in order to call handleEditItem because the isolated item_id is required
         else if (mode === "edit" && item && "quantity" in createEditFormDataState) {
+            const parsedQuantity = Number.parseInt(editQuantityInput, 10);
+            const parsedLowStock = Number.parseInt(editLowStockInput, 10);
 
-            for (const [key, value] of Object.entries(createEditFormDataState)) {
-                if (key != "file") {
+            if (!Number.isInteger(parsedQuantity) || parsedQuantity < 0) {
+                Alert.alert("Invalid quantity", "Quantity must be a non-negative integer.");
+                return;
+            }
+
+            if (!Number.isInteger(parsedLowStock) || parsedLowStock < 0) {
+                Alert.alert("Invalid low stock value", "Low stock alert must be a non-negative integer.");
+                return;
+            }
+
+            const editPayload: editItemFormData = {
+                ...createEditFormDataState,
+                quantity: parsedQuantity,
+                low_stock_trigger: parsedLowStock,
+            };
+
+            for (const [key, value] of Object.entries(editPayload)) {
+                if (key !== "file") {
                     formData.set(key, String(value))
                 }
                 //If the current residing image is different (meaning user took a new picture) from what the item's photo_url seen in the database is, send new file
                 else if (image && image !== item.photo_url) {
-                    console.log("Changing stored item image")
                     formData.set("file", { uri: image, name: "item-photo.jpg", type: "image/jpeg" } as any)
 
                     //Set photo_url to empty string because file will be the new image; photo_url is reassigned by backend later
@@ -292,8 +310,6 @@ export default function CreateEditItemModal({ mode, item }: Props) {
     }
     //END FUNCTION DEFINITIONS (For functions that require component scope)
 
-    console.log("ITEM PROP:", item);
-    console.log("STATE:", createEditFormDataState);
     //MARK: Component return
     return (
         <>
@@ -519,14 +535,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    value={mode === "edit" ? String(createEditFormDataState.quantity) : undefined}
+                                    value={mode === "edit" ? editQuantityInput : undefined}
                                     keyboardType="number-pad"
                                     onChangeText={(text) => {
                                         mode === "edit"
-                                            ? setCreateEditFormDataState({
-                                                ...createEditFormDataState,
-                                                quantity: Number(text),
-                                            })
+                                            ? setEditQuantityInput(text.replace(/[^\d]/g, ""))
                                             : setAddFormDataState({
                                                 ...addFormDataState,
                                                 quantity: Number(text),
@@ -538,14 +551,11 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                     headerStyle={{ color: "#246fa1" }}
                                     placeholder="0"
                                     placeholderTextColor="#979797"
-                                    value={mode === "edit" ? String(createEditFormDataState.low_stock_trigger) : undefined}
+                                    value={mode === "edit" ? editLowStockInput : undefined}
                                     keyboardType="number-pad"
                                     onChangeText={(text) => {
                                         mode === "edit"
-                                            ? setCreateEditFormDataState({
-                                                ...createEditFormDataState,
-                                                low_stock_trigger: Number(text),
-                                            })
+                                            ? setEditLowStockInput(text.replace(/[^\d]/g, ""))
                                             : setAddFormDataState({
                                                 ...addFormDataState,
                                                 low_stock_trigger: Number(text),
@@ -561,8 +571,8 @@ export default function CreateEditItemModal({ mode, item }: Props) {
                                 style={{ alignItems: "center", paddingTop: -5, padding: 5 }}
                             >
                                 <Text style={{ width: 250, color: "#437a9e" }}>
-                                    {"\u2020"}You'll receive a push notification (if enabled) when
-                                    this item's quantity drops to the specified number.
+                                    {"\u2020"}You will receive a push notification (if enabled) when
+                                    this item quantity drops to the specified number.
                                 </Text>
                             </View>
                         </View>
