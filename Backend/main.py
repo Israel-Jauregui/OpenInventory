@@ -723,7 +723,7 @@ def delete_inventory_item(
 
 @app.post("/inventory/updatecount")
 def update_count(req: UpdateCountRequest, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    require_inventory_admin(inventory_id=req.inventory_id, current_user=current_user, db=db)
+    require_inventory_member(inventory_id=req.inventory_id, current_user=current_user, db=db)
 
     item = (db.query(models.InventoryEntry).filter(models.InventoryEntry.inventory_id == req.inventory_id, models.InventoryEntry.item_id == req.item_id).first())
     
