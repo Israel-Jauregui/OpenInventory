@@ -803,7 +803,7 @@ def get_inventory_item_by_barcode(
             item_name=catalog_item.item_name,
             desc=catalog_item.desc or "",
             upc=catalog_item.upc or "",
-            photo_url=f"{BASE_URL}{catalog_item.photo_url}" or "",
+            photo_url=f"{BASE_URL}{catalog_item.photo_url}" if catalog_item.photo_url else "",
             price=catalog_item.price or 0.0,
             category=catalog_item.category or "",
             brand=catalog_item.brand or "",
