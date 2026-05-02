@@ -1,6 +1,10 @@
 
 # OpenInventory - Mobile Inventory App
 
+<p align="center">
+  <img src="./icon.png" alt="OpenInventory app icon" width="140" />
+</p>
+
 **Keep Track.** OpenInventory is designed for everyday people who want to keep track of their day-to-day life on the go. From business owners to help desk clerks, OpenInventory is designed to help you no matter your experience.
 
 ## App Features
