@@ -11,7 +11,7 @@ import { useCurrentInventoryContext } from '@/contexts/CurrentInventoryContext/C
 export default function ScannerView() {
 
     const router = useRouter();
-    const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" | "updateQuantity" }>();
+    const { action } = useLocalSearchParams<{ action?: "view" | "edit" | "delete" | "updateQuantity" | "createBarcodeFill" }>();
     const { fetchWithAuth } = useSession();
     const { currentInventory } = useCurrentInventoryContext();
 
@@ -19,13 +19,36 @@ export default function ScannerView() {
     const isProcessingRef = useRef(false);
 
     async function handleScannedBarcode(barcode: string) {
-        if (isProcessingRef.current || !currentInventory.invId) {
+        if (isProcessingRef.current) {
             return;
         }
 
         isProcessingRef.current = true;
 
         try {
+            if (action === "createBarcodeFill") {
+                const existingCatalogItemResponse = await fetchWithAuth(`/items/${barcode}`, {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json",
+                    },
+                });
+
+                if (existingCatalogItemResponse?.ok) {
+                    Alert.alert("Barcode already exists", "This barcode already exists in the catalog. You can still continue editing before saving.");
+                }
+
+                router.replace({
+                    pathname: "/inventory/item/create",
+                    params: { mode: "create", barcode },
+                });
+                return;
+            }
+
+            if (!currentInventory.invId) {
+                return;
+            }
+
             const response = await fetchWithAuth(
                 `/inventory/${currentInventory.invId}/items/by-barcode/${barcode}`,
                 {

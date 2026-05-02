@@ -123,10 +123,11 @@ export default function Home() {
                             <Text style={[styles.buttonText, { marginBottom: 20, padding: 4, textAlign: "center" }]}>Create Item Master Data</Text>
 
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
-                            <ChangeQuantityIcon width={75} height={75} 
-                            onPress={()=>{ router.push({pathname: "/scanner", params: {action: "updateQuantity"}})}}
-                             />
+                        <TouchableOpacity
+                        style={styles.button}
+                        onPress={()=>{ router.push({pathname: "/scanner", params: {action: "updateQuantity"}})}}
+                        >
+                            <ChangeQuantityIcon width={75} height={75} />
                             <Text style={[styles.buttonText, { marginTop: 10 }]}>Change Quanity</Text>
                         </TouchableOpacity>
 
